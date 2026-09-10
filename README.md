@@ -2,7 +2,7 @@
 
 Status: implementasi awal bank soal tersedia. **SvelteKit + TypeScript + Node.js + Drizzle + SQLite + Better Auth**, dengan rencana self-hosting Dokploy dan backup Cloudflare R2. Paket ujian, ranking, pembayaran dan backup belum diimplementasikan.
 
-Halaman peserta tersedia di `/` (beranda), `/paket` (katalog dalam persiapan), dan `/dashboard` (akun login). Peserta yang sudah memiliki akun diarahkan ke dashboard; admin ke bank soal. Pendaftaran mandiri belum dibuka. Layout responsif sudah dibuat, validasi lintas browser/perangkat masih berlangsung.
+Halaman peserta tersedia di `/` (beranda), `/paket` (katalog dalam persiapan), dan `/dashboard` (akun login). Pendaftaran peserta menggunakan Google melalui Better Auth setelah [credential OAuth dikonfigurasi](docs/google-auth-setup.md). Admin tetap masuk ke bank soal. Layout responsif sudah dibuat, validasi lintas browser/perangkat masih berlangsung.
 
 ## Jalankan aplikasi lokal
 

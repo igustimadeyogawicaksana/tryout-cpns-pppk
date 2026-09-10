@@ -23,10 +23,13 @@
   }
   async function googleLogin() {
     busy = true;
+    error = '';
     try {
       const result = await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/account'
+        callbackURL: '/account',
+        newUserCallbackURL: '/dashboard',
+        errorCallbackURL: '/login?oauth_error=1'
       });
       if (result.error) error = 'Login Google belum berhasil.';
     } catch {
@@ -59,40 +62,66 @@
   <section class="login-panel">
     <div class="login-card">
       <p class="eyebrow">SELAMAT DATANG KEMBALI</p>
-      <h2>Masuk ke akun</h2>
-      <p class="muted">Gunakan akun yang sudah tersedia.</p>
+      <h2>Masuk atau daftar</h2>
+      <p class="muted">
+        Gunakan Google untuk mulai belajar. Akun peserta dibuat saat pertama kali masuk.
+      </p>
+      {#if data.oauthError}<div class="notice error" role="alert">
+          Proses Google belum selesai atau akses dibatalkan. Silakan coba lagi.
+        </div>{/if}
       {#if error}<div class="notice error" role="alert">{error}</div>{/if}
-      <form onsubmit={login} class="stack">
-        <label
-          >Email<input
-            type="email"
-            autocomplete="username"
-            bind:value={email}
-            required
-            placeholder="nama@domain.id"
-          /></label
-        >
-        <label
-          >Password<input
-            type="password"
-            autocomplete="current-password"
-            bind:value={password}
-            required
-          /></label
-        >
-        <button class="button" disabled={busy}
-          >{busy ? 'Memeriksa akun…' : 'Masuk ke akun'}
-          <span aria-hidden="true">↗</span></button
-        >
-      </form>
-      {#if data.googleEnabled}<button
-          class="button secondary full"
-          disabled={busy}
-          onclick={googleLogin}>Lanjutkan dengan Google</button
-        >{/if}
+      <button
+        class="button secondary full"
+        disabled={busy || !data.googleEnabled}
+        onclick={googleLogin}>Lanjutkan dengan Google</button
+      >
+      {#if !data.googleEnabled}<p class="login-note">
+          Pendaftaran Google belum diaktifkan oleh pengelola.
+        </p>{/if}
+      <details class="email-login">
+        <summary>Masuk dengan email dan password yang sudah ada</summary>
+        <form onsubmit={login} class="stack">
+          <label
+            >Email<input
+              type="email"
+              autocomplete="username"
+              bind:value={email}
+              required
+              placeholder="nama@domain.id"
+            /></label
+          >
+          <label
+            >Password<input
+              type="password"
+              autocomplete="current-password"
+              bind:value={password}
+              required
+            /></label
+          >
+          <button class="button" disabled={busy}
+            >{busy ? 'Memeriksa akun…' : 'Masuk ke akun'}
+            <span aria-hidden="true">↗</span></button
+          >
+        </form>
+      </details>
       <p class="login-note">
-        Pendaftaran mandiri belum dibuka. Akun peserta disiapkan oleh pengelola.
+        Pendaftaran peserta menggunakan Google. Login password tersedia untuk akun yang sudah
+        disiapkan, termasuk pengelola.
       </p>
     </div>
   </section>
 </main>
+
+<style>
+  .email-login {
+    margin-top: 24px;
+  }
+  .email-login summary {
+    cursor: pointer;
+    padding: 12px 0;
+    line-height: 1.5;
+  }
+  .email-login form {
+    margin-top: 16px;
+  }
+</style>

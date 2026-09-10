@@ -24,8 +24,8 @@ const env = {
   BETTER_AUTH_SECRET: randomBytes(48).toString('hex'),
   DATABASE_PATH: join(temp, 'test.sqlite'),
   ADMIN_PASSWORD: password,
-  GOOGLE_CLIENT_ID: '',
-  GOOGLE_CLIENT_SECRET: ''
+  GOOGLE_CLIENT_ID: 'test-client.apps.googleusercontent.com',
+  GOOGLE_CLIENT_SECRET: 'test-only-not-a-real-google-secret'
 };
 let server;
 function seed(email) {
@@ -70,6 +70,38 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
   assert.ok(ready, 'Test server did not become ready');
+  const social = await fetch(origin + '/api/auth/sign-in/social', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: origin },
+    body: JSON.stringify({
+      provider: 'google',
+      callbackURL: '/account',
+      newUserCallbackURL: '/dashboard',
+      errorCallbackURL: '/login?oauth_error=1',
+      disableRedirect: true
+    })
+  });
+  assert.equal(social.status, 200, await social.clone().text());
+  const socialBody = await social.json();
+  const googleUrl = new URL(socialBody.url);
+  assert.equal(googleUrl.hostname, 'accounts.google.com');
+  assert.equal(googleUrl.searchParams.get('client_id'), env.GOOGLE_CLIENT_ID);
+  assert.equal(googleUrl.searchParams.get('redirect_uri'), origin + '/api/auth/callback/google');
+  assert.ok(googleUrl.searchParams.get('state'));
+  assert.ok(!socialBody.url.includes(env.GOOGLE_CLIENT_SECRET));
+  const untrustedCallback = await fetch(origin + '/api/auth/sign-in/social', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: origin },
+    body: JSON.stringify({
+      provider: 'google',
+      callbackURL: 'https://attacker.invalid/',
+      disableRedirect: true
+    })
+  });
+  assert.ok(untrustedCallback.status >= 400);
+  console.log(
+    'Google OAuth initiation: authorization URL, callback, state, secret exclusion and untrusted redirect rejection passed (no live Google request).'
+  );
   const anonymous = await fetch(origin + '/admin/questions', { redirect: 'manual' });
   assert.equal(anonymous.status, 303);
   assert.equal(anonymous.headers.get('location'), '/login');

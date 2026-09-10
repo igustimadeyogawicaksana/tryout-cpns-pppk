@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-10 — AUTH-002, pendaftaran Google
+
+Google dijadikan jalur utama daftar/login peserta melalui Better Auth. Akun baru menuju dashboard; akun lama mengikuti peran; email/password lama tetap tersedia dan signup password publik tetap ditutup. Ditambahkan error callback dengan pesan aman, tombol nonaktif ketika credential kosong dan panduan callback lokal/Dokploy. Pendaftaran Google tidak menambahkan admin_users.
+
+Verifikasi: typecheck/build dan HTTP smoke memakai client ID/secret fiktif untuk memeriksa URL otorisasi, callback, state, secret tidak bocor dan penolakan redirect asing. Tidak menghubungi Google. Credential nyata lokal belum tersedia sehingga consent/callback nyata dan pendaftaran akun Google belum diuji; AUTH-002 tetap In progress.
+
 ## 2026-09-10 — PAY-004, fondasi paket dan skema gateway
 
 Ditambahkan fondasi schema paket/opsi/sesi dan service ujian awal (belum terhubung UI/endpoint), lalu persiapan payment gateway sesuai arahan pengguna. Migrasi 0001 memuat paket/sesi; 0002 memuat products, product_packages, orders, order_packages, payments, payment_events, access_grants dan refunds. Produk dan snapshot pembelian terpisah; integer rupiah, deduplikasi provider/event dan grant tunggal diberi constraint. Dokumen payment-gateway-schema.md membedakan constraint database dari pemeriksaan lintas tabel/transisi yang wajib dibangun di service.

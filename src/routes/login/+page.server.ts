@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { googleEnabled } from '$lib/server/auth';
-export function load({ locals }: { locals: App.Locals }) {
+import type { PageServerLoad } from './$types';
+export const load: PageServerLoad = ({ locals, url }) => {
   if (locals.user) redirect(303, locals.isAdmin ? '/admin/questions' : '/dashboard');
-  return { googleEnabled };
-}
+  return { googleEnabled, oauthError: url.searchParams.has('oauth_error') };
+};

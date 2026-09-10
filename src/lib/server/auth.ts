@@ -18,7 +18,14 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'sqlite', schema }),
   emailAndPassword: { enabled: true, disableSignUp: true, minPasswordLength: 12 },
   socialProviders: googleEnabled
-    ? { google: { clientId: env.GOOGLE_CLIENT_ID!, clientSecret: env.GOOGLE_CLIENT_SECRET! } }
+    ? {
+        google: {
+          clientId: env.GOOGLE_CLIENT_ID!,
+          clientSecret: env.GOOGLE_CLIENT_SECRET!,
+          disableSignUp: false,
+          prompt: 'select_account'
+        }
+      }
     : {},
   advanced: { database: { generateId: 'uuid' } },
   rateLimit: { enabled: true, window: 60, max: 30 }

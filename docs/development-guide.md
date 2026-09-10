@@ -27,7 +27,7 @@ Contoh sintetis hanya untuk memeriksa alur. Tidak ada soal contoh yang otomatis 
 ## Batas implementasi ini
 
 - Login email/password khusus pengelola melalui Better Auth sudah aktif; signup email publik sengaja dinonaktifkan. Hak admin berdasarkan tabel admin_users, bukan email kiriman browser. Akun Google baru tidak otomatis menjadi admin.
-- Login Google hanya ditampilkan bila GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET diisi. Callback sesuai origin aplikasi `/api/auth/callback/google`. Kredensial Google belum diatur dan OAuth belum diuji langsung.
+- Tombol daftar/login Google menjadi pilihan utama dan aktif bila GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET diisi. Panduan: [Google Auth](google-auth-setup.md). Callback sesuai origin aplikasi `/api/auth/callback/google`. Kredensial Google belum diatur dan OAuth belum diuji langsung.
 - Registrasi peserta, reset password lewat email dan free trial belum dibangun. Jangan membuka pendaftaran publik sebelum alur verifikasi/pemulihan akun siap.
 - Bank soal pilot menerima lima opsi dan skor integer 0–100. Validasi penuh blueprint per tahun/formasi, daftar topik/formasi terdaftar dan batas bobot resmi belum ada. Status terbit saat ini hanya bank soal internal, belum penerbitan paket ujian.
 - Teks dirender sebagai teks ter-escape, tanpa HTML/Markdown aktif. Gambar, rumus dan rich text belum didukung; impor dengan assets ditolak secara eksplisit.
