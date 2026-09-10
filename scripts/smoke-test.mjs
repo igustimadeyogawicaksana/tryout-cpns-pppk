@@ -125,6 +125,42 @@ try {
   const detail = await fetch(origin + location, { headers: { Cookie: cookie } });
   assert.equal(detail.status, 200);
   assert.match(await detail.text(), /HTTP-TIU-001/);
+  const tryUrl = origin + location + '/try';
+  assert.equal((await fetch(tryUrl, { redirect: 'manual' })).status, 303);
+  assert.equal((await fetch(tryUrl, { headers: { Cookie: participantCookie } })).status, 403);
+  const preview = await fetch(tryUrl, { headers: { Cookie: cookie } });
+  const previewHtml = await preview.text();
+  assert.equal(preview.status, 200);
+  assert.ok(!previewHtml.includes('correct_option_code'), 'Preview must not expose answer keys');
+  assert.ok(
+    !previewHtml.includes(source.questions[0].explanation_md),
+    'Preview must not expose explanation'
+  );
+  const checkAnswer = (choice, revision = '1', sessionCookie = cookie) =>
+    fetch(tryUrl, {
+      method: 'POST',
+      redirect: 'manual',
+      headers: { Cookie: sessionCookie, Origin: origin, Accept: 'text/html' },
+      body: new URLSearchParams({ choice, revision })
+    });
+  assert.equal((await checkAnswer('C', '1', participantCookie)).status, 403);
+  assert.equal((await checkAnswer('C', '1', '')).status, 303);
+  assert.equal((await checkAnswer('Z')).status, 400);
+  assert.equal((await checkAnswer('C', '999')).status, 409);
+  for (const [choice, score] of [
+    ['C', 5],
+    ['A', 0],
+    ['blank', 0]
+  ]) {
+    const checked = await checkAnswer(choice);
+    assert.equal(checked.status, 200);
+    const html = await checked.text();
+    assert.match(html, new RegExp(`Skor ${score} / 5`));
+    assert.ok(html.includes(source.questions[0].explanation_md));
+  }
+  console.log(
+    'Question try: hidden key/explanation, correct/wrong/blank scoring, invalid choice, stale revision and admin access passed.'
+  );
   const crossSite = await fetch(origin + '/admin/questions/new?/save', {
     method: 'POST',
     redirect: 'manual',

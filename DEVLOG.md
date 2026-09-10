@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-10 — CONTENT-005, coba soal
+
+Ditambahkan tombol Coba soal pada editor dan halaman simulasi satu soal untuk admin. GET hanya mengirim pertanyaan dan teks opsi, tanpa kunci, bobot atau pembahasan. POST memeriksa hak admin, kelengkapan, revision dan pilihan sebelum menghitung skor di server. Hasil menampilkan nilai, kunci/pilihan bobot tertinggi dan pembahasan; tersedia opsi jawaban kosong dan coba lagi. Soal yang belum lengkap tidak dapat dinilai. Tidak mengubah isi soal atau menyimpan hasil ke ranking.
+
+Verifikasi: typecheck/build dan HTTP smoke menguji kunci/pembahasan tidak ada pada halaman awal, skor benar/salah/kosong, pilihan ilegal, stale revision dan akses non-admin. Tes memakai database sementara. Sebelumnya tiga soal sintetis TEST-API-TIU-001/002/003 berhasil ditambahkan melalui API lokal dengan retry tanpa duplikasi; ketiganya tetap draft, bukan konten resmi CPNS 2027.
+
 ## 2026-09-10 — CONTENT-004, API unggah bank soal
 
 Pengguna memperjelas kebutuhan: endpoint untuk mengirim hasil pembuatan soal dari skrip/backend langsung ke bank soal, bukan integrasi generator AI. Ditambahkan POST /api/admin/questions dan /api/admin/questions/batch. Keduanya memakai bearer token khusus tambah draft, hash token dan aktor admin melalui environment, validasi lengkap, Idempotency-Key persisten, transaksi atomik, tautan hasil ke admin dan audit. Batas: 100 soal/2 MB dan 60 request terautentikasi per menit per instance. Cookie admin saja tidak mengizinkan API. Hak admin diperiksa setiap permintaan.

@@ -16,7 +16,10 @@
       >
     </h1>
   </div>
-  <span class={'pill status-' + data.row.status}>{statusLabels[data.row.status]}</span>
+  <div class="actions">
+    <a class="button secondary" href={'/admin/questions/' + data.row.id + '/try'}>Coba soal</a>
+    <span class={'pill status-' + data.row.status}>{statusLabels[data.row.status]}</span>
+  </div>
 </div>
 {#if form?.success}<div class="notice success" role="status">{form.success}</div>{/if}
 {#if form?.error}<div class="notice error" role="alert">{form.error}</div>{/if}

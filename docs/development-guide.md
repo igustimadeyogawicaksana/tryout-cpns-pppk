@@ -59,3 +59,6 @@ Entrypoint menjalankan migrasi lalu server. Buat pengelola produksi dari termina
 Schema migration baru dibuat dengan `npm run db:generate`, ditinjau, lalu diterapkan dengan `npm run db:migrate`. Ambil snapshot konsisten sebelum migrasi produksi. Aplikasi tidak menjalankan migrasi destruktif otomatis dari perubahan model.
 
 Sebelum rilis publik: uji Docker, volume/redeploy, backup R2 dan restore, alur peserta/pembayaran, batas beban serta kebijakan privasi. R2 masih rencana pada tahap ini.
+# Mencoba satu soal
+
+Dari bank soal, buka editor soal lalu klik **Coba soal**. Pilih opsi atau kosongkan jawaban, kemudian klik **Periksa jawaban** untuk melihat skor dan pembahasan. **Coba lagi** membuka ulang simulasi tanpa hasil sebelumnya. Simpan perubahan editor sebelum mencoba; halaman mencoba versi terakhir yang sudah tersimpan. Hanya admin yang dapat memakai simulasi ini. Soal belum lengkap harus diperbaiki dahulu. Ini bukan sesi ujian peserta dan tidak memengaruhi ranking.
