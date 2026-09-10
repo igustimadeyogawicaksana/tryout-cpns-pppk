@@ -14,7 +14,7 @@
       if (result.error)
         error =
           'Email atau password tidak cocok, atau percobaan masuk terlalu sering. Silakan coba kembali.';
-      else window.location.href = '/admin/questions';
+      else window.location.href = '/account';
     } catch {
       error = 'Koneksi terganggu. Silakan coba kembali.';
     } finally {
@@ -26,7 +26,7 @@
     try {
       const result = await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/admin/questions'
+        callbackURL: '/account'
       });
       if (result.error) error = 'Login Google belum berhasil.';
     } catch {
@@ -38,9 +38,9 @@
 </script>
 
 <svelte:head
-  ><title>Masuk pengelola · Ruang Tryout</title><meta
+  ><title>Masuk · Ruang Tryout</title><meta
     name="description"
-    content="Kelola bank soal dan pembahasan tryout CPNS dan PPPK."
+    content="Masuk ke akun Ruang Tryout CPNS dan PPPK."
   /></svelte:head
 >
 <main id="main" class="login-shell">
@@ -50,26 +50,17 @@
       ></a
     >
     <div>
-      <p class="eyebrow">RUANG KERJA PENGELOLA</p>
-      <h1>Soal yang baik.<br />Persiapan yang<br /><em>lebih berarti.</em></h1>
-      <p>Susun soal, tinjau pembahasan, dan jaga kualitas setiap paket latihan.</p>
+      <p class="eyebrow">RUANG PERSIAPANMU</p>
+      <h1>Langkah kecil.<br />Persiapan yang<br /><em>lebih berarti.</em></h1>
+      <p>Masuk dan siapkan langkah belajar untuk tujuan seleksimu.</p>
     </div>
-    <p class="story-foot">CPNS & PPPK <span>Bank soal · Edisi awal</span></p>
+    <p class="story-foot">CPNS & PPPK <span>Persiapan · Edisi awal</span></p>
   </section>
   <section class="login-panel">
     <div class="login-card">
       <p class="eyebrow">SELAMAT DATANG KEMBALI</p>
-      <h2>Masuk ke ruang kerja</h2>
-      <p class="muted">Gunakan akun pengelola yang sudah disiapkan.</p>
-      {#if data.denied}<div class="notice error" role="alert">
-          Akun ini belum memiliki akses pengelola. <button
-            class="text-button"
-            onclick={async () => {
-              await authClient.signOut();
-              window.location.reload();
-            }}>Keluar dari akun</button
-          >
-        </div>{/if}
+      <h2>Masuk ke akun</h2>
+      <p class="muted">Gunakan akun yang sudah tersedia.</p>
       {#if error}<div class="notice error" role="alert">{error}</div>{/if}
       <form onsubmit={login} class="stack">
         <label
@@ -90,7 +81,7 @@
           /></label
         >
         <button class="button" disabled={busy}
-          >{busy ? 'Memeriksa akun…' : 'Masuk ke ruang kerja'}
+          >{busy ? 'Memeriksa akun…' : 'Masuk ke akun'}
           <span aria-hidden="true">↗</span></button
         >
       </form>
@@ -100,7 +91,7 @@
           onclick={googleLogin}>Lanjutkan dengan Google</button
         >{/if}
       <p class="login-note">
-        Akses khusus pengelola. Hubungi pemilik proyek jika belum memiliki akun.
+        Pendaftaran mandiri belum dibuka. Akun peserta disiapkan oleh pengelola.
       </p>
     </div>
   </section>

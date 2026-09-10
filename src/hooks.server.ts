@@ -24,7 +24,12 @@ export const handle: Handle = async ({ event, resolve }) => {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('X-Frame-Options', 'DENY');
-  if (event.url.pathname.startsWith('/admin') || event.url.pathname.startsWith('/api/auth'))
+  if (
+    event.locals.user ||
+    event.url.pathname.startsWith('/admin') ||
+    event.url.pathname.startsWith('/api/auth') ||
+    event.url.pathname === '/account'
+  )
     response.headers.set('Cache-Control', 'private, no-store');
   return response;
 };

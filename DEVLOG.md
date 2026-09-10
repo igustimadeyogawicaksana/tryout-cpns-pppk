@@ -1,5 +1,13 @@
 # Development log
 
+## 2026-09-10 — USER-001, UX-002, halaman peserta
+
+Beranda publik menggantikan redirect root ke admin. Ditambahkan katalog /paket dengan filter CPNS/PPPK dan kondisi kosong, dashboard /dashboard untuk akun login, navigasi peserta/logout, serta /account untuk redirect berdasarkan peran. Login peserta yang sudah ada menuju dashboard; admin tetap menuju bank soal. Pendaftaran mandiri/pemulihan akun belum diaktifkan. Tidak ada paket, pembelian, nilai atau testimoni palsu. Respons dengan akun login memakai private/no-store.
+
+Layout memakai grid fleksibel, breakpoint HP, ukuran huruf adaptif, navigasi membungkus, fokus keyboard dan target tombol minimal 44 px. Beranda terlihat di browser aplikasi; katalog diperiksa pada viewport 320×740 dan ukuran browser dikembalikan. Pemeriksaan browser dibatasi ketika pengguna berinteraksi dengan tab. Belum mengklaim lolos Safari/Firefox atau perangkat fisik; matriks lintas browser tetap UX-002 In progress.
+
+Verifikasi: typecheck tanpa error/warning, build dan HTTP smoke meliputi beranda/katalog publik, dashboard anonim ditolak, redirect peserta/admin, no-store, serta regresi bank soal/API/coba soal. Paket, ujian, pembayaran dan backup tetap pekerjaan terpisah.
+
 ## 2026-09-10 — CONTENT-005, coba soal
 
 Ditambahkan tombol Coba soal pada editor dan halaman simulasi satu soal untuk admin. GET hanya mengirim pertanyaan dan teks opsi, tanpa kunci, bobot atau pembahasan. POST memeriksa hak admin, kelengkapan, revision dan pilihan sebelum menghitung skor di server. Hasil menampilkan nilai, kunci/pilihan bobot tertinggi dan pembahasan; tersedia opsi jawaban kosong dan coba lagi. Soal yang belum lengkap tidak dapat dinilai. Tidak mengubah isi soal atau menyimpan hasil ke ranking.

@@ -2,6 +2,8 @@
 
 Status: implementasi awal bank soal tersedia. **SvelteKit + TypeScript + Node.js + Drizzle + SQLite + Better Auth**, dengan rencana self-hosting Dokploy dan backup Cloudflare R2. Paket ujian, ranking, pembayaran dan backup belum diimplementasikan.
 
+Halaman peserta tersedia di `/` (beranda), `/paket` (katalog dalam persiapan), dan `/dashboard` (akun login). Peserta yang sudah memiliki akun diarahkan ke dashboard; admin ke bank soal. Pendaftaran mandiri belum dibuka. Layout responsif sudah dibuat, validasi lintas browser/perangkat masih berlangsung.
+
 ## Jalankan aplikasi lokal
 
 ```sh

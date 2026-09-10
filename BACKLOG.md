@@ -18,6 +18,8 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
 | APP-001 | P1 | Setup aplikasi dan lingkungan | Done | DEC-001 | Setup lokal, migrasi SQLite, typecheck/build dan HTTP smoke lolos; secret/data lokal diabaikan Git |
+| USER-001 | P1 | Beranda, katalog dan dashboard peserta | Done | APP-001 | Halaman publik, filter CPNS/PPPK, dashboard terlindungi dan redirect berdasarkan peran; paket/hasil masih kondisi kosong |
+| UX-002 | P1 | Validasi lintas perangkat/browser | In progress | USER-001 | Layout responsif dan katalog 320 px diperiksa di browser aplikasi; matriks Chrome/Edge/Firefox/Safari, tablet, landscape dan perangkat fisik masih perlu diuji |
 | AUTH-001 | P1 | Akun, akses admin, trial | In progress | APP-001, PROD-002 | Login pengelola dan proteksi admin selesai; registrasi peserta, pemulihan akun, Google live dan trial belum selesai |
 | CONTENT-001 | P1 | Form bank soal, review dan versi | In progress | APP-001, PROD-001, DATA-001 | Draft, review, approval, terbit, arsip/revisi dan stale-write guard selesai; blueprint/kategori resmi, assets dan rich text belum |
 | CONTENT-002 | P1 | Impor JSON ke draft | In progress | CONTENT-001 | Preview, batch atomik, retry/hash dan batas 100 soal/2 MB selesai; validasi referensi blueprint/topik/formasi masih menunggu katalog |

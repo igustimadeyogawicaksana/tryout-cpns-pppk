@@ -96,6 +96,29 @@ try {
   };
   const cookie = await login('admin@smoke.test');
   const participantCookie = await login('participant@smoke.test');
+  for (const path of ['/', '/paket', '/paket?jenis=CPNS', '/paket?jenis=PPPK']) {
+    const response = await fetch(origin + path);
+    assert.equal(response.status, 200);
+    assert.ok(!(await response.text()).includes('correct_option_code'));
+  }
+  assert.equal((await fetch(origin + '/dashboard', { redirect: 'manual' })).status, 303);
+  for (const [sessionCookie, destination] of [
+    [cookie, '/admin/questions'],
+    [participantCookie, '/dashboard']
+  ]) {
+    for (const path of ['/account', '/login']) {
+      const response = await fetch(origin + path, {
+        headers: { Cookie: sessionCookie },
+        redirect: 'manual'
+      });
+      assert.equal(response.status, 303);
+      assert.equal(response.headers.get('location'), destination);
+    }
+  }
+  const dashboard = await fetch(origin + '/dashboard', { headers: { Cookie: participantCookie } });
+  assert.equal(dashboard.status, 200);
+  assert.match(dashboard.headers.get('cache-control'), /no-store/);
+  assert.match(await dashboard.text(), /Belum ada riwayat ujian/);
   assert.equal(
     (await fetch(origin + '/admin/questions', { headers: { Cookie: participantCookie } })).status,
     403
