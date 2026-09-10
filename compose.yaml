@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_PATH: /app/data/app.sqlite
+      ORIGIN: ${ORIGIN:?Set ORIGIN to the public HTTPS origin}
+      BETTER_AUTH_URL: ${ORIGIN}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set a random secret}
+      BODY_SIZE_LIMIT: 4M
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    volumes:
+      - app_data:/app/data
+    expose:
+      - '3000'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  app_data:

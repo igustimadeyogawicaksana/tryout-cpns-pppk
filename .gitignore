@@ -13,3 +13,10 @@ Thumbs.db
 *.db-shm
 uploads/
 backups/
+.svelte-kit/
+data/
+.local/
+coverage/
+*.sqlite-wal
+*.sqlite-shm
+*.tsbuildinfo

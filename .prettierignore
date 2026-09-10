@@ -1,0 +1,8 @@
+node_modules
+.svelte-kit
+build
+data
+.local
+drizzle/meta
+package-lock.json
+Rancangan_Web_Tryout_CPNS_PPPK*

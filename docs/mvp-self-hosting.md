@@ -6,7 +6,7 @@ Tanggal: 2026-09-10. Dokumen ini memperbarui arah teknis; kajian sebelumnya dan 
 
 - Dipilih: SQLite lokal untuk MVP, server sendiri dikelola melalui Dokploy, autentikasi Better Auth.
 - Tujuan: memungkinkan migrasi ke PostgreSQL kemudian.
-- Usulan: SvelteKit + TypeScript, adapter-node, Node.js LTS, Drizzle; belum diimplementasikan atau difinalkan.
+- Implementasi pertama memakai SvelteKit + TypeScript, adapter-node, Node.js LTS dan Drizzle. Lihat [panduan pengembangan](development-guide.md) untuk menjalankan dan batas fitur.
 - Dipilih: Cloudflare R2 sebagai tujuan backup di luar server utama, berdasarkan klarifikasi pengguna. Konfigurasi belum dilakukan.
 - Pembayaran: belum ada keputusan baru; tetap lihat kajian pembayaran.
 

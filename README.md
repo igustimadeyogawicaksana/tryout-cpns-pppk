@@ -1,6 +1,16 @@
 # Rancangan Web Tryout CPNS & PPPK
 
-Status: perencanaan, belum ada implementasi aplikasi. **Arah MVP: SQLite lokal, self-hosting lewat Dokploy, Better Auth, dan backup di Cloudflare R2.** Framework/runtime/ORM masih usulan; backup belum dikonfigurasi.
+Status: implementasi awal bank soal tersedia. **SvelteKit + TypeScript + Node.js + Drizzle + SQLite + Better Auth**, dengan rencana self-hosting Dokploy dan backup Cloudflare R2. Paket ujian, ranking, pembayaran dan backup belum diimplementasikan.
+
+## Jalankan aplikasi lokal
+
+```sh
+npm ci
+npm run dev:setup
+npm run dev
+```
+
+Buka http://localhost:5173. Detail akun pengelola lokal tersimpan di `.local/akses-lokal.txt` setelah setup; berkas ini tidak masuk Git. Lihat [panduan pengembangan](docs/development-guide.md) untuk batas fitur, pengujian dan persiapan Dokploy. “Ruang Tryout” adalah nama tampilan sementara.
 
 ## Mulai membaca
 
@@ -15,7 +25,7 @@ Status: perencanaan, belum ada implementasi aplikasi. **Arah MVP: SQLite lokal, 
 - [Contoh JSON bank soal](examples/question-bank-import.json): dua contoh sintetis untuk kontrak impor draft.
 - [Rancangan awal](Rancangan_Web_Tryout_CPNS_PPPK%20(1).md): referensi asli, dipertahankan apa adanya.
 
-Instruksi implementasi di rancangan awal merupakan konteks, bukan persetujuan memilih stack. Permintaan terbaru pengguna mengutamakan evaluasi opsi dan pencatatan perubahan.
+Rancangan awal adalah referensi historis. Keputusan SQLite, Dokploy, Better Auth dan R2 serta permintaan melanjutkan implementasi menjadi arahan terbaru. Tahapan dan perubahan dicatat di backlog/dev log.
 
 ## Pelacakan perubahan
 

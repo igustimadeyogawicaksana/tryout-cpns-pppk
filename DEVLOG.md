@@ -1,5 +1,19 @@
 # Development log
 
+## 2026-09-10 — APP-001, AUTH-001, CONTENT-001/002, implementasi pertama
+
+Permintaan lanjut dikerjakan sebagai fondasi aplikasi dan bank soal yang bisa dijalankan. SvelteKit/TypeScript/Node/Drizzle dipakai; satu SQLite lokal dengan WAL, foreign keys, FULL durability, busy timeout dan migrasi terlacak. Better Auth menyediakan login pengelola; tabel admin_users mengontrol akses server dan pendaftaran email publik dimatikan. Google hanya disiapkan melalui environment, belum diaktifkan.
+
+UI: login, daftar/filter/status/statistik soal, draft manual, opsi satu-kunci/bobot, pembahasan teks, sumber, review, approval, terbit, arsip, revisi dan riwayat versi. Impor JSON memiliki preview, batas ukuran/jumlah, validasi, hash batch, unique key dan transaksi atomik. Tidak ada data contoh yang otomatis masuk ke bank kerja.
+
+Perlindungan: stale revision ditolak; versi terbit tidak dapat diedit melalui service; semua endpoint bank soal memeriksa akses pengelola. Form POST lintas origin ditolak. Rahasia dan akun lokal acak hanya tersimpan pada berkas yang diabaikan Git. Dockerfile/Compose named volume disiapkan, tetapi Docker tidak tersedia untuk pengujian image/deploy.
+
+Verifikasi: enam pengujian service SQLite lulus (skor, validasi, deduplikasi, rollback, versi/stale edit, draft tidak lengkap); typecheck tanpa error/warning; build Node berhasil; HTTP smoke login/persistensi/otorisasi/signup-disabled/CSRF berhasil. Dependency audit setelah override transitif melaporkan nol kerentanan. Halaman login lokal dibuka. Ini bukan hasil benchmark peserta serentak atau pengujian OAuth/Dokploy.
+
+Workflow GitHub Actions disiapkan untuk menjalankan pemeriksaan tipe, pengujian SQLite, build dan HTTP smoke pada push main/pull request. Hasil verifikasi di atas berasal dari mesin lokal; hasil workflow remote belum diverifikasi.
+
+Batas: blueprint resmi/katalog kategori, opsi ternormalisasi untuk ujian, assets/rich text, paket, ujian, ranking, payment dan backup R2 belum selesai. Panduan development-guide.md dan status backlog menjelaskan tahapan tersebut; belum ada deployment publik.
+
 ## 2026-09-10 — PLAN-004, bank soal dan perankingan SQLite
 
 Pengguna menegaskan SQLite untuk MVP dan meminta dokumentasi input bank soal serta ranking. Ditambahkan spesifikasi cakupan SQLite, input manual/impor JSON/review/versi/paket dan ranking cohort/percobaan pertama/seri/provinsi/privasi. Disediakan dua soal sintetis sebagai contoh format impor, bukan konten siap jual. Ranking dasar dipindah ke rencana MVP; ketergantungan backlog diperbaiki agar pengujian kapasitas dilakukan setelah fitur tersedia dan sebelum rilis. README dan daftar keputusan diselaraskan; rancangan asli tetap utuh.

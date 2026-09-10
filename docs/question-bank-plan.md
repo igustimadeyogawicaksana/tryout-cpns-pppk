@@ -2,6 +2,8 @@
 
 Status: rancangan implementasi, 2026-09-10. SQLite dipilih pengguna; aturan produk di bawah merupakan default rancangan yang dapat ditinjau sebelum rilis. Belum ada UI atau importir yang dibangun.
 
+Pembaruan implementasi: form draft, impor JSON dua tahap, review/terbit/revisi sudah dibangun. Spesifikasi di bawah tetap target lengkap; batas pilot (lima opsi, kategori bebas, tanpa assets/rich text dan blueprint resmi) dijelaskan di [panduan pengembangan](development-guide.md). Pernyataan “belum dibangun” pada rancangan awal adalah status historis.
+
 ## Ruang lingkup
 
 MVP menyediakan input manual dan impor JSON terstruktur, review soal, penerbitan versi, penyusunan paket dan preview peserta. Input spreadsheet, OCR PDF dan generasi otomatis ditunda. CPNS dan PPPK memakai struktur yang sama, tetapi blueprint jumlah soal, durasi, formasi dan aturan skornya terpisah.

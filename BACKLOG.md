@@ -13,14 +13,14 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PAY-002 | P0 | Pilih alur manual atau gateway | Todo | PAY-001 | Alur disepakati; bila manual ada jam layanan dan target waktu verifikasi |
 | DATA-001 | P0 | Finalisasi schema dari model logis | In progress | PLAN-004 | Model soal/sesi/ranking/payment terdokumentasi; DDL, mapping tipe dan constraint lintas tabel belum dibangun |
 | DATA-002 | P1 | Uji kapasitas SQLite | Todo | APP-001, EXAM-001, PAY-003, RANK-001, DISC-001 | Profil autosave/submit/payment/ranking diuji pada server target; tidak menjadi dependensi pemilihan framework |
-| DEC-001 | P0 | Lengkapi keputusan stack MVP | In progress | PLAN-004 | SQLite lokal, Dokploy, Better Auth dan backup R2 dipilih; framework/runtime/ORM masih perlu dilengkapi |
+| DEC-001 | P0 | Lengkapi keputusan stack MVP | Done | PLAN-004 | Implementasi memakai SvelteKit/TypeScript/Node/Drizzle, SQLite, Better Auth; Dokploy/R2 tetap target hosting/backup |
 | PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | Todo | — | Validasi jumlah soal/durasi/skor ke sumber resmi tahun seleksi; selesaikan konflik ranking MVP dan pembahasan trial di rancangan |
 | PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
-| APP-001 | P1 | Setup aplikasi dan lingkungan | Todo | DEC-001 | Aplikasi minimal bisa dijalankan; rahasia terpisah dari repo |
-| AUTH-001 | P1 | Akun, akses admin, trial | Todo | APP-001, PROD-002 | Peserta tidak dapat mengakses admin/data peserta lain; trial sesuai aturan |
-| CONTENT-001 | P1 | Form bank soal, review dan versi | Todo | APP-001, PROD-001, DATA-001 | Field/validasi question-bank-plan.md terpenuhi; pilihan tunggal dan bobot; versi terbit immutable |
-| CONTENT-002 | P1 | Impor JSON ke draft | Todo | CONTENT-001 | Preview error per field, batch atomik maksimal 100 soal/2 MB, external_key dan retry tidak menggandakan soal |
+| APP-001 | P1 | Setup aplikasi dan lingkungan | Done | DEC-001 | Setup lokal, migrasi SQLite, typecheck/build dan HTTP smoke lolos; secret/data lokal diabaikan Git |
+| AUTH-001 | P1 | Akun, akses admin, trial | In progress | APP-001, PROD-002 | Login pengelola dan proteksi admin selesai; registrasi peserta, pemulihan akun, Google live dan trial belum selesai |
+| CONTENT-001 | P1 | Form bank soal, review dan versi | In progress | APP-001, PROD-001, DATA-001 | Draft, review, approval, terbit, arsip/revisi dan stale-write guard selesai; blueprint/kategori resmi, assets dan rich text belum |
+| CONTENT-002 | P1 | Impor JSON ke draft | In progress | CONTENT-001 | Preview, batch atomik, retry/hash dan batas 100 soal/2 MB selesai; validasi referensi blueprint/topik/formasi masih menunggu katalog |
 | CONTENT-003 | P1 | Blueprint dan publikasi paket | Todo | CONTENT-001, PROD-001 | Kuota/durasi/skor diverifikasi, paket membekukan versi soal; tidak mengirim kunci saat ujian |
 | PAY-003 | P1 | Checkout dan verifikasi pembayaran | Todo | AUTH-001, CONTENT-001, PAY-002 | Bayar valid membuka akses sekali; bukti palsu/duplikat/nominal salah tidak membuka akses; ada audit |
 | EXAM-001 | P1 | Mesin tryout | Todo | AUTH-001, CONTENT-003 | Timer server, autosave/revision/reconnect, versi dan urutan soal tetap, submit/timeout idempotent |
