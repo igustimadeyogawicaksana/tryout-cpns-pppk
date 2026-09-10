@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-10 — PAY-004, fondasi paket dan skema gateway
+
+Ditambahkan fondasi schema paket/opsi/sesi dan service ujian awal (belum terhubung UI/endpoint), lalu persiapan payment gateway sesuai arahan pengguna. Migrasi 0001 memuat paket/sesi; 0002 memuat products, product_packages, orders, order_packages, payments, payment_events, access_grants dan refunds. Produk dan snapshot pembelian terpisah; integer rupiah, deduplikasi provider/event dan grant tunggal diberi constraint. Dokumen payment-gateway-schema.md membedakan constraint database dari pemeriksaan lintas tabel/transisi yang wajib dibangun di service.
+
+Verifikasi: migrasi diuji pada SQLite sementara termasuk migrasi ulang, foreign key, uang negatif/pecahan, duplikasi checkout/payment/event/grant dan event belum terverifikasi. Typecheck dan tes diperiksa. Tidak ada gateway, webhook publik, checkout atau akses berbayar diaktifkan. Service ujian masih fondasi yang perlu pengujian dan penyambungan; pekerjaan paket/ujian tetap belum selesai.
+
 ## 2026-09-10 — USER-001, UX-002, halaman peserta
 
 Beranda publik menggantikan redirect root ke admin. Ditambahkan katalog /paket dengan filter CPNS/PPPK dan kondisi kosong, dashboard /dashboard untuk akun login, navigasi peserta/logout, serta /account untuk redirect berdasarkan peran. Login peserta yang sudah ada menuju dashboard; admin tetap menuju bank soal. Pendaftaran mandiri/pemulihan akun belum diaktifkan. Tidak ada paket, pembelian, nilai atau testimoni palsu. Respons dengan akun login memakai private/no-store.

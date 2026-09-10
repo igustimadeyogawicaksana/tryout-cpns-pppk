@@ -126,3 +126,280 @@ export const auditLog = sqliteTable('audit_log', {
   note: text('note').notNull(),
   createdAt: integer('created_at').notNull()
 });
+
+export const examPackages = sqliteTable(
+  'exam_packages',
+  {
+    id: text('id').primaryKey().notNull(),
+    title: text('title').notNull(),
+    examType: text('exam_type').notNull(),
+    formation: text('formation').notNull(),
+    targetYear: integer('target_year').notNull(),
+    reference: text('reference').notNull(),
+    durationMinutes: integer('duration_minutes').notNull(),
+    quotas: text('quotas', { mode: 'json' }).$type<Record<string, number>>().notNull(),
+    status: text('status', { enum: ['draft', 'published', 'archived'] })
+      .notNull()
+      .default('draft'),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [
+    check('exam_duration_valid', sql`${t.durationMinutes} BETWEEN 1 AND 240`),
+    check('exam_status_valid', sql`${t.status} IN ('draft','published','archived')`)
+  ]
+);
+export const examItems = sqliteTable(
+  'exam_items',
+  {
+    id: text('id').primaryKey().notNull(),
+    packageId: text('package_id')
+      .notNull()
+      .references(() => examPackages.id),
+    versionId: text('version_id')
+      .notNull()
+      .references(() => questionVersions.id),
+    position: integer('position').notNull(),
+    content: text('content', { mode: 'json' }).$type<QuestionInput>().notNull()
+  },
+  (t) => [
+    uniqueIndex('exam_item_position').on(t.packageId, t.position),
+    uniqueIndex('exam_item_version').on(t.packageId, t.versionId)
+  ]
+);
+export const examOptions = sqliteTable(
+  'exam_options',
+  {
+    id: text('id').primaryKey().notNull(),
+    itemId: text('item_id')
+      .notNull()
+      .references(() => examItems.id),
+    code: text('code').notNull(),
+    text: text('text').notNull(),
+    score: integer('score').notNull()
+  },
+  (t) => [uniqueIndex('exam_option_code').on(t.itemId, t.code)]
+);
+export const examAttempts = sqliteTable(
+  'exam_attempts',
+  {
+    id: text('id').primaryKey().notNull(),
+    packageId: text('package_id')
+      .notNull()
+      .references(() => examPackages.id),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    startedAt: integer('started_at').notNull(),
+    deadlineAt: integer('deadline_at').notNull(),
+    revision: integer('revision').notNull().default(1),
+    status: text('status', { enum: ['in_progress', 'scored'] })
+      .notNull()
+      .default('in_progress'),
+    answers: text('answers', { mode: 'json' }).$type<Record<string, string>>().notNull(),
+    result: text('result', { mode: 'json' }).$type<{
+      total: number;
+      maximum: number;
+      subscores: Record<string, { score: number; maximum: number }>;
+    }>(),
+    endedReason: text('ended_reason'),
+    finishedAt: integer('finished_at')
+  },
+  (t) => [
+    uniqueIndex('exam_attempt_once').on(t.packageId, t.userId),
+    index('exam_attempt_deadline').on(t.status, t.deadlineAt),
+    check('exam_attempt_status', sql`${t.status} IN ('in_progress','scored')`)
+  ]
+);
+
+// Payment preparation only: no gateway requests or access activation yet.
+export const products = sqliteTable(
+  'products',
+  {
+    id: text('id').primaryKey().notNull(),
+    title: text('title').notNull(),
+    priceIdr: integer('price_idr').notNull(),
+    accessDays: integer('access_days').notNull(),
+    active: integer('active', { mode: 'boolean' }).notNull().default(false),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [
+    check(
+      'product_price_valid',
+      sql`typeof(${t.priceIdr}) = 'integer' AND ${t.priceIdr} BETWEEN 0 AND 1000000000`
+    ),
+    check('product_access_valid', sql`${t.accessDays} BETWEEN 1 AND 3650`)
+  ]
+);
+export const productPackages = sqliteTable(
+  'product_packages',
+  {
+    id: text('id').primaryKey().notNull(),
+    productId: text('product_id')
+      .notNull()
+      .references(() => products.id),
+    packageId: text('package_id')
+      .notNull()
+      .references(() => examPackages.id)
+  },
+  (t) => [uniqueIndex('product_package_unique').on(t.productId, t.packageId)]
+);
+export const orders = sqliteTable(
+  'orders',
+  {
+    id: text('id').primaryKey().notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    productId: text('product_id')
+      .notNull()
+      .references(() => products.id),
+    productTitle: text('product_title').notNull(),
+    amountIdr: integer('amount_idr').notNull(),
+    currency: text('currency').notNull().default('IDR'),
+    accessDays: integer('access_days').notNull(),
+    status: text('status').notNull().default('pending'),
+    idempotencyKey: text('idempotency_key').notNull(),
+    requestHash: text('request_hash').notNull(),
+    createdAt: integer('created_at').notNull(),
+    expiresAt: integer('expires_at').notNull(),
+    paidAt: integer('paid_at')
+  },
+  (t) => [
+    uniqueIndex('order_user_idempotency').on(t.userId, t.idempotencyKey),
+    index('order_user_created').on(t.userId, t.createdAt),
+    check(
+      'order_amount_valid',
+      sql`typeof(${t.amountIdr}) = 'integer' AND ${t.amountIdr} BETWEEN 0 AND 1000000000 AND ${t.currency} = 'IDR'`
+    ),
+    check('order_access_valid', sql`${t.accessDays} BETWEEN 1 AND 3650`),
+    check(
+      'order_status_valid',
+      sql`${t.status} IN ('pending','paid','expired','cancelled','partially_refunded','refunded','review_required')`
+    )
+  ]
+);
+// Snapshot of the editions purchased, independent of later product changes.
+export const orderPackages = sqliteTable(
+  'order_packages',
+  {
+    id: text('id').primaryKey().notNull(),
+    orderId: text('order_id')
+      .notNull()
+      .references(() => orders.id),
+    packageId: text('package_id')
+      .notNull()
+      .references(() => examPackages.id)
+  },
+  (t) => [uniqueIndex('order_package_unique').on(t.orderId, t.packageId)]
+);
+export const payments = sqliteTable(
+  'payments',
+  {
+    id: text('id').primaryKey().notNull(),
+    orderId: text('order_id')
+      .notNull()
+      .references(() => orders.id),
+    provider: text('provider').notNull(), // 'manual' is supported as an adapter later.
+    environment: text('environment').notNull().default('sandbox'),
+    merchantAccount: text('merchant_account').notNull(), // Non-secret configuration identifier.
+    externalId: text('external_id'),
+    idempotencyKey: text('idempotency_key').notNull().unique(),
+    amountIdr: integer('amount_idr').notNull(),
+    currency: text('currency').notNull().default('IDR'),
+    status: text('status').notNull().default('created'),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at').notNull(),
+    settledAt: integer('settled_at')
+  },
+  (t) => [
+    uniqueIndex('payment_external_unique').on(
+      t.provider,
+      t.environment,
+      t.merchantAccount,
+      t.externalId
+    ),
+    index('payment_order_idx').on(t.orderId),
+    check(
+      'payment_amount_valid',
+      sql`typeof(${t.amountIdr}) = 'integer' AND ${t.amountIdr} BETWEEN 1 AND 1000000000 AND ${t.currency} = 'IDR'`
+    ),
+    check('payment_environment_valid', sql`${t.environment} IN ('sandbox','production')`),
+    check(
+      'payment_status_valid',
+      sql`${t.status} IN ('created','pending','succeeded','failed','expired','cancelled','review_required')`
+    )
+  ]
+);
+export const paymentEvents = sqliteTable(
+  'payment_events',
+  {
+    id: text('id').primaryKey().notNull(),
+    provider: text('provider').notNull(),
+    environment: text('environment').notNull(),
+    merchantAccount: text('merchant_account').notNull(),
+    eventKey: text('event_key').notNull(),
+    paymentId: text('payment_id').references(() => payments.id),
+    payloadHash: text('payload_hash').notNull(),
+    verified: integer('verified', { mode: 'boolean' }).notNull().default(false),
+    status: text('status').notNull().default('received'),
+    attempts: integer('attempts').notNull().default(0),
+    errorCode: text('error_code'),
+    receivedAt: integer('received_at').notNull(),
+    processedAt: integer('processed_at')
+  },
+  (t) => [
+    uniqueIndex('payment_event_unique').on(
+      t.provider,
+      t.environment,
+      t.merchantAccount,
+      t.eventKey
+    ),
+    index('payment_event_retry').on(t.status, t.receivedAt),
+    check('payment_event_status', sql`${t.status} IN ('received','processed','ignored','failed')`),
+    check('payment_event_verified', sql`${t.status} != 'processed' OR ${t.verified} = 1`)
+  ]
+);
+// Owner and package are derived through order_packages -> orders; no mismatched user IDs.
+export const accessGrants = sqliteTable(
+  'access_grants',
+  {
+    id: text('id').primaryKey().notNull(),
+    orderPackageId: text('order_package_id')
+      .notNull()
+      .unique()
+      .references(() => orderPackages.id),
+    startsAt: integer('starts_at').notNull(),
+    expiresAt: integer('expires_at').notNull(),
+    revokedAt: integer('revoked_at'),
+    revokeReason: text('revoke_reason'),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [check('grant_period_valid', sql`${t.expiresAt} > ${t.startsAt}`)]
+);
+export const refunds = sqliteTable(
+  'refunds',
+  {
+    id: text('id').primaryKey().notNull(),
+    paymentId: text('payment_id')
+      .notNull()
+      .references(() => payments.id),
+    externalId: text('external_id'),
+    idempotencyKey: text('idempotency_key').notNull().unique(),
+    amountIdr: integer('amount_idr').notNull(),
+    reason: text('reason').notNull(),
+    status: text('status').notNull().default('requested'),
+    actorId: text('actor_id')
+      .notNull()
+      .references(() => user.id),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at').notNull()
+  },
+  (t) => [
+    uniqueIndex('refund_external_unique').on(t.paymentId, t.externalId),
+    check(
+      'refund_amount_valid',
+      sql`typeof(${t.amountIdr}) = 'integer' AND ${t.amountIdr} BETWEEN 1 AND 1000000000`
+    ),
+    check('refund_status_valid', sql`${t.status} IN ('requested','pending','succeeded','failed')`)
+  ]
+);

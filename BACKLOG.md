@@ -27,6 +27,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | CONTENT-004 | P1 | Endpoint API unggah soal | Done | CONTENT-001 | POST satu/batch, bearer token admin, batas 2 MB/100 soal, validasi, retry idempotent, transaksi atomik dan audit; HTTP integration test lulus |
 | CONTENT-005 | P1 | Coba soal sebagai pengelola | Done | CONTENT-001 | Tombol dari editor; kunci/pembahasan tidak dikirim pada GET; penilaian server untuk pilihan/kosong, revision guard, coba ulang dan proteksi admin; tidak mencatat hasil ujian/ranking |
 | PAY-003 | P1 | Checkout dan verifikasi pembayaran | Todo | AUTH-001, CONTENT-001, PAY-002 | Bayar valid membuka akses sekali; bukti palsu/duplikat/nominal salah tidak membuka akses; ada audit |
+| PAY-004 | P1 | Skema payment gateway | Done | DATA-001 | Produk, snapshot pesanan, payment attempt, event, grant dan refund tersedia di migrasi; constraint SQLite diuji; checkout/webhook/aktivasi akses belum diimplementasikan |
 | EXAM-001 | P1 | Mesin tryout | Todo | AUTH-001, CONTENT-003 | Timer server, autosave/revision/reconnect, versi dan urutan soal tetap, submit/timeout idempotent |
 | RANK-001 | P1 | Ranking dasar umum dan provinsi | Todo | EXAM-001, RESULT-001 | Cohort sama, percobaan kompetitif pertama, seri 1/2/2/4, privasi, posisi saya dan snapshot atomik sesuai ranking-plan.md |
 | RANK-002 | P1 | Koreksi penilaian dan finalisasi ranking | Todo | RANK-001 | Revisi diaudit, cohort tidak mencampur aturan, hasil dan generasi ranking konsisten |
