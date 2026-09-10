@@ -2,7 +2,8 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep, basename } from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createHash } from 'node:crypto';
+import { testQuestionApi } from './test-question-api.mjs';
 import assert from 'node:assert/strict';
 import Database from 'better-sqlite3';
 
@@ -11,11 +12,13 @@ const temp = mkdtempSync(join(tmpdir(), 'tryout-smoke-'));
 const port = 5198,
   origin = `http://127.0.0.1:${port}`;
 const password = randomBytes(24).toString('base64url');
+const apiToken = randomBytes(32).toString('base64url');
 const env = {
   ...process.env,
   NODE_ENV: 'production',
   HOST: '127.0.0.1',
   PORT: String(port),
+  BODY_SIZE_LIMIT: '4M',
   ORIGIN: origin,
   BETTER_AUTH_URL: origin,
   BETTER_AUTH_SECRET: randomBytes(48).toString('hex'),
@@ -37,6 +40,10 @@ try {
   seed('admin@smoke.test');
   seed('participant@smoke.test');
   const database = new Database(env.DATABASE_PATH);
+  env.QUESTIONS_API_TOKEN_SHA256 = createHash('sha256').update(apiToken).digest('hex');
+  env.QUESTIONS_API_USER_ID = database
+    .prepare('SELECT id FROM user WHERE email = ?')
+    .get('admin@smoke.test').id;
   database
     .prepare('DELETE FROM admin_users WHERE user_id = (SELECT id FROM user WHERE email = ?)')
     .run('participant@smoke.test');
@@ -131,6 +138,14 @@ try {
     body: JSON.stringify({ email: 'new@smoke.test', name: 'Nobody', password })
   });
   assert.ok(publicSignup.status >= 400, 'Public signup must stay disabled');
+  await testQuestionApi({
+    origin,
+    apiToken,
+    cookie,
+    participantCookie,
+    databasePath: env.DATABASE_PATH,
+    actor: env.QUESTIONS_API_USER_ID
+  });
   console.log(
     'HTTP smoke: login, admin-only reads/writes, draft persistence, disabled signup and cross-site protection passed.'
   );

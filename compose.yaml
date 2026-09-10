@@ -11,6 +11,8 @@ services:
       BODY_SIZE_LIMIT: 4M
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      QUESTIONS_API_TOKEN_SHA256: ${QUESTIONS_API_TOKEN_SHA256:-}
+      QUESTIONS_API_USER_ID: ${QUESTIONS_API_USER_ID:-}
     volumes:
       - app_data:/app/data
     expose:

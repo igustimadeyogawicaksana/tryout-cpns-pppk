@@ -1,5 +1,13 @@
 # Development log
 
+## 2026-09-10 — CONTENT-004, API unggah bank soal
+
+Pengguna memperjelas kebutuhan: endpoint untuk mengirim hasil pembuatan soal dari skrip/backend langsung ke bank soal, bukan integrasi generator AI. Ditambahkan POST /api/admin/questions dan /api/admin/questions/batch. Keduanya memakai bearer token khusus tambah draft, hash token dan aktor admin melalui environment, validasi lengkap, Idempotency-Key persisten, transaksi atomik, tautan hasil ke admin dan audit. Batas: 100 soal/2 MB dan 60 request terautentikasi per menit per instance. Cookie admin saja tidak mengizinkan API. Hak admin diperiksa setiap permintaan.
+
+Script api:token membuat/merotasi token privat; Compose dan .env.example diperbarui. Panduan API memuat contoh pengiriman objek langsung tanpa file. Pekerjaan awal generator AI/CSV dan schema paket yang belum dipakai dibatalkan mengikuti klarifikasi pengguna; tidak ada migrasi database baru. Target tahun 2027 belum menjadi kurikulum resmi terverifikasi, dan API tidak mengklaim memvalidasi kesesuaian materi tahun seleksi.
+
+Verifikasi: typecheck, build, enam tes service SQLite dan HTTP integration test. Pengujian API mencakup token salah/tanpa token/cookie saja, JSON rusak, tipe/ukuran body, data tidak valid, duplikasi, retry bersamaan, batch atomik, status draft, audit dan pencabutan admin. Semua memakai database sementara terpisah dari bank soal kerja. Tidak ada pemanggilan provider AI atau deployment publik.
+
 ## 2026-09-10 — APP-001, AUTH-001, CONTENT-001/002, implementasi pertama
 
 Permintaan lanjut dikerjakan sebagai fondasi aplikasi dan bank soal yang bisa dijalankan. SvelteKit/TypeScript/Node/Drizzle dipakai; satu SQLite lokal dengan WAL, foreign keys, FULL durability, busy timeout dan migrasi terlacak. Better Auth menyediakan login pengelola; tabel admin_users mengontrol akses server dan pendaftaran email publik dimatikan. Google hanya disiapkan melalui environment, belum diaktifkan.

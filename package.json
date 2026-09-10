@@ -17,7 +17,8 @@
     "dev:setup": "tsx scripts/setup-local.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file-if-exists=.env scripts/migrate.ts",
-    "admin:create": "tsx --env-file-if-exists=.env scripts/create-admin.ts"
+    "admin:create": "tsx --env-file-if-exists=.env scripts/create-admin.ts",
+    "api:token": "tsx --env-file-if-exists=.env scripts/create-api-token.ts"
   },
   "overrides": {
     "@sveltejs/kit": {
