@@ -13,7 +13,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PAY-002 | P0 | Pilih alur manual atau gateway | Todo | PAY-001 | Alur disepakati; bila manual ada jam layanan dan target waktu verifikasi |
 | DATA-001 | P0 | Model data logis | Todo | DISC-001 | Order/payment/akses terpisah, uang integer, referensi pembayaran unik, snapshot soal dan jawaban per sesi |
 | DATA-002 | P0 | Uji kapasitas kandidat database | Todo | DATA-001 | Simpan/submit/payment bersamaan diuji pada target DISC-001; laporkan latensi/error/biaya/restore |
-| DEC-001 | P0 | Lengkapi keputusan stack MVP | In progress | DATA-002, PAY-002 | SQLite lokal, Dokploy dan Better Auth dipilih; framework/runtime/ORM dan tujuan backup masih perlu dilengkapi |
+| DEC-001 | P0 | Lengkapi keputusan stack MVP | In progress | DATA-002, PAY-002 | SQLite lokal, Dokploy, Better Auth dan backup R2 dipilih; framework/runtime/ORM masih perlu dilengkapi |
 | PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | Todo | — | Validasi jumlah soal/durasi/skor ke sumber resmi tahun seleksi; selesaikan konflik ranking MVP dan pembahasan trial di rancangan |
 | PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
@@ -37,7 +37,8 @@ Tambahan dari arah self-hosting:
 | ID | Prioritas | Pekerjaan | Status | Dependensi | Kriteria selesai |
 |---|---|---|---|---|---|
 | PLAN-003 | P0 | Catat arah SQLite, Dokploy dan Better Auth | Done | PLAN-002 | Rencana deployment, migrasi PostgreSQL dan backup tertulis; pilihan vs usulan dibedakan |
-| OPS-002 | P0 | Identifikasi tujuan backup “r 1” | Blocked | — | Menunggu jawaban pengguna; penyedia, kuota dan akses backup dipastikan |
+| OPS-002 | P0 | Identifikasi tujuan backup | Done | — | Pengguna mengonfirmasi Cloudflare R2; konfigurasi dipisahkan ke OPS-004 |
+| OPS-004 | P1 | Konfigurasi backup ke Cloudflare R2 | Todo | OPS-002, OPS-003 | Bucket privat, akses terbatas, kuota/biaya diperiksa, snapshot konsisten terjadwal, retensi, pemantauan dan restore teruji |
 | OPS-003 | P1 | Volume SQLite persisten di Dokploy | Todo | APP-001 | Redeploy tidak menghilangkan data; satu instance; snapshot konsisten dan restore teruji |
 | DATA-003 | P2 | Latihan migrasi SQLite ke PostgreSQL | Todo | DATA-001, APP-001 | Tipe, ID, auth, jawaban, pembayaran dan akses tervalidasi; prosedur cutover/rollback diuji |
 

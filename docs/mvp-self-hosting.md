@@ -7,7 +7,7 @@ Tanggal: 2026-09-10. Dokumen ini memperbarui arah teknis; kajian sebelumnya dan 
 - Dipilih: SQLite lokal untuk MVP, server sendiri dikelola melalui Dokploy, autentikasi Better Auth.
 - Tujuan: memungkinkan migrasi ke PostgreSQL kemudian.
 - Usulan: SvelteKit + TypeScript, adapter-node, Node.js LTS, Drizzle; belum diimplementasikan atau difinalkan.
-- Tujuan backup: pengguna menyebut “r 1”; menunggu klarifikasi apakah Cloudflare R2 atau layanan lain.
+- Dipilih: Cloudflare R2 sebagai tujuan backup di luar server utama, berdasarkan klarifikasi pengguna. Konfigurasi belum dilakukan.
 - Pembayaran: belum ada keputusan baru; tetap lihat kajian pembayaran.
 
 Self-hosting menghilangkan kebutuhan langganan database terpisah, tetapi server tetap memiliki biaya sewa atau listrik/internet bila memakai perangkat sendiri. Dokploy mengelola deployment; tidak menyediakan kapasitas server gratis. Belum ada server yang diakses atau deployment dilakukan.
@@ -41,4 +41,4 @@ Dokploy menyediakan backup named volume ke tujuan S3. Fitur ini tidak berlaku un
 
 Usulan kebijakan, belum dikonfigurasi: snapshot setiap jam, retensi 24 snapshot per jam dan 7 snapshot harian, serta salinan sebelum rilis/migrasi. Konsekuensinya sampai satu jam perubahan bisa hilang bila server rusak tepat sebelum backup berikutnya; sesuaikan dengan kebutuhan pembayaran. Pilih pemulihan target dua jam setelah latihan restore membuktikannya.
 
-Tujuan backup harus privat, di luar server utama, dengan credential terbatas dan rahasia terpisah dari Git. Simpan juga aset unggahan dan konfigurasi pemulihan yang diperlukan. Pantau keberhasilan, umur backup terakhir, ukuran/checksum dan kegagalan upload. Uji restore ke database terpisah, integrity check, login, hasil ujian dan pencocokan pembayaran. Tidak ada backup yang sudah berjalan saat ini.
+Gunakan bucket Cloudflare R2 privat, di luar server utama, dengan credential terbatas dan rahasia terpisah dari Git. SQLite aktif tetap berada di volume server; R2 menyimpan hasil backup, bukan file database yang dibuka langsung oleh aplikasi. Simpan juga aset unggahan dan konfigurasi pemulihan yang diperlukan. Pantau keberhasilan, umur backup terakhir, ukuran/checksum dan kegagalan upload. Uji restore ke database terpisah, integrity check, login, hasil ujian dan pencocokan pembayaran. Tidak ada bucket atau backup yang sudah dikonfigurasi pada pekerjaan ini.

@@ -1,5 +1,9 @@
 # Development log
 
+## 2026-09-10 — OPS-002, konfirmasi Cloudflare R2
+
+Pengguna mengonfirmasi Cloudflare R2 sebagai tujuan backup. README, daftar keputusan dan rencana MVP diselaraskan. OPS-002 selesai; OPS-004 ditambahkan untuk konfigurasi dan uji backup/restore. SQLite aktif tetap di volume persisten server Dokploy; R2 menyimpan salinan backup. Verifikasi: pemeriksaan diff dan konsistensi dokumen. Belum ada bucket, credential, jadwal backup atau deployment yang dibuat.
+
 ## 2026-09-10 — PLAN-003, arah MVP self-hosted
 
 Pengguna mengarahkan MVP ke SQLite lokal, Dokploy self-hosted dan Better Auth, dengan opsi migrasi PostgreSQL nanti. README dan daftar keputusan diperbarui; ditambahkan rencana volume persisten, migrasi lintas database, snapshot konsisten dan latihan restore. Backlog dilengkapi. Tujuan backup “r 1” menunggu klarifikasi; belum diasumsikan sebagai R2. Framework/runtime/ORM masih usulan.

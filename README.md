@@ -1,6 +1,6 @@
 # Rancangan Web Tryout CPNS & PPPK
 
-Status: perencanaan, belum ada implementasi aplikasi. **Arah MVP: SQLite lokal, self-hosting lewat Dokploy, dan Better Auth.** Framework/runtime/ORM masih usulan; tujuan backup menunggu klarifikasi.
+Status: perencanaan, belum ada implementasi aplikasi. **Arah MVP: SQLite lokal, self-hosting lewat Dokploy, Better Auth, dan backup di Cloudflare R2.** Framework/runtime/ORM masih usulan; backup belum dikonfigurasi.
 
 ## Mulai membaca
 
