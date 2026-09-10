@@ -13,7 +13,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PAY-002 | P0 | Pilih alur manual atau gateway | Todo | PAY-001 | Alur disepakati; bila manual ada jam layanan dan target waktu verifikasi |
 | DATA-001 | P0 | Model data logis | Todo | DISC-001 | Order/payment/akses terpisah, uang integer, referensi pembayaran unik, snapshot soal dan jawaban per sesi |
 | DATA-002 | P0 | Uji kapasitas kandidat database | Todo | DATA-001 | Simpan/submit/payment bersamaan diuji pada target DISC-001; laporkan latensi/error/biaya/restore |
-| DEC-001 | P0 | Review dan pilih stack | Todo | DATA-002, PAY-002 | Keputusan eksplisit beserta alasan; jangan scaffold sebelum keputusan ini |
+| DEC-001 | P0 | Lengkapi keputusan stack MVP | In progress | DATA-002, PAY-002 | SQLite lokal, Dokploy dan Better Auth dipilih; framework/runtime/ORM dan tujuan backup masih perlu dilengkapi |
 | PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | Todo | — | Validasi jumlah soal/durasi/skor ke sumber resmi tahun seleksi; selesaikan konflik ranking MVP dan pembahasan trial di rancangan |
 | PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
@@ -31,5 +31,14 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | NEXT-002 | P2 | Otomasi pembayaran bila MVP manual | Todo | PAY-003, PAY-001 | Migrasi tidak menghapus riwayat dan hak akses; webhook/reconciliation teruji |
 
 ## Aturan update
+
+Tambahan dari arah self-hosting:
+
+| ID | Prioritas | Pekerjaan | Status | Dependensi | Kriteria selesai |
+|---|---|---|---|---|---|
+| PLAN-003 | P0 | Catat arah SQLite, Dokploy dan Better Auth | Done | PLAN-002 | Rencana deployment, migrasi PostgreSQL dan backup tertulis; pilihan vs usulan dibedakan |
+| OPS-002 | P0 | Identifikasi tujuan backup “r 1” | Blocked | — | Menunggu jawaban pengguna; penyedia, kuota dan akses backup dipastikan |
+| OPS-003 | P1 | Volume SQLite persisten di Dokploy | Todo | APP-001 | Redeploy tidak menghilangkan data; satu instance; snapshot konsisten dan restore teruji |
+| DATA-003 | P2 | Latihan migrasi SQLite ke PostgreSQL | Todo | DATA-001, APP-001 | Tipe, ID, auth, jawaban, pembayaran dan akses tervalidasi; prosedur cutover/rollback diuji |
 
 Gunakan Todo → In progress → Done; Blocked harus menyebut hambatan konkret. Saat menyelesaikan pekerjaan, tambahkan bukti di DEVLOG.md dan referensikan ID pada commit. Backlog Markdown ini adalah sumber pelacakan awal; GitHub Issues/Project belum dibuat.

@@ -1,6 +1,6 @@
 # Rancangan Web Tryout CPNS & PPPK
 
-Status: perencanaan, belum ada implementasi aplikasi. **Stack belum diputuskan.**
+Status: perencanaan, belum ada implementasi aplikasi. **Arah MVP: SQLite lokal, self-hosting lewat Dokploy, dan Better Auth.** Framework/runtime/ORM masih usulan; tujuan backup menunggu klarifikasi.
 
 ## Mulai membaca
 
@@ -8,6 +8,7 @@ Status: perencanaan, belum ada implementasi aplikasi. **Stack belum diputuskan.*
 - [Dev log](DEVLOG.md): perubahan yang benar-benar sudah dikerjakan.
 - [Kajian database & pembayaran](docs/database-payment-options.md): opsi dan sumber resmi, diperiksa 10 September 2026.
 - [Daftar keputusan](docs/decisions.md): keputusan terbuka dan bukti yang diperlukan.
+- [Rencana MVP, migrasi, dan backup](docs/mvp-self-hosting.md): arah terbaru dari pengguna.
 - [Rancangan awal](Rancangan_Web_Tryout_CPNS_PPPK%20(1).md): referensi asli, dipertahankan apa adanya.
 
 Instruksi implementasi di rancangan awal merupakan konteks, bukan persetujuan memilih stack. Permintaan terbaru pengguna mengutamakan evaluasi opsi dan pencatatan perubahan.

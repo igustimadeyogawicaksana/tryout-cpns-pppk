@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-10 — PLAN-003, arah MVP self-hosted
+
+Pengguna mengarahkan MVP ke SQLite lokal, Dokploy self-hosted dan Better Auth, dengan opsi migrasi PostgreSQL nanti. README dan daftar keputusan diperbarui; ditambahkan rencana volume persisten, migrasi lintas database, snapshot konsisten dan latihan restore. Backlog dilengkapi. Tujuan backup “r 1” menunggu klarifikasi; belum diasumsikan sebagai R2. Framework/runtime/ORM masih usulan.
+
+Verifikasi: dokumentasi resmi Dokploy Volume Backups, Better Auth database, dan SQLite Backup API dibaca. Perubahan hanya dokumentasi; tidak ada aplikasi, server, akun auth atau backup yang sudah dikonfigurasi. Pemeriksaan diff dilakukan sebelum commit.
+
 ## 2026-09-10 — PLAN-001, PLAN-002
 
 Permintaan: evaluasi SQLite/PostgreSQL dan payment/QRIS tanpa menetapkan stack; buat backlog, dev log, serta pelacakan GitHub.
