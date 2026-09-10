@@ -2,6 +2,8 @@
 
 Tanggal pemeriksaan: 10 September 2026. Status: usulan, bukan penetapan stack.
 
+Catatan terbaru: pengguna kemudian memilih satu SQLite lokal untuk seluruh MVP, Dokploy, Better Auth dan backup R2. Perbandingan di bawah tetap sebagai kajian historis; keputusan aktif ada di [daftar keputusan](decisions.md).
+
 ## Apakah PostgreSQL tambahan diperlukan?
 
 Belum ada kebutuhan menambah PostgreSQL khusus pembayaran. Satu database relasional dapat menyimpan akun, soal, sesi, order, pembayaran, dan hak akses. Kebenaran pembayaran bergantung pada verifikasi server, transaksi atomik, pencegahan duplikasi, serta pencocokan transaksi; nama mesin database saja tidak menjaminnya.

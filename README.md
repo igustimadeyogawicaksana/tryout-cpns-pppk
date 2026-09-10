@@ -9,6 +9,10 @@ Status: perencanaan, belum ada implementasi aplikasi. **Arah MVP: SQLite lokal, 
 - [Kajian database & pembayaran](docs/database-payment-options.md): opsi dan sumber resmi, diperiksa 10 September 2026.
 - [Daftar keputusan](docs/decisions.md): keputusan terbuka dan bukti yang diperlukan.
 - [Rencana MVP, migrasi, dan backup](docs/mvp-self-hosting.md): arah terbaru dari pengguna.
+- [Cakupan SQLite MVP](docs/sqlite-mvp-coverage.md): persyaratan per fitur dan target uji kapasitas.
+- [Input bank soal](docs/question-bank-plan.md): form, impor, review, versi dan penyusunan paket.
+- [Perankingan](docs/ranking-plan.md): cohort, percobaan, skor seri, privasi dan snapshot.
+- [Contoh JSON bank soal](examples/question-bank-import.json): dua contoh sintetis untuk kontrak impor draft.
 - [Rancangan awal](Rancangan_Web_Tryout_CPNS_PPPK%20(1).md): referensi asli, dipertahankan apa adanya.
 
 Instruksi implementasi di rancangan awal merupakan konteks, bukan persetujuan memilih stack. Permintaan terbaru pengguna mengutamakan evaluasi opsi dan pencatatan perubahan.

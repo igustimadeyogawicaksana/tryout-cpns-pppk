@@ -10,6 +10,8 @@ Tanggal: 2026-09-10. Dokumen ini memperbarui arah teknis; kajian sebelumnya dan 
 - Dipilih: Cloudflare R2 sebagai tujuan backup di luar server utama, berdasarkan klarifikasi pengguna. Konfigurasi belum dilakukan.
 - Pembayaran: belum ada keputusan baru; tetap lihat kajian pembayaran.
 
+SQLite mencakup akun, bank soal, paket, sesi/jawaban, hasil, ranking dan pembayaran dalam satu database. Detail fitur dan persyaratan verifikasi ada di [cakupan SQLite](sqlite-mvp-coverage.md), [input bank soal](question-bank-plan.md) dan [perankingan](ranking-plan.md).
+
 Self-hosting menghilangkan kebutuhan langganan database terpisah, tetapi server tetap memiliki biaya sewa atau listrik/internet bila memakai perangkat sendiri. Dokploy mengelola deployment; tidak menyediakan kapasitas server gratis. Belum ada server yang diakses atau deployment dilakukan.
 
 ## Penyimpanan dan deployment

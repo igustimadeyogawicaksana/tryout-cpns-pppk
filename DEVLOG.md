@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-10 — PLAN-004, bank soal dan perankingan SQLite
+
+Pengguna menegaskan SQLite untuk MVP dan meminta dokumentasi input bank soal serta ranking. Ditambahkan spesifikasi cakupan SQLite, input manual/impor JSON/review/versi/paket dan ranking cohort/percobaan pertama/seri/provinsi/privasi. Disediakan dua soal sintetis sebagai contoh format impor, bukan konten siap jual. Ranking dasar dipindah ke rencana MVP; ketergantungan backlog diperbaiki agar pengujian kapasitas dilakukan setelah fitur tersedia dan sebelum rilis. README dan daftar keputusan diselaraskan; rancangan asli tetap utuh.
+
+Verifikasi: dokumentasi SQLite Window Functions dan referensi historis BKN dibaca; aturan tahun terkini tidak diasumsikan. JSON diperiksa struktur, opsi dan skornya; tautan lokal dan whitespace dokumentasi diperiksa sebelum commit. Belum ada importir, UI, schema executable, ranking atau benchmark produksi. Angka kapasitas/latensi adalah target pengujian, bukan hasil.
+
 ## 2026-09-10 — OPS-002, konfirmasi Cloudflare R2
 
 Pengguna mengonfirmasi Cloudflare R2 sebagai tujuan backup. README, daftar keputusan dan rencana MVP diselaraskan. OPS-002 selesai; OPS-004 ditambahkan untuk konfigurasi dan uji backup/restore. SQLite aktif tetap di volume persisten server Dokploy; R2 menyimpan salinan backup. Verifikasi: pemeriksaan diff dan konsistensi dokumen. Belum ada bucket, credential, jadwal backup atau deployment yang dibuat.

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "batch_key": "contoh-draft-001",
+  "questions": [
+    {
+      "external_key": "CONTOH-TIU-001",
+      "exam_type": "CPNS",
+      "subtest_code": "TIU",
+      "formation_code": null,
+      "topic_code": "ARITMETIKA",
+      "difficulty": "easy",
+      "prompt_md": "Berapakah hasil 12 + 8?",
+      "scoring_mode": "single_correct",
+      "options": [
+        { "code": "A", "text_md": "16" },
+        { "code": "B", "text_md": "18" },
+        { "code": "C", "text_md": "20" },
+        { "code": "D", "text_md": "22" },
+        { "code": "E", "text_md": "24" }
+      ],
+      "correct_option_code": "C",
+      "score_correct": 5,
+      "score_wrong": 0,
+      "score_blank": 0,
+      "explanation_md": "12 ditambah 8 menghasilkan 20. Contoh ini hanya untuk memeriksa format impor.",
+      "shuffle_options": true,
+      "assets": [],
+      "source_note": "Contoh sintetis untuk dokumentasi; bukan soal resmi atau paket siap jual.",
+      "rights_basis": "original_example"
+    },
+    {
+      "external_key": "CONTOH-TKP-001",
+      "exam_type": "CPNS",
+      "subtest_code": "TKP",
+      "formation_code": null,
+      "topic_code": "PELAYANAN",
+      "difficulty": "easy",
+      "prompt_md": "Pengunjung belum memahami prosedur layanan. Tindakan yang Anda pilih adalah ...",
+      "scoring_mode": "weighted_options",
+      "options": [
+        { "code": "A", "text_md": "Menjelaskan prosedur dengan bahasa sederhana dan memastikan pemahamannya.", "score": 5 },
+        { "code": "B", "text_md": "Memberikan panduan tertulis dan menawarkan bantuan jika masih ada pertanyaan.", "score": 4 },
+        { "code": "C", "text_md": "Mengarahkan ke petugas informasi yang tersedia.", "score": 3 },
+        { "code": "D", "text_md": "Meminta pengunjung membaca papan informasi sendiri.", "score": 2 },
+        { "code": "E", "text_md": "Mengabaikannya dan melanjutkan pekerjaan lain.", "score": 1 }
+      ],
+      "score_blank": 0,
+      "explanation_md": "Bobot ini hanya ilustrasi kontrak data. Isi dan bobot wajib ditinjau editor sebelum digunakan sebagai materi latihan.",
+      "shuffle_options": true,
+      "assets": [],
+      "source_note": "Contoh sintetis untuk dokumentasi; bukan kunci resmi TKP.",
+      "rights_basis": "original_example"
+    }
+  ]
+}

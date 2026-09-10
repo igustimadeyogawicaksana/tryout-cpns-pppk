@@ -11,23 +11,27 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | DISC-001 | P0 | Tetapkan target peserta dan pola simpan | Todo | — | Target serentak, sesi harian, frekuensi autosave, toleransi latensi dan anggaran tertulis |
 | PAY-001 | P0 | Validasi merchant individu | Todo | — | Bandingkan syarat/approval produk tryout, biaya, settlement, refund, API/webhook pada kandidat penyedia |
 | PAY-002 | P0 | Pilih alur manual atau gateway | Todo | PAY-001 | Alur disepakati; bila manual ada jam layanan dan target waktu verifikasi |
-| DATA-001 | P0 | Model data logis | Todo | DISC-001 | Order/payment/akses terpisah, uang integer, referensi pembayaran unik, snapshot soal dan jawaban per sesi |
-| DATA-002 | P0 | Uji kapasitas kandidat database | Todo | DATA-001 | Simpan/submit/payment bersamaan diuji pada target DISC-001; laporkan latensi/error/biaya/restore |
-| DEC-001 | P0 | Lengkapi keputusan stack MVP | In progress | DATA-002, PAY-002 | SQLite lokal, Dokploy, Better Auth dan backup R2 dipilih; framework/runtime/ORM masih perlu dilengkapi |
+| DATA-001 | P0 | Finalisasi schema dari model logis | In progress | PLAN-004 | Model soal/sesi/ranking/payment terdokumentasi; DDL, mapping tipe dan constraint lintas tabel belum dibangun |
+| DATA-002 | P1 | Uji kapasitas SQLite | Todo | APP-001, EXAM-001, PAY-003, RANK-001, DISC-001 | Profil autosave/submit/payment/ranking diuji pada server target; tidak menjadi dependensi pemilihan framework |
+| DEC-001 | P0 | Lengkapi keputusan stack MVP | In progress | PLAN-004 | SQLite lokal, Dokploy, Better Auth dan backup R2 dipilih; framework/runtime/ORM masih perlu dilengkapi |
 | PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | Todo | — | Validasi jumlah soal/durasi/skor ke sumber resmi tahun seleksi; selesaikan konflik ranking MVP dan pembahasan trial di rancangan |
 | PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
 | APP-001 | P1 | Setup aplikasi dan lingkungan | Todo | DEC-001 | Aplikasi minimal bisa dijalankan; rahasia terpisah dari repo |
 | AUTH-001 | P1 | Akun, akses admin, trial | Todo | APP-001, PROD-002 | Peserta tidak dapat mengakses admin/data peserta lain; trial sesuai aturan |
-| CONTENT-001 | P1 | Bank soal dan paket | Todo | APP-001, PROD-001 | Admin mengelola soal, bobot dan pembahasan; perubahan soal tidak mengubah sesi lama |
+| CONTENT-001 | P1 | Form bank soal, review dan versi | Todo | APP-001, PROD-001, DATA-001 | Field/validasi question-bank-plan.md terpenuhi; pilihan tunggal dan bobot; versi terbit immutable |
+| CONTENT-002 | P1 | Impor JSON ke draft | Todo | CONTENT-001 | Preview error per field, batch atomik maksimal 100 soal/2 MB, external_key dan retry tidak menggandakan soal |
+| CONTENT-003 | P1 | Blueprint dan publikasi paket | Todo | CONTENT-001, PROD-001 | Kuota/durasi/skor diverifikasi, paket membekukan versi soal; tidak mengirim kunci saat ujian |
 | PAY-003 | P1 | Checkout dan verifikasi pembayaran | Todo | AUTH-001, CONTENT-001, PAY-002 | Bayar valid membuka akses sekali; bukti palsu/duplikat/nominal salah tidak membuka akses; ada audit |
-| EXAM-001 | P1 | Mesin tryout | Todo | AUTH-001, CONTENT-001 | Timer server, autosave/reconnect, urutan soal tersimpan, submit idempotent, hasil konsisten |
+| EXAM-001 | P1 | Mesin tryout | Todo | AUTH-001, CONTENT-003 | Timer server, autosave/revision/reconnect, versi dan urutan soal tetap, submit/timeout idempotent |
+| RANK-001 | P1 | Ranking dasar umum dan provinsi | Todo | EXAM-001, RESULT-001 | Cohort sama, percobaan kompetitif pertama, seri 1/2/2/4, privasi, posisi saya dan snapshot atomik sesuai ranking-plan.md |
+| RANK-002 | P1 | Koreksi penilaian dan finalisasi ranking | Todo | RANK-001 | Revisi diaudit, cohort tidak mencampur aturan, hasil dan generasi ranking konsisten |
 | RESULT-001 | P1 | Hasil dan pembahasan dasar | Todo | EXAM-001, PROD-001 | Skor per subtes benar; pembahasan mengikuti hak akses |
 | OPS-001 | P1 | Backup, pemulihan dan pemantauan | Todo | APP-001, DATA-001 | Restore diuji; pantau gagal simpan, pembayaran tertunda dan penggunaan kuota |
 | LEGAL-001 | P1 | Ketentuan produk dan legalitas | Todo | PROD-002, PAY-001 | Tinjau NIB/kewajiban usaha, privasi, refund, hak konten dan disclaimer sebelum rilis |
-| QA-001 | P1 | Uji alur ujung ke ujung | Todo | PAY-003, EXAM-001, RESULT-001 | Daftar-bayar-ujian-hasil lolos; uji gangguan jaringan, double submit, akses ilegal dan bayar terlambat |
-| RELEASE-001 | P1 | Persiapan peluncuran | Todo | QA-001, OPS-001, LEGAL-001 | Checklist rilis dan biaya ditinjau; deployment dikerjakan sebagai tahap berikutnya |
-| NEXT-001 | P2 | Ranking, grafik progres, komunitas | Todo | RELEASE-001 | Prioritas berdasarkan umpan balik dan aturan privasi ranking |
+| QA-001 | P1 | Uji alur ujung ke ujung | Todo | PAY-003, EXAM-001, RESULT-001, CONTENT-002, RANK-002 | Input-publish-bayar-ujian-ranking lolos; uji seri, retake, opt-out, gangguan jaringan, double submit dan akses ilegal |
+| RELEASE-001 | P1 | Persiapan peluncuran | Todo | QA-001, DATA-002, OPS-001, OPS-004, LEGAL-001 | Uji kapasitas dan restore lolos; checklist rilis dan biaya ditinjau |
+| NEXT-001 | P2 | Grafik progres dan komunitas | Todo | RELEASE-001 | Prioritas berdasarkan umpan balik; ranking dasar sudah masuk MVP |
 | NEXT-002 | P2 | Otomasi pembayaran bila MVP manual | Todo | PAY-003, PAY-001 | Migrasi tidak menghapus riwayat dan hak akses; webhook/reconciliation teruji |
 
 ## Aturan update
@@ -37,6 +41,7 @@ Tambahan dari arah self-hosting:
 | ID | Prioritas | Pekerjaan | Status | Dependensi | Kriteria selesai |
 |---|---|---|---|---|---|
 | PLAN-003 | P0 | Catat arah SQLite, Dokploy dan Better Auth | Done | PLAN-002 | Rencana deployment, migrasi PostgreSQL dan backup tertulis; pilihan vs usulan dibedakan |
+| PLAN-004 | P0 | Dokumentasi SQLite, input soal dan ranking | Done | PLAN-003 | Tiga spesifikasi dan contoh JSON tersedia; default produk dipisahkan dari aturan resmi; belum ada implementasi |
 | OPS-002 | P0 | Identifikasi tujuan backup | Done | — | Pengguna mengonfirmasi Cloudflare R2; konfigurasi dipisahkan ke OPS-004 |
 | OPS-004 | P1 | Konfigurasi backup ke Cloudflare R2 | Todo | OPS-002, OPS-003 | Bucket privat, akses terbatas, kuota/biaya diperiksa, snapshot konsisten terjadwal, retensi, pemantauan dan restore teruji |
 | OPS-003 | P1 | Volume SQLite persisten di Dokploy | Todo | APP-001 | Redeploy tidak menghilangkan data; satu instance; snapshot konsisten dan restore teruji |
