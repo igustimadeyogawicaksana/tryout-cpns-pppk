@@ -16,4 +16,4 @@ Instruksi implementasi di rancangan awal merupakan konteks, bukan persetujuan me
 
 Setiap pekerjaan memakai ID backlog. Setelah selesai, perbarui status, tambahkan dev log berisi perubahan serta verifikasi, lalu commit dengan ID tersebut. Push ke GitHub setelah satu perubahan logis selesai agar tab Commits menampilkan riwayat dan diff. Perubahan lokal tidak otomatis terlihat di GitHub sebelum push.
 
-Rencana repositori: `tryout-cpns-pppk`, private. Status koneksi aktual dicatat di DEVLOG.md. Tidak ada otomatisasi push yang berjalan saat ini.
+Repositori: [tryout-cpns-pppk](https://github.com/igustimadeyogawicaksana/tryout-cpns-pppk), dibuat pengguna dengan visibilitas public. [Riwayat perubahan](https://github.com/igustimadeyogawicaksana/tryout-cpns-pppk/commits/main/) tersedia setelah push berhasil. Status koneksi aktual dicatat di DEVLOG.md. Tidak ada otomatisasi push yang berjalan saat ini.

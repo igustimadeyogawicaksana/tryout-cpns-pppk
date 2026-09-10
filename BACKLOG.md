@@ -7,7 +7,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PLAN-001 | P0 | Baca rancangan dan catat opsi database/payment | Done | — | Kajian bersumber tersedia; stack tetap terbuka |
 | PLAN-002 | P0 | Dev log, backlog, daftar keputusan | Done | PLAN-001 | Berkas saling tertaut; status akurat |
 | REPO-001 | P0 | Inisialisasi Git lokal | Done | PLAN-002 | Dokumen awal disimpan pada commit 201042f; dokumen perencanaan pada commit berikutnya |
-| REPO-002 | P0 | Buat repo private GitHub dan push | Blocked | REPO-001 | URL repo terverifikasi; remote tersambung; commit lokal/remote sesuai. Menunggu login browser |
+| REPO-002 | P0 | Hubungkan repo GitHub buatan pengguna dan push | Blocked | REPO-001 | Repo public terverifikasi dan origin tersambung. Menunggu autentikasi Git akun pemilik; selesai setelah commit lokal/remote sesuai |
 | DISC-001 | P0 | Tetapkan target peserta dan pola simpan | Todo | — | Target serentak, sesi harian, frekuensi autosave, toleransi latensi dan anggaran tertulis |
 | PAY-001 | P0 | Validasi merchant individu | Todo | — | Bandingkan syarat/approval produk tryout, biaya, settlement, refund, API/webhook pada kandidat penyedia |
 | PAY-002 | P0 | Pilih alur manual atau gateway | Todo | PAY-001 | Alur disepakati; bila manual ada jam layanan dan target waktu verifikasi |
