@@ -17,8 +17,8 @@ import {
 } from '../src/lib/server/schema';
 import type { QuestionInput } from '../src/lib/question-input';
 
-// Default is the release baseline. Stress levels are opt-in because 300 did not
-// complete within the local 10-minute observation window on 2026-09-11.
+// Default is the release baseline. Stress levels are opt-in because a full
+// 300/500 run takes several minutes and should be executed with sleep disabled.
 const levels = (process.env.CAPACITY_LEVELS || '50,100')
   .split(',')
   .map(Number)
@@ -76,7 +76,7 @@ function runLevel(participants: number) {
   const now = Date.now();
   const adminId = 'capacity-admin';
   const packageId = randomUUID();
-  const setupStarted = performance.now();
+  const levelStarted = performance.now();
   try {
     db.insert(user).values({ id: adminId, name: 'Capacity Admin', email: 'capacity-admin@test.invalid', emailVerified: true, createdAt: new Date(now), updatedAt: new Date(now) }).run();
     db.insert(adminUsers).values({ userId: adminId, createdAt: now }).run();
@@ -92,22 +92,29 @@ function runLevel(participants: number) {
         for (const option of q.options) db.insert(examOptions).values({ id: randomUUID(), itemId, code: option.code, text: option.text_md, score: q.scoring_mode === 'weighted_options' ? option.score! : option.code === q.correct_option_code ? q.score_correct! : q.score_wrong! }).run();
       }
     })();
+    const dataSetupMs = performance.now() - levelStarted;
+    console.log(`${participants}: fixture siap ${dataSetupMs.toFixed(0)} ms`);
     const svc = examService(db, () => now);
     const ranking = rankingService(db, () => now);
     ranking.create(packageId, now + 7_200_000, adminId);
     const starts: number[] = [], saves: number[] = [], submits: number[] = [];
+    const startsStarted = performance.now();
     const attempts = actors.map((actor, index) => {
       const before = performance.now();
       const id = ranking.join(packageId, actor, `Peserta ${index + 1}`, true);
       starts.push(performance.now() - before);
       return id;
     });
+    const startsMs = performance.now() - startsStarted;
+    console.log(`${participants}: ${participants} sesi siap ${startsMs.toFixed(0)} ms`);
     const view = svc.view(attempts[0], actors[0]);
     const selected = view.items.map((item) => [item.id, item.options[0].id] as const);
     const revisions = Array(participants).fill(1);
     let errors = 0;
+    const saveBlocks: Array<{ throughQuestion: number; elapsedMs: number; averageMs: number; walPages: number }> = [];
+    let blockStarted = performance.now();
     // Round-robin represents active sessions sharing one synchronous Node/SQLite writer.
-    for (const [itemId, optionId] of selected) {
+    for (const [questionIndex, [itemId, optionId]] of selected.entries()) {
       for (let i = 0; i < participants; i++) {
         const before = performance.now();
         try {
@@ -116,12 +123,27 @@ function runLevel(participants: number) {
         } catch { errors++; }
         saves.push(performance.now() - before);
       }
+      if ((questionIndex + 1) % 10 === 0 || questionIndex + 1 === selected.length) {
+        const elapsedMs = performance.now() - blockStarted;
+        const wal = sqlite.pragma('wal_checkpoint(PASSIVE)') as Array<{ log: number }>;
+        saveBlocks.push({
+          throughQuestion: questionIndex + 1,
+          elapsedMs,
+          averageMs: elapsedMs / (participants * ((questionIndex + 1) % 10 || 10)),
+          walPages: wal[0]?.log ?? -1
+        });
+        console.log(`${participants}: save ${questionIndex + 1}/${answerCount}; blok=${elapsedMs.toFixed(0)} ms; WAL=${wal[0]?.log ?? -1} halaman`);
+        blockStarted = performance.now();
+      }
     }
+    const submitStarted = performance.now();
     for (let i = 0; i < participants; i++) {
       const before = performance.now();
       try { svc.submit(attempts[i], actors[i]); } catch { errors++; }
       submits.push(performance.now() - before);
     }
+    const submitsMs = performance.now() - submitStarted;
+    console.log(`${participants}: ${participants} submit selesai ${submitsMs.toFixed(0)} ms`);
     const boardStarted = performance.now();
     const board = ranking.board(packageId, actors[0]);
     const rankingMs = performance.now() - boardStarted;
@@ -131,10 +153,14 @@ function runLevel(participants: number) {
       participants,
       questions: answerCount,
       saveRequests: saves.length,
-      setupMs: performance.now() - setupStarted,
+      elapsedMs: performance.now() - levelStarted,
+      dataSetupMs,
+      startsMs,
       start: stats(starts),
       save: stats(saves),
+      saveBlocks,
       submit: stats(submits),
+      submitsMs,
       rankingMs,
       rankingCount: board.count,
       errors,

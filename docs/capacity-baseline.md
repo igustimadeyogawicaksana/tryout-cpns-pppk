@@ -1,6 +1,6 @@
 # DISC-001 — Usulan kapasitas dan anggaran MVP
 
-Pembaruan setelah DATA-002: lihat [hasil uji kapasitas](capacity-test-results.md). DISC-001 dibuka ulang singkat untuk konfirmasi usulan revisi: batasi rilis awal 50 peserta aktif dan naikkan ke 100 hanya setelah profil HTTP yang sama lulus pada VPS final. Target 300–500 dan 2.000 sesi penuh/12 jam belum didukung hasil uji.
+Pembaruan setelah DATA-002: lihat [hasil uji dan diagnosis](capacity-test-results.md). DISC-001 dibuka ulang singkat untuk konfirmasi: batasi rilis awal 50 peserta aktif dan naikkan ke 100 setelah profil HTTP yang sama lulus pada VPS final. Uji lokal menyelesaikan 300 dan 500 tanpa error setelah sleep laptop dikeluarkan dari pengukuran. Angka itu menjadi target validasi pertumbuhan di VPS, bukan kapasitas produksi yang sudah disetujui dan tidak otomatis mensyaratkan optimasi lebih dahulu.
 
 Diperbarui 2026-09-11. DISC-001 ditutup memakai angka berikut sebagai estimasi awal agar DATA-002 dapat berjalan; angka akan dibuka ulang dan direvisi setelah hasil uji nyata tersedia. Ini belum merupakan janji kapasitas produksi. Revisi anggaran terakhir menggantikan usulan Rp200.000–350.000/bulan. Stack tetap SQLite, Dokploy, Better Auth dan backup R2.
 
@@ -8,8 +8,8 @@ Diperbarui 2026-09-11. DISC-001 ditutup memakai angka berikut sebagai estimasi a
 
 | Parameter | Dasar DATA-002 |
 |---|---|
-| Peserta aktif bersamaan | Uji awal 50 lalu 100; uji pertumbuhan 300 dan 500 terpisah |
-| Sesi harian | 100–300 biasa; 2.000 pada musim puncak |
+| Peserta aktif bersamaan | Rilis awal 50; naik 100 setelah uji HTTP/VPS; target validasi pertumbuhan 300 dan 500 |
+| Total sesi selesai | 100–300 per hari biasa; target musiman 2.000 per 12 jam tetap metrik volume terpisah |
 | Autosave | Setiap perubahan jawaban; satu request aktif per sesi, revision dan retry; tidak menulis timer setiap detik |
 | Latensi | Usulan interpretasi terukur: p95 autosave <500 ms, p95 submit <2 detik; laporkan p99 juga |
 | Anggaran VPS | Rp55.000–100.000/bulan, termasuk biaya lokasi/pajak/kurs yang berlaku; belum ada penawaran final |
@@ -21,7 +21,7 @@ SLO diukur dari klien uji regional hingga respons server, dengan jaringan, paylo
 
 ## Implikasi volume
 
-Perhitungan perencanaan, bukan pengukuran: 2.000 sesi × 100 menit / 1.440 menit = sekitar 139 peserta aktif rata-rata bila tersebar 24 jam; dalam 12 jam menjadi sekitar 278. Karena itu target 100 aktif tidak mencakup 2.000 sesi penuh dalam 12 jam. Sesi pendek atau distribusi waktu berbeda mengubah hasil ini.
+Peserta bersamaan adalah stok pada satu saat; sesi per hari adalah total yang selesai selama periode. Keduanya tidak boleh dipakai bergantian. Perhitungan perencanaan, bukan pengukuran: 2.000 sesi × 100 menit / 1.440 menit = sekitar 139 peserta aktif rata-rata bila tersebar 24 jam; dalam 12 jam menjadi sekitar 278. Target volume 2.000/12 jam karena itu memerlukan sedikitnya rata-rata 278 aktif untuk paket penuh, ditambah headroom atas pola kedatangan. Hasil lokal 300 bukan bukti deployment mampu menjaga rata-rata tersebut; uji HTTP/VPS 300–500 diperlukan. Sesi pendek atau distribusi waktu berbeda mengubah hasil ini.
 
 Asumsikan 110 jawaban awal + 22 perubahan = 132 penyimpanan per sesi. Puncak 2.000 sesi menghasilkan 264.000 request simpan/hari. Rata-rata selama ujian 100 menit sekitar 2,2 request/detik untuk 100 peserta dan 11/detik untuk 500 peserta. Burst satu perubahan tiap dua detik menghasilkan 50/detik dan 250/detik. Sesi harian bukan jumlah pesanan berbayar.
 

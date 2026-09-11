@@ -1,5 +1,15 @@
 # Development log
 
+## 2026-09-11 — Koreksi diagnosis DATA-002: stall berasal dari sleep laptop
+
+Kesimpulan sementara “300 tidak selesai” diperiksa ulang. Event System Windows membuktikan laptop sleep pada 20:25:17–20:32:02 saat percobaan 300 pertama. Harness diperbarui untuk menampilkan fixture, pembuatan sesi, setiap blok 10 soal, halaman WAL dan fase submit. Ulangan 300 selesai sekitar 150 detik dengan p95 simpan 5,64 ms, p95 submit 20,45 ms, nol error dan integrity ok.
+
+Percobaan 500 pertama menangkap satu save 531,9 detik; Windows sleep pada 20:51:31–21:00:23. Setelah resume, beban kembali normal. Ulangan dengan sleep ditahan menyelesaikan 55.000 autosave dalam total 252 detik: p95 simpan 5,60 ms, p99 7,57 ms, maksimum 42,61 ms; 500 submit p95 21,03 ms; nol error, integrity ok. Blok save stabil ketika WAL mencapai 1.000 halaman. Tidak ada bukti deadlock, bocor koneksi atau batas serialisasi pada level ini dalam pengujian langsung service lokal.
+
+Catatan DATA-002 dan BACKLOG dikoreksi: 300–500 tidak lagi “ditunda sampai optimasi”. Keduanya menjadi target validasi pertumbuhan melalui HTTP/Dokploy pada VPS; optimasi dilakukan bila profil itu gagal. Batas rilis 50 lalu 100 tetap konservatif karena benchmark ini tidak memasukkan jaringan/auth/reverse proxy dan mesin VPS murah dapat lebih lambat.
+
+DISC-001 tetap dibuka untuk konfirmasi revisi. Peserta aktif bersamaan dipisahkan dari total sesi selesai: 100–300 sesi/hari biasa adalah volume; 2.000 sesi penuh/12 jam memerlukan rata-rata sekitar 278 aktif plus headroom. Angka tersebut tidak disamakan dengan batas concurrency.
+
 ## 2026-09-11 — DATA-002 selesai lokal; DISC-001 dibuka ulang untuk revisi
 
 Benchmark repeatable ditambahkan melalui `npm run test:capacity` dan hasilnya dicatat di [docs/capacity-test-results.md](docs/capacity-test-results.md). Paket sintetis berisi 110 soal; setiap peserta menyimpan seluruh 110 jawaban, submit, lalu ranking dibaca. SQLite memakai WAL, `synchronous=FULL` dan satu proses Node sebagaimana implementasi saat ini.
