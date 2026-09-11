@@ -243,6 +243,8 @@ Disiapkan produk aktif `Tryout SKD CPNS Lengkap — Uji Coba` dengan paket 110 s
 
 Verifikasi: svelte-check 0 error/0 warning dan 11 tes unit lulus.
 
+CI lokal pada source terbaru: `npm run test:http` berhasil penuh setelah perbaikan alur pembelian manual. Run GitHub Actions sebelumnya pada commit `65afa4d` gagal sebelum pemeriksaan ulang ini; commit berikutnya memicu validasi ulang.
+
 ## 2026-09-11 — PAY-003, produk berbayar admin
 
 Ditambahkan halaman admin `/admin/products` untuk membuat produk aktif, menetapkan harga dan masa akses, serta menghubungkannya ke paket tryout terbit. Produk ini menjadi sumber order manual dan pemeriksaan grant akses paket.
