@@ -87,7 +87,7 @@ export function rankingService(db: AppDatabase, now = Date.now) {
         .where(and(eq(rankingMembers.cohortId, c.id), eq(rankingMembers.userId, actor)))
         .run();
     },
-    board(packageId: string, actor: string) {
+    board(packageId: string, actor: string, requestedPage = 1) {
       examService(db, now).expire();
       return db.transaction(() => {
         const c = cohortFor(packageId);
@@ -142,10 +142,20 @@ export function rankingService(db: AppDatabase, now = Date.now) {
             mine: r.userId === actor
           };
         });
+        const pageSize = 20;
+        const pages = Math.max(1, Math.ceil(ranked.length / pageSize));
+        const page = Number.isSafeInteger(requestedPage)
+          ? Math.min(pages, Math.max(1, requestedPage))
+          : 1;
+        const mineIndex = ranked.findIndex((r) => r.mine);
         return {
+          page,
+          pages,
+          pageSize,
+          minePage: mineIndex < 0 ? null : Math.floor(mineIndex / pageSize) + 1,
           cohort: c,
           count: ranked.length,
-          entries: ranked.slice(0, 100),
+          entries: ranked.slice((page - 1) * pageSize, page * pageSize),
           mine: ranked.find((r) => r.mine) ?? null,
           visible: membership?.visible ?? false,
           updatedAt: now()

@@ -1,5 +1,10 @@
 # Development log
 
+## 2026-09-11 — RANK-001: halaman ranking
+
+Ranking kini dapat dibuka per 20 peserta dengan tombol sebelumnya/berikutnya dan tautan halaman saya. Posisi dihitung sebelum pembagian halaman, sehingga seri di batas halaman tetap sama. Posisi sendiri tetap tersedia di semua halaman. Parameter halaman tidak valid dibatasi ke rentang yang tersedia. Pengujian ditambah memakai 23 peserta tampil, nilai seri lintas halaman, posisi sendiri dan parameter invalid. Perhitungan masih membaca seluruh hasil eligible; ini perbaikan navigasi, belum optimasi beban melalui snapshot persisten.
+
+
 ## 2026-09-11 — RANK-001: ranking umum per paket
 
 Migrasi 0003 menambahkan periode kompetisi dan anggota unik per pengguna. Admin dapat mengaktifkan satu periode pada paket terbit yang belum pernah dikerjakan, dengan audit. Peserta terverifikasi bergabung memakai alias dan pilihan tampil; pengelola ditolak. Jalur latihan biasa tidak bisa melewati pendaftaran kompetisi. Deadline dibatasi waktu penutupan; pembahasan/nilai opsi disembunyikan server sampai periode tutup, termasuk setelah submit.
@@ -133,3 +138,4 @@ Git lokal diinisialisasi dengan branch main. Commit 201042f menyimpan dua refere
 Pengguna membuat https://github.com/igustimadeyogawicaksana/tryout-cpns-pppk dengan visibilitas public. Repo kosong telah diperiksa melalui GitHub dan origin lokal diarahkan ke repo tersebut. Push pertama ditolak karena Git memakai akun berbeda. Login Git untuk akun pemilik sedang diminta; login browser sudah berhasil, tetapi belum berarti autentikasi Git lokal selesai. Stack tetap belum diputuskan.
 
 Hasil lanjutan: autentikasi Git berhasil dan push main diterima GitHub. Branch main kini melacak origin/main. Preferensi akun Git disetel khusus repositori ini agar unggahan berikutnya memakai akun pemilik. README menautkan repo dan halaman riwayat commit; REPO-002 selesai. Tidak ada perubahan stack atau implementasi aplikasi, dan push tetap dilakukan per pekerjaan, bukan otomatis setiap penyimpanan berkas.
+`nVerifikasi perubahan pagination: 11 tes unit lulus, svelte-check 0 error/0 warning dan build produksi berhasil. Belum diuji visual di seluruh perangkat.

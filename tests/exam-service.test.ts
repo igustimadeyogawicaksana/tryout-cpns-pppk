@@ -110,6 +110,31 @@ test('competition isolation, hidden review, tie ranking and immediate opt-out', 
       [1, 1, 3]
     );
     assert.ok(!ranking.board(p, 'other').entries.some((r) => r.alias === 'Alias0'));
+    for (let i = 0; i < 20; i++) {
+      const actor = 'extra' + i;
+      f.db
+        .insert(user)
+        .values({
+          id: actor,
+          name: actor,
+          email: actor + '@test.invalid',
+          emailVerified: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .run();
+      f.svc.submit(ranking.join(p, actor, 'Extra' + i, true), actor);
+    }
+    const secondPage = ranking.board(p, 'other', 2);
+    assert.equal(secondPage.count, 23);
+    assert.equal(secondPage.entries.length, 3);
+    assert.ok(secondPage.entries.every((r) => r.rank === 3));
+    assert.equal(secondPage.mine?.rank, 1);
+    assert.equal(secondPage.minePage, 1);
+    assert.equal(ranking.board(p, 'other', 999).page, 2);
+    assert.equal(ranking.board(p, 'other', NaN).page, 1);
+    assert.equal(ranking.board(p, 'other', -1).page, 1);
+    assert.equal(ranking.board(p, 'other', 1).entries.length, 20);
     const practice = f.svc.create(f.input, 'admin');
     f.svc.publish(practice, 'admin');
     f.svc.start(practice, 'student');
