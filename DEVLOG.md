@@ -1,5 +1,9 @@
 # Development log
 
+## 2026-09-11 — AUTH-002, login Google lokal berhasil
+
+Pengguna memasang credential OAuth di environment privat dan menyelesaikan pemilihan akun/persetujuan Google. Pengguna mengonfirmasi nama tampil di dashboard. Pemeriksaan database read-only menemukan akun provider Google dengan nama terisi, email terverifikasi, sesi aktif dan peran peserta tanpa admin_users. Tidak mencatat email, nama, token atau credential ke dokumentasi. Alur daftar/login Google lokal berhasil; callback domain produksi dan pengujian lintas browser tetap belum diverifikasi.
+
 ## 2026-09-10 — AUTH-002, pendaftaran Google
 
 Google dijadikan jalur utama daftar/login peserta melalui Better Auth. Akun baru menuju dashboard; akun lama mengikuti peran; email/password lama tetap tersedia dan signup password publik tetap ditutup. Ditambahkan error callback dengan pesan aman, tombol nonaktif ketika credential kosong dan panduan callback lokal/Dokploy. Pendaftaran Google tidak menambahkan admin_users.
