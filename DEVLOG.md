@@ -212,3 +212,7 @@ Identitas resmi BKN, logo, dan elemen merek tidak disalin; halaman tetap menggun
 Sesi yang sudah selesai kini dapat diulang dari halaman hasil. Setiap pengulangan membuat sesi baru, sementara sesi yang masih berjalan tetap dilanjutkan. Indeks unik satu sesi per pengguna dan paket dihapus melalui migrasi `0005_powerful_namor.sql`; riwayat sesi tetap tersimpan.
 
 Paket lokal `Coba Fitur Jawab Soal — 20 Soal` disiapkan untuk percobaan dengan 10 soal TIU dan 10 soal TKP sintetis. Konten ini hanya data uji, bukan soal resmi. Verifikasi: 11 tes unit lulus, svelte-check 0 error/0 warning, dan build produksi berhasil.
+
+## 2026-09-11 — Pembersihan data uji
+
+Paket percobaan `Coba Fitur Jawab Soal` beserta versi soal sintetis `TRY-UI-*`, item, opsi, dan sesi uji dihapus dari SQLite lokal setelah pengujian selesai. Bank soal lain tidak diubah.
