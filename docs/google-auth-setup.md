@@ -1,5 +1,7 @@
 # Pendaftaran Google melalui Better Auth
 
+Diagnosis lokal 2026-09-11: setelah origin diperbaiki, callback masih dapat gagal karena koneksi keluar Node ke Google timeout. Uji GET tanpa credential ke endpoint sertifikat Google gagal dengan resolusi default dan berhasil ketika IPv4 didahulukan. Perintah `npm run dev` sekarang memakai `--dns-result-order=ipv4first`; ini preferensi urutan DNS proses pengembangan, bukan mematikan validasi TLS atau mengubah pengaturan jaringan Windows. Bila timeout berulang, periksa koneksi jaringan; keberhasilan mengambil sertifikat tidak membuktikan callback OAuth lengkap berhasil.
+
 Peserta memilih Lanjutkan dengan Google di /login. Pengunjung baru dibuatkan akun peserta dan masuk /dashboard; pengguna lama masuk melalui /account sesuai perannya. Hak admin hanya dari admin_users. Login email/password dan [pendaftaran email](email-auth-setup.md) juga tersedia; pendaftaran email produksi memerlukan SMTP.
 
 ## Konfigurasi yang masih diperlukan

@@ -1,5 +1,9 @@
 # Development log
 
+## 2026-09-11 — AUTH-002: timeout koneksi Google setelah perbaikan origin
+
+Log callback terbaru menunjukkan `UND_ERR_CONNECT_TIMEOUT` saat Better Auth menghubungi Google. Pengujian tanpa token/secret ke endpoint Google menemukan GET sertifikat gagal dengan resolusi default dan berhasil (200) menggunakan Node `--dns-result-order=ipv4first`. Perintah dev ditambah preferensi IPv4 dan server lokal dijalankan ulang. Respons GET 404 dari endpoint token berarti endpoint terjangkau tetapi metode GET tidak didukung; bukan bukti token exchange berhasil. Penyelesaian OAuth dengan akun nyata masih harus dicoba pengguna. Browser saat diagnosis masih memiliki sesi admin; itu tidak membuktikan percobaan Google terbaru berhasil.
+
 ## 2026-09-11 — AUTH-002: perbaikan origin login Google lokal
 
 Login Google gagal ketika UI dibuka melalui `http://127.0.0.1:5173`, sedangkan `BETTER_AUTH_URL` dan callback Google memakai `http://localhost:5173`. Log menunjukkan POST social sign-in dari 127.0.0.1 mendapat 404; request yang sama pada localhost mendapat 200 dan URL tujuan `accounts.google.com`. Client ID/Secret tersedia tanpa dicetak.
