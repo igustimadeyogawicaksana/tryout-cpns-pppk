@@ -231,6 +231,8 @@ Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
 
 Pedoman produk dan akses ditulis di `docs/product-and-access-policy.md`, mencakup paket gratis/berbayar/kompetisi, retake, masa akses, pembayaran manual, order kedaluwarsa, refund, serta disclaimer hasil. Checklist legal dan privasi ditulis di `docs/legal-and-privacy-checklist.md`; publikasi halaman legal dan tinjauan hukum masih tersisa.
 
+Kebijakan retake diperjelas: retake gratis tetap aktif untuk pengujian saat pengembangan, tetapi target final sebelum rilis adalah satu percobaan untuk paket gratis dan kuota percobaan eksplisit untuk produk berbayar.
+
 ## 2026-09-11 — PAY-003, produk berbayar admin
 
 Ditambahkan halaman admin `/admin/products` untuk membuat produk aktif, menetapkan harga dan masa akses, serta menghubungkannya ke paket tryout terbit. Produk ini menjadi sumber order manual dan pemeriksaan grant akses paket.

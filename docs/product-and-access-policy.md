@@ -12,7 +12,8 @@ Dokumen ini menjadi aturan produk sementara untuk Ruang Tryout. Angka harga dan 
 
 - Satu klik mulai membuat satu sesi ujian.
 - Sesi yang masih berjalan dapat dilanjutkan sampai deadline.
-- Sesi selesai dapat diulangi; setiap pengulangan menjadi riwayat terpisah.
+- Selama fase pengembangan, sesi gratis yang selesai dapat diulangi untuk pengujian; setiap pengulangan menjadi riwayat terpisah.
+- Aturan final sebelum rilis membatasi paket gratis menjadi satu percobaan per akun. Paket berbayar mengikuti jumlah percobaan yang tercantum pada produk.
 - Masa akses produk dihitung sejak pembayaran disetujui.
 - Akses yang kedaluwarsa tidak dapat memulai sesi baru, tetapi riwayat dan hasil lama tetap tersimpan.
 
