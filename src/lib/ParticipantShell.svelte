@@ -53,6 +53,7 @@
     <strong>Ruang Tryout</strong><span
       >Latihan independen CPNS & PPPK. Tidak berafiliasi dengan BKN atau PANRB.</span
     ><a href="/paket">Jelajahi paket</a>
+    <a href="/legal">Ketentuan & privasi</a>
   </footer>
 </div>
 
