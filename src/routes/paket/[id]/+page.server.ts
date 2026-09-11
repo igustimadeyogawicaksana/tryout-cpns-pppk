@@ -25,7 +25,10 @@ export const actions: Actions = {
     try {
       const orderId = paymentService(db).createManualOrder(productId, locals.user.id, `web-${locals.user.id}-${productId}`);
       redirect(303, '/pembayaran/' + orderId);
-    } catch (e) { return actionError(e); }
+    } catch (e) {
+      if (e && typeof e === 'object' && 'status' in e && Number(e.status) >= 300 && Number(e.status) < 400) throw e;
+      return actionError(e);
+    }
   },
   default: async ({ locals, params, request }) => {
     if (!locals.user) redirect(303, '/login');
