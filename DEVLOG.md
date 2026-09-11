@@ -226,3 +226,9 @@ Alur pembayaran manual dipilih untuk MVP: transfer bank atau QRIS diverifikasi p
 Ditambahkan service pembayaran manual untuk membuat order idempoten, menerima referensi bukti, memproses review admin, mengubah status order/payment/event, dan membuat grant akses setelah disetujui. Endpoint `POST/PUT /api/payments/manual` memakai kontrak tabel gateway yang sama sehingga provider otomatis dapat ditambahkan kemudian. UI checkout/admin dan uji HTTP masih menjadi pekerjaan lanjutan.
 
 Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
+
+## 2026-09-11 — PAY-003, UI checkout dan verifikasi
+
+Ditambahkan halaman `/pembayaran/[id]` untuk menampilkan nominal/instruksi pembayaran dan mengirim referensi bukti, serta `/admin/payments` untuk menyetujui atau menolak pembayaran manual. Persetujuan membuat grant akses sesuai masa produk; penolakan tidak membuka akses. Konfigurasi rekening/QRIS dibaca dari environment dan tidak masuk Git.
+
+Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning. Uji HTTP dengan produk aktif dan kredensial admin masih perlu dilakukan.

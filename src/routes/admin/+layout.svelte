@@ -15,6 +15,9 @@
       <a class:nav-active={page.url.pathname.startsWith('/admin/packages')} href="/admin/packages"
         >Paket tryout</a
       >
+      <a class:nav-active={page.url.pathname.startsWith('/admin/payments')} href="/admin/payments"
+        >Pembayaran</a
+      >
       <a class:nav-active={page.url.pathname.startsWith('/admin/questions')} href="/admin/questions"
         ><span aria-hidden="true">▤</span> Bank soal
         <span class="nav-arrow" aria-hidden="true">↗</span></a

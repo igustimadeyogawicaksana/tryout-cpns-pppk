@@ -17,6 +17,12 @@ const hash = (value: string) => createHash('sha256').update(value).digest('hex')
 
 export function paymentService(db: AppDatabase, now: () => number = Date.now) {
   return {
+    order(id: string, actor: string) {
+      const row = db.select().from(orders).where(and(eq(orders.id, id), eq(orders.userId, actor))).get();
+      if (!row) throw new DomainError('Pesanan tidak ditemukan.', 404);
+      const payment = db.select().from(payments).where(eq(payments.orderId, id)).get();
+      return { order: row, payment };
+    },
     createManualOrder(productId: string, actor: string, idempotencyKey: string) {
       if (!idempotencyKey.trim()) throw new DomainError('Idempotency key wajib diisi.');
       const product = db.select().from(products).where(and(eq(products.id, productId), eq(products.active, true))).get();
