@@ -5,6 +5,8 @@ import { eq } from 'drizzle-orm';
 import { building } from '$app/environment';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import type { Handle } from '@sveltejs/kit';
+import { startExamWorker } from '$lib/server/exam-worker';
+if (!building) startExamWorker();
 
 export const handle: Handle = async ({ event, resolve }) => {
   event.locals.user = null;

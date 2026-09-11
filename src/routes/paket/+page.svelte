@@ -18,12 +18,25 @@
         href={kind === 'Semua' ? '/paket' : '/paket?jenis=' + kind}>{kind}</a
       >{/each}
   </nav>
-  <section class="participant-card empty">
-    <span class="pill">SEDANG DISIAPKAN</span>
-    <h2>Belum ada paket {data.kind === 'Semua' ? '' : data.kind} yang tersedia.</h2>
-    <p>Bank soal sedang disusun dan ditinjau. Paket akan muncul setelah siap digunakan.</p>
-    <a class="button secondary" href="/">Kembali ke beranda</a>
-  </section>
+  <div class="cards">
+    {#each data.packages.filter((p) => data.kind === 'Semua' || p.examType === data.kind) as p}<article
+        class="participant-card"
+      >
+        <span class="pill">{p.examType} · Gratis</span>
+        <h2>{p.title}</h2>
+        <p>{p.durationMinutes} menit · Target {p.targetYear}</p>
+        <p>{p.reference}</p>
+        <a class="button secondary" href={'/paket/' + p.id}>Detail paket</a>
+      </article>{/each}
+  </div>
+  {#if !data.packages.some((p) => data.kind === 'Semua' || p.examType === data.kind)}<section
+      class="participant-card empty"
+    >
+      <span class="pill">SEDANG DISIAPKAN</span>
+      <h2>Belum ada paket {data.kind === 'Semua' ? '' : data.kind} yang tersedia.</h2>
+      <p>Bank soal sedang disusun dan ditinjau. Paket akan muncul setelah siap digunakan.</p>
+      <a class="button secondary" href="/">Kembali ke beranda</a>
+    </section>{/if}
 </ParticipantShell>
 
 <style>

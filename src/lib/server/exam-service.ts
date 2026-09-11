@@ -294,7 +294,8 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
       return db.transaction(
         () => {
           const row = attempt(id, actor);
-          if (row.status !== 'in_progress') throw new DomainError('Ujian sudah selesai.', 409);
+          if (row.status !== 'in_progress' || now() >= row.deadlineAt)
+            throw new DomainError('Ujian sudah selesai.', 409);
           if (row.revision !== revision)
             throw new DomainError(
               'Jawaban berubah di tab lain. Muat ulang untuk mengambil jawaban tersimpan.',

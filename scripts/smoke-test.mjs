@@ -4,6 +4,7 @@ import { join, resolve, sep, basename } from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { randomBytes, createHash } from 'node:crypto';
 import { testQuestionApi } from './test-question-api.mjs';
+import { testExamHttp } from './test-exam-http.mjs';
 import assert from 'node:assert/strict';
 import Database from 'better-sqlite3';
 
@@ -284,9 +285,8 @@ try {
     databasePath: env.DATABASE_PATH,
     actor: env.QUESTIONS_API_USER_ID
   });
-  console.log(
-    'HTTP smoke: login, admin-only reads/writes, draft persistence, email lifecycle and cross-site protection passed.'
-  );
+  await testExamHttp({ origin, cookie, participantCookie, databasePath: env.DATABASE_PATH });
+  console.log('HTTP smoke: authentication, question API and participant exams passed.');
 } finally {
   if (server && server.exitCode === null) {
     server.kill();

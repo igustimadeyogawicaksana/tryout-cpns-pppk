@@ -25,15 +25,15 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | AUTH-001 | P1 | Akun, akses admin, trial | In progress | APP-001, PROD-002 | Login pengelola dan proteksi admin selesai; registrasi peserta, pemulihan akun, Google live dan trial belum selesai |
 | CONTENT-001 | P1 | Form bank soal, review dan versi | In progress | APP-001, PROD-001, DATA-001 | Draft, review, approval, terbit, arsip/revisi dan stale-write guard selesai; blueprint/kategori resmi, assets dan rich text belum |
 | CONTENT-002 | P1 | Impor JSON ke draft | In progress | CONTENT-001 | Preview, batch atomik, retry/hash dan batas 100 soal/2 MB selesai; validasi referensi blueprint/topik/formasi masih menunggu katalog |
-| CONTENT-003 | P1 | Blueprint dan publikasi paket | Todo | CONTENT-001, PROD-001 | Kuota/durasi/skor diverifikasi, paket membekukan versi soal; tidak mengirim kunci saat ujian |
+| CONTENT-003 | P1 | Blueprint dan publikasi paket | In progress | CONTENT-001, PROD-001 | UI susun/terbit paket gratis, kuota dan versi beku tersedia; blueprint resmi/arsip paket belum |
 | CONTENT-004 | P1 | Endpoint API unggah soal | Done | CONTENT-001 | POST satu/batch, bearer token admin, batas 2 MB/100 soal, validasi, retry idempotent, transaksi atomik dan audit; HTTP integration test lulus |
 | CONTENT-005 | P1 | Coba soal sebagai pengelola | Done | CONTENT-001 | Tombol dari editor; kunci/pembahasan tidak dikirim pada GET; penilaian server untuk pilihan/kosong, revision guard, coba ulang dan proteksi admin; tidak mencatat hasil ujian/ranking |
 | PAY-003 | P1 | Checkout dan verifikasi pembayaran | Todo | AUTH-001, CONTENT-001, PAY-002 | Bayar valid membuka akses sekali; bukti palsu/duplikat/nominal salah tidak membuka akses; ada audit |
 | PAY-004 | P1 | Skema payment gateway | Done | DATA-001 | Produk, snapshot pesanan, payment attempt, event, grant dan refund tersedia di migrasi; constraint SQLite diuji; checkout/webhook/aktivasi akses belum diimplementasikan |
-| EXAM-001 | P1 | Mesin tryout | Todo | AUTH-001, CONTENT-003 | Timer server, autosave/revision/reconnect, versi dan urutan soal tetap, submit/timeout idempotent |
+| EXAM-001 | P1 | Mesin tryout | In progress | AUTH-001, CONTENT-003 | Latihan gratis: timer server, autosave/revision/retry, versi/urutan tetap, submit/timeout idempotent tersedia; uji beban dan perangkat/jaringan lanjutan belum |
 | RANK-001 | P1 | Ranking dasar umum dan provinsi | Todo | EXAM-001, RESULT-001 | Cohort sama, percobaan kompetitif pertama, seri 1/2/2/4, privasi, posisi saya dan snapshot atomik sesuai ranking-plan.md |
 | RANK-002 | P1 | Koreksi penilaian dan finalisasi ranking | Todo | RANK-001 | Revisi diaudit, cohort tidak mencampur aturan, hasil dan generasi ranking konsisten |
-| RESULT-001 | P1 | Hasil dan pembahasan dasar | Todo | EXAM-001, PROD-001 | Skor per subtes benar; pembahasan mengikuti hak akses |
+| RESULT-001 | P1 | Hasil dan pembahasan dasar | In progress | EXAM-001, PROD-001 | Hasil/subskor dan pembahasan latihan gratis tersedia hanya sesudah selesai; integrasi hak akses berbayar belum |
 | OPS-001 | P1 | Backup, pemulihan dan pemantauan | Todo | APP-001, DATA-001 | Restore diuji; pantau gagal simpan, pembayaran tertunda dan penggunaan kuota |
 | LEGAL-001 | P1 | Ketentuan produk dan legalitas | Todo | PROD-002, PAY-001 | Tinjau NIB/kewajiban usaha, privasi, refund, hak konten dan disclaimer sebelum rilis |
 | QA-001 | P1 | Uji alur ujung ke ujung | Todo | PAY-003, EXAM-001, RESULT-001, CONTENT-002, RANK-002 | Input-publish-bayar-ujian-ranking lolos; uji seri, retake, opt-out, gangguan jaringan, double submit dan akses ilegal |

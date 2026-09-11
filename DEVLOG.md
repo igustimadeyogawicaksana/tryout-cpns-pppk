@@ -1,5 +1,15 @@
 # Development log
 
+## 2026-09-11 — CONTENT-003, EXAM-001, RESULT-001: alur latihan gratis
+
+Admin dapat menyusun draft paket dari soal terbit dengan kuota per subtes, jenis CPNS/PPPK dan formasi; publikasi membuka katalog/detail peserta. Isi paket disalin saat dibuat. Peserta terverifikasi dapat mulai/lanjut satu sesi, menyimpan jawaban dengan revision guard, menyelesaikan ujian dan membaca skor/pembahasan. Dashboard menampilkan nama di atas serta riwayat sebenarnya. Navigasi pengelola membedakan bank soal dan paket.
+
+Deadline ditentukan server; worker memproses sesi kedaluwarsa sekalipun tab ditutup. API simpan memeriksa pemilik, origin, struktur payload, opsi dan revisi. Kunci/penjelasan hanya dikirim setelah selesai. Ditambahkan tes SQLite dan HTTP pada database sementara; panduan `docs/practice-exam-guide.md` menjelaskan batas alur ini.
+
+Ini latihan gratis; ranking, retake, blueprint resmi terverifikasi, checkout/payment grant, backup R2, SMTP nyata dan validasi perangkat lengkap masih tersisa. Tidak ada perubahan status soal lokal menjadi terbit secara otomatis.
+
+Verifikasi: 9 tes unit lulus, svelte-check 0 error/0 warning, build produksi berhasil, seluruh HTTP smoke (auth, question API dan ujian) lulus. Belum melakukan uji beban atau pengujian UI lintas perangkat pada perubahan ini.
+
 ## 2026-09-11 — AUTH-003, logo Google dan pendaftaran email
 
 Ditambahkan logo G lokal pada tombol Google serta form login email yang langsung terlihat, daftar nama/email/password/konfirmasi, lupa password, reset dan kirim ulang verifikasi. Better Auth membuka signup bila pengiriman email tersedia; auto-signin signup dimatikan dan reset mencabut sesi lama. Dashboard menandai email belum terverifikasi; service mulai ujian menolak peserta belum terverifikasi. Admin lama tetap dapat login.

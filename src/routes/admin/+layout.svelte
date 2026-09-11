@@ -1,5 +1,6 @@
 <script lang="ts">
   import { authClient } from '$lib/auth-client';
+  import { page } from '$app/state';
   let { data, children } = $props();
 </script>
 
@@ -11,7 +12,10 @@
     >
     <p class="nav-caption">RUANG PENGELOLA</p>
     <nav aria-label="Navigasi utama">
-      <a class="nav-active" href="/admin/questions"
+      <a class:nav-active={page.url.pathname.startsWith('/admin/packages')} href="/admin/packages"
+        >Paket tryout</a
+      >
+      <a class:nav-active={page.url.pathname.startsWith('/admin/questions')} href="/admin/questions"
         ><span aria-hidden="true">▤</span> Bank soal
         <span class="nav-arrow" aria-hidden="true">↗</span></a
       >
@@ -19,7 +23,7 @@
     <div class="sidebar-note">
       <span class="pill subtle">MVP · Tahap 1</span>
       <p>Bangun bank soal yang siap ditinjau.</p>
-      <small>Paket ujian dan ranking menyusul pada tahap berikutnya.</small>
+      <small>Susun soal terbit menjadi paket latihan. Ranking menyusul.</small>
     </div>
     <div class="sidebar-account">
       <span class="avatar">{data.user?.name?.slice(0, 1) || 'P'}</span>
@@ -36,7 +40,11 @@
   </aside>
   <div class="workspace-body">
     <header class="topbar">
-      <span>Konten / <strong>Bank soal</strong></span><span class="topbar-meta">CPNS & PPPK</span>
+      <span
+        >Konten / <strong
+          >{page.url.pathname.startsWith('/admin/packages') ? 'Paket tryout' : 'Bank soal'}</strong
+        ></span
+      ><span class="topbar-meta">CPNS & PPPK</span>
     </header>
     <main id="main" class="main-content">{@render children()}</main>
     <footer class="workspace-footer">Ruang Tryout <span>Simulasi latihan independen</span></footer>
