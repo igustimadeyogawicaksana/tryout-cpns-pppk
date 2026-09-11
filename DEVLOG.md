@@ -216,3 +216,7 @@ Paket lokal `Coba Fitur Jawab Soal — 20 Soal` disiapkan untuk percobaan dengan
 ## 2026-09-11 — Pembersihan data uji
 
 Paket percobaan `Coba Fitur Jawab Soal` beserta versi soal sintetis `TRY-UI-*`, item, opsi, dan sesi uji dihapus dari SQLite lokal setelah pengujian selesai. Bank soal lain tidak diubah.
+
+## 2026-09-11 — PAY-002, pembayaran manual MVP
+
+Alur pembayaran manual dipilih untuk MVP: transfer bank atau QRIS diverifikasi pengelola sebelum akses dibuka. Status order, payment, event, grant akses, refund, idempotensi, dan jalur migrasi ke gateway otomatis dicatat di `docs/manual-payment-flow.md`. Skema tabel gateway yang sudah ada tetap menjadi kontrak data; UI checkout dan verifikasi admin menjadi pekerjaan PAY-003.
