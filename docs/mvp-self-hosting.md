@@ -1,5 +1,7 @@
 # Arah MVP: SQLite, Dokploy, Better Auth
 
+Pembaruan DISC-001 2026-09-11: anggaran VPS terbaru Rp55.000–100.000/bulan; Contabo Singapura kandidat dengan total penawaran belum diverifikasi. Profil beban, volume, retensi R2 dan gerbang deployment mengikuti [baseline kapasitas](capacity-baseline.md). R2 gratis bergantung total pemakaian; provider lokal tidak otomatis layanan pengelolaan server.
+
 Tanggal: 2026-09-10. Dokumen ini memperbarui arah teknis; kajian sebelumnya dan rancangan asli tetap menjadi referensi historis.
 
 ## Pilihan pengguna dan usulan lanjutan

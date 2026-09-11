@@ -8,7 +8,7 @@ Pembaruan implementasi: form draft, impor JSON dua tahap, review/terbit/revisi s
 
 MVP menyediakan input manual dan impor JSON terstruktur, review soal, penerbitan versi, penyusunan paket dan preview peserta. Input spreadsheet, OCR PDF dan generasi otomatis ditunda. CPNS dan PPPK memakai struktur yang sama, tetapi blueprint jumlah soal, durasi, formasi dan aturan skornya terpisah.
 
-Jangan memakai angka “100 soal SKD” dari rancangan awal sebagai konstanta. BKN pernah menetapkan 110 soal/100 menit pada SKD 2021; itu referensi historis, bukan verifikasi aturan tahun seleksi sekarang. Simpan tahun, URL sumber, tanggal pemeriksaan dan konfigurasi setiap blueprint; admin harus memvalidasinya sebelum menerbitkan paket berlabel simulasi resmi tahun tertentu. [BKN 2021](https://www.bkn.go.id/peserta-calon-pns-2021-akan-berkompetisi-dalam-100-menit-untuk-menjawab-110-soal-skd-dengan-cat-bkn-berita/).
+Jangan memakai angka “100 soal SKD” dari rancangan awal sebagai konstanta. Pemeriksaan 2026-09-11 memverifikasi baseline SKD TA 2024: 110 soal/100 menit untuk profil umum; lihat [acuan ujian](exam-rules-baseline.md). Tahun target belajar 2027 bukan tahun aturan resmi yang sudah diverifikasi. Simpan tahun acuan, URL sumber, tanggal pemeriksaan, status verifikasi dan konfigurasi setiap blueprint; admin harus memvalidasinya sebelum publikasi. SKB dan PPPK memerlukan preset berbeda.
 
 ## Data yang diisi admin
 

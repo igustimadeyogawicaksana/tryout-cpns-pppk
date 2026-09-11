@@ -1,5 +1,7 @@
 # Daftar keputusan
 
+Pembaruan 2026-09-11: [acuan ujian](exam-rules-baseline.md) menyelesaikan scope trial/ranking dan mencatat batas verifikasi 2027/SKB; [kapasitas](capacity-baseline.md) memakai revisi anggaran VPS Rp55.000–100.000/bulan dan usulan beban pengguna; [kajian payment](payment-provider-comparison.md) menjadi dasar DEC-002 yang masih terbuka. Sumber ini mengungguli asumsi lama yang bertentangan. Tidak ada server atau merchant produksi diaktifkan.
+
 Diperbarui: 2026-09-10. Pengguna memilih arah MVP SQLite lokal, Dokploy self-hosted, dan Better Auth. Detail lain tetap terbuka.
 
 | ID | Pertanyaan | Status | Bukti sebelum diputuskan |

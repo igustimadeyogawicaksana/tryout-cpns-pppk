@@ -1,5 +1,7 @@
 # Rancangan perankingan MVP
 
+Pembaruan PROD-001 2026-09-11: [acuan ujian dan scope](exam-rules-baseline.md) mengatur trial/latihan tanpa ranking kompetisi, pembahasan kompetisi setelah tutup, serta blueprint dan cohort identik. Aturan ini mengungguli asumsi rancangan lama yang bertentangan; pembatasan konversi trial dan pengikatan blueprint belum diimplementasikan.
+
 Status: rancangan produk, bukan aturan seleksi BKN. Implementasi awal ranking umum per paket tersedia sejak 2026-09-11; bagian di bawah adalah target lengkap dan belum seluruhnya selesai.
 
 ## Implementasi awal yang tersedia

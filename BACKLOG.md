@@ -1,6 +1,6 @@
 # Backlog
 
-Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanjutan. Semua penanggung jawab belum ditetapkan. Status Done berarti keluaran sudah ada dan diperiksa, bukan sekadar direncanakan.
+Terakhir diperbarui: 2026-09-11. P0 = sebelum implementasi terkait; P1 = MVP; P2 = lanjutan. Semua penanggung jawab belum ditetapkan. Status Done berarti keluaran sudah ada dan diperiksa, bukan sekadar direncanakan.
 
 | ID | Prioritas | Pekerjaan | Status | Dependensi | Kriteria selesai |
 |---|---|---|---|---|---|
@@ -8,13 +8,13 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PLAN-002 | P0 | Dev log, backlog, daftar keputusan | Done | PLAN-001 | Berkas saling tertaut; status akurat |
 | REPO-001 | P0 | Inisialisasi Git lokal | Done | PLAN-002 | Dokumen awal disimpan pada commit 201042f; dokumen perencanaan pada commit berikutnya |
 | REPO-002 | P0 | Hubungkan repo GitHub buatan pengguna dan push | Done | REPO-001 | Repo public terverifikasi, origin tersambung, push main berhasil; main melacak origin/main |
-| DISC-001 | P0 | Tetapkan target peserta dan pola simpan | Todo | — | Target serentak, sesi harian, frekuensi autosave, toleransi latensi dan anggaran tertulis |
-| PAY-001 | P0 | Validasi merchant individu | Todo | — | Bandingkan syarat/approval produk tryout, biaya, settlement, refund, API/webhook pada kandidat penyedia |
+| DISC-001 | P0 | Tetapkan target peserta dan pola simpan | In progress | — | Usulan tertulis di docs/capacity-baseline.md: 50–100 aktif, stress 300/500, 100–300 sesi/hari dan puncak 2.000, autosave per perubahan, p95 500 ms/2 detik; VPS Rp55.000–100.000; finalisasi kapasitas rilis dan RPO setelah penawaran/uji |
+| PAY-001 | P0 | Validasi merchant individu | Done | — | Kajian syarat, biaya, settlement, refund dan API/webhook GoPay Merchant versus Midtrans individu di docs/payment-provider-comparison.md; approval akun/produk belum diperoleh dan menjadi gerbang PAY-002/PAY-003 |
 | PAY-002 | P0 | Pilih alur manual atau gateway | Todo | PAY-001 | Alur disepakati; bila manual ada jam layanan dan target waktu verifikasi |
 | DATA-001 | P0 | Finalisasi schema dari model logis | In progress | PLAN-004 | Model soal/sesi/ranking/payment terdokumentasi; DDL, mapping tipe dan constraint lintas tabel belum dibangun |
-| DATA-002 | P1 | Uji kapasitas SQLite | Todo | APP-001, EXAM-001, PAY-003, RANK-001, DISC-001 | Profil autosave/submit/payment/ranking diuji pada server target; tidak menjadi dependensi pemilihan framework |
+| DATA-002 | P1 | Uji kapasitas SQLite | Todo | APP-001, EXAM-001, RANK-001, DISC-001; PAY-003 untuk profil berbayar | Ikuti matriks docs/capacity-baseline.md: 50/100 lalu 300/500, ujian penuh, burst submit, retry, impor/ranking/backup; p95 simpan <500 ms dan submit <2 detik, nol kehilangan acknowledged, error <0,1%; ukur JSON rewrite, worker dan WAL |
 | DEC-001 | P0 | Lengkapi keputusan stack MVP | Done | PLAN-004 | Implementasi memakai SvelteKit/TypeScript/Node/Drizzle, SQLite, Better Auth; Dokploy/R2 tetap target hosting/backup |
-| PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | Todo | — | Validasi jumlah soal/durasi/skor ke sumber resmi tahun seleksi; selesaikan konflik ranking MVP dan pembahasan trial di rancangan |
+| PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | In progress | — | docs/exam-rules-baseline.md memverifikasi SKD acuan 2024 110 soal/100 menit dan skor, SKB CAT 80/100 soal 90 menit; konflik trial/ranking selesai; aturan SKB per jabatan dan resmi 2027 belum lengkap; dampak EXAM/CONTENT/RESULT dicatat sebelum implementasi |
 | PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
 | APP-001 | P1 | Setup aplikasi dan lingkungan | Done | DEC-001 | Setup lokal, migrasi SQLite, typecheck/build dan HTTP smoke lolos; secret/data lokal diabaikan Git |
@@ -52,7 +52,7 @@ Tambahan dari arah self-hosting:
 | PLAN-004 | P0 | Dokumentasi SQLite, input soal dan ranking | Done | PLAN-003 | Tiga spesifikasi dan contoh JSON tersedia; default produk dipisahkan dari aturan resmi; belum ada implementasi |
 | OPS-002 | P0 | Identifikasi tujuan backup | Done | — | Pengguna mengonfirmasi Cloudflare R2; konfigurasi dipisahkan ke OPS-004 |
 | OPS-004 | P1 | Konfigurasi backup ke Cloudflare R2 | Todo | OPS-002, OPS-003 | Bucket privat, akses terbatas, kuota/biaya diperiksa, snapshot konsisten terjadwal, retensi, pemantauan dan restore teruji |
-| OPS-003 | P1 | Volume SQLite persisten di Dokploy | Todo | APP-001 | Redeploy tidak menghilangkan data; satu instance; snapshot konsisten dan restore teruji |
+| OPS-003 | P1 | Volume SQLite persisten di Dokploy | Todo | APP-001, DISC-001 | Ukur kebutuhan sesuai docs/capacity-baseline.md: usulan volume 40 GiB/host 80 GB disesuaikan paket dalam anggaran; satu penulis, WAL persisten, cadangan restore, alarm disk dan redeploy/restore teruji |
 | DATA-003 | P2 | Latihan migrasi SQLite ke PostgreSQL | Todo | DATA-001, APP-001 | Tipe, ID, auth, jawaban, pembayaran dan akses tervalidasi; prosedur cutover/rollback diuji |
 
 Gunakan Todo → In progress → Done; Blocked harus menyebut hambatan konkret. Saat menyelesaikan pekerjaan, tambahkan bukti di DEVLOG.md dan referensikan ID pada commit. Backlog Markdown ini adalah sumber pelacakan awal; GitHub Issues/Project belum dibuat.

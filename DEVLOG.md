@@ -1,5 +1,19 @@
 # Development log
 
+## 2026-09-11 — PROD-001, DISC-001, PAY-001: kajian P0 sebelum implementasi lanjutan
+
+Ditambahkan [acuan ujian](docs/exam-rules-baseline.md), [usulan kapasitas](docs/capacity-baseline.md) dan [perbandingan pembayaran](docs/payment-provider-comparison.md), dengan sumber resmi dan batas verifikasi. Tidak ada perubahan runtime, schema, paket/sesi lama atau transaksi nyata pada pekerjaan ini.
+
+**Dampak PROD-001 dicatat sebelum pekerjaan EXAM-001, CONTENT-003 dan RESULT-001 dilanjutkan:** SKD acuan 2024 adalah 110 soal (30 TWK/35 TIU/45 TKP), 100 menit profil umum, maksimum 550. EXAM-001 perlu uji preset tersebut dan akomodasi terpisah; kode saat ini memakai durasi paket configurable, form admin default 10 menit, bukan timer global 100 soal. CONTENT-003 perlu blueprint immutable beserta sumber/tahun acuan/status verifikasi serta pemisahan trial, latihan dan kompetisi. RESULT-001 perlu evaluasi ambang per kategori yang tervalidasi; skor latihan bukan kelulusan CPNS. Jangan mengubah hasil lama secara retroaktif. SKB CAT 80/100 soal dan 90 menit tidak menetapkan satu scoring universal lintas jabatan. Aturan 2027 belum terverifikasi sehingga PROD-001 tetap In progress.
+
+Konflik rancangan diselesaikan: ranking dasar tetap MVP untuk kompetisi dengan cohort identik; trial/latihan pendek mendapat pembahasan setelah dinilai dan tidak masuk ranking kompetisi; pembahasan kompetisi ditunda sampai penutupan. Pembatasan konversi trial dan blueprint masih harus dibangun; perilaku runtime belum diklaim memenuhi seluruh keputusan baru.
+
+DISC-001 memakai usulan pengguna 50–100 aktif, stress 300–500, 100–300 sesi harian dan 2.000 saat puncak, simpan setiap perubahan serta usulan p95 simpan <500 ms/submit <2 detik. Revisi terakhir anggaran VPS adalah Rp55.000–100.000/bulan, menggantikan Rp200.000–350.000; domain opsional sekitar Rp150.000/tahun. Contabo Singapura kandidat, total checkout dan layanan managed belum diverifikasi. R2 gratis hanya bila seluruh retensi/operasi berada dalam kuota. 2.000 sesi penuh/12 jam berarti rata-rata 278 aktif; tidak tercakup oleh target 100. DATA-002 dan OPS-003 diberi matriks uji serta perhitungan ruang, bukan klaim kapasitas. RPO/retensi produksi dan server final masih perlu ditetapkan.
+
+PAY-001 Done sebatas kajian perbandingan resmi. Midtrans individu tidak memiliki daftar dokumen yang sama dengan badan usaha; approval tryout, tarif akun dan settlement/refund final tetap perlu konfirmasi. Rekomendasi gateway untuk akses otomatis bersifat bersyarat; manual memerlukan verifikasi transaksi merchant dan jam layanan. PAY-002/PAY-003 belum dilanjutkan. Perbedaan dokumentasi pencairan Midtrans umum tiga hari kerja versus QRIS statis dua hari dicatat, tidak disamakan dengan kontrak akun QRIS dinamis.
+
+Verifikasi: audit konfigurasi durasi, batas batch worker/API dan implementasi penyimpanan/ranking; pemeriksaan sumber primer, konsistensi angka dan diff dokumentasi. Tidak menjalankan ulang tes aplikasi karena perubahan hanya dokumentasi. Stack SQLite/Dokploy/Better Auth/R2 tetap.
+
 ## 2026-09-11 — USER-002, RANK-001: profil dan ranking provinsi
 
 Menu Profil memungkinkan peserta mengubah nama tampilan dan provinsi opsional. Validasi server membatasi nama dan pilihan provinsi; identitas pemilik diambil dari sesi, bukan dari form. Migrasi 0004 menambahkan profil dan kolom provinsi pada anggota ranking. Saat bergabung, provinsi disalin secara atomik bersama pendaftaran; perubahan profil tidak mengubah sesi lama dan data lama tidak diisi mundur.

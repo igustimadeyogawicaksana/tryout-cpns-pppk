@@ -18,15 +18,15 @@ Gunakan UUID dari aplikasi sebagai TEXT NOT NULL PRIMARY KEY, foreign_keys=ON pe
 
 Evaluasi WAL dan synchronous=FULL untuk durabilitas pembayaran; nilai akhir ditetapkan dari pengujian driver/disk. busy_timeout dibatasi, bukan menunggu tanpa akhir. Pembayaran jaringan, upload file, parsing impor dan perhitungan besar tidak dilakukan sambil memegang transaksi tulis. Gunakan satu instance aplikasi pada named volume lokal, tanpa berbagi file melalui jaringan.
 
-Autosave default usulan: debounce sekitar 1 detik setelah perubahan jawaban, kirim hanya perubahan, satu permintaan aktif per sesi dan retry dengan revision yang sama. Saat navigasi tunggu/beri status pengakuan simpan; sebelum submit kirim perubahan tertunda selama deadline masih berlaku. Jangan menulis timer setiap detik. Simpan revision untuk menolak request lama yang datang setelah jawaban baru. Penyimpanan lokal untuk retry boleh dipertimbangkan, tetapi bukan bukti jawaban diterima server dan tidak memuat kunci.
+Autosave usulan terbaru DISC-001: setiap perubahan jawaban, kirim hanya perubahan, satu permintaan aktif per sesi dan retry dengan revision yang sama. Saat navigasi tunggu/beri status pengakuan simpan; sebelum submit kirim perubahan tertunda selama deadline masih berlaku. Jangan menulis timer setiap detik. Simpan revision untuk menolak request lama yang datang setelah jawaban baru. Penyimpanan lokal untuk retry boleh dipertimbangkan, tetapi bukan bukti jawaban diterima server dan tidak memuat kunci.
 
 Order/payment memakai ID unik; satu payment event penyedia memiliki identitas deduplikasi yang sesuai kontraknya. Setelah notifikasi diverifikasi di luar transaksi, di dalam transaksi pendek cocokkan order/nominal/mata uang, ubah status dengan transisi yang diizinkan, dan berikan entitlement unik. Callback berulang atau dua admin bersamaan tidak membuat akses ganda. Akses tidak dibuka dari redirect atau unggahan bukti saja. Refund/reversal membutuhkan alur eksplisit dan audit; notifikasi lama tidak boleh menurunkan status lunas tanpa aturan.
 
 ## Target uji sebelum peluncuran
 
-Target berikut adalah skenario benchmark sementara, bukan janji kapasitas: 50, 100, 200 peserta bersamaan; naikkan setelah hasil stabil. Jalankan profil perubahan jawaban realistis, burst submit akhir sesi, webhook duplikat, impor draft dan pembacaan ranking. Catat spesifikasi server, versi SQLite/driver, ukuran soal/hasil, frekuensi autosave dan durasi pengujian agar hasil dapat diulang.
+Target berikut adalah skenario benchmark sementara, bukan janji kapasitas: 50 dan 100 peserta bersamaan, lalu stress 300 dan 500 sesuai [baseline kapasitas](capacity-baseline.md); naikkan setelah hasil stabil. Jalankan profil perubahan jawaban realistis, burst submit akhir sesi, webhook duplikat, impor draft dan pembacaan ranking. Catat spesifikasi server, versi SQLite/driver, ukuran soal/hasil, frekuensi autosave dan durasi pengujian agar hasil dapat diulang.
 
-Usulan kriteria: nol jawaban yang sudah diakui server hilang; nol aktivasi pembayaran/hasil ganda; p95 autosave <1 detik, p95 submit <3 detik, error server <0,1% pada beban target di lingkungan uji. Target ini harus divalidasi terhadap jaringan/lokasi pengujian dan kebutuhan produk. Ukur lock timeout, antrean, CPU/RAM/disk dan waktu rebuild ranking. Uji backup saat ada penulisan dan restore terpisah.
+Usulan kriteria: nol jawaban yang sudah diakui server hilang; nol aktivasi pembayaran/hasil ganda; p95 autosave <500 ms, p95 submit <2 detik, error server <0,1% pada beban target di lingkungan uji. Target ini harus divalidasi terhadap jaringan/lokasi pengujian dan kebutuhan produk. Ukur lock timeout, antrean, CPU/RAM/disk dan waktu rebuild ranking. Uji backup saat ada penulisan dan restore terpisah.
 
 Jika gagal: periksa query/indeks, kurangi transaksi panjang, sesuaikan antrean/import/rebuild dan ulangi profil gagal. Batasi kapasitas rilis ke beban yang sudah terbukti. Evaluasi PostgreSQL hanya bila kebutuhan nyata tetap melampaui hasil optimasi atau membutuhkan beberapa server. Tidak ada angka kapasitas produksi yang disetujui saat ini.
 
@@ -39,3 +39,5 @@ Jika gagal: periksa query/indeks, kurangi transaksi panjang, sesuaikan antrean/i
 5. Pembayaran, backup R2, uji akses, kapasitas dan restore sebelum rilis berbayar.
 
 Rujukan terkait: [bank soal](question-bank-plan.md), [ranking](ranking-plan.md), [deployment/migrasi/backup](mvp-self-hosting.md), [kajian pembayaran](database-payment-options.md). Rincian tahapan bergantung backlog; dokumentasi selesai tidak berarti fitur sudah dibangun.
+
+Audit 2026-09-11: upsert per jawaban dan snapshot ranking pada tabel rancangan belum sepenuhnya diterapkan. Implementasi menulis ulang objek JSON jawaban sesi dan membaca hasil eligible sebelum pagination ranking. DATA-002 wajib mengukur perilaku aktual ini. Anggaran, profil harian, sizing volume dan retensi mengikuti [baseline kapasitas](capacity-baseline.md).
