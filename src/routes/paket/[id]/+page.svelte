@@ -13,7 +13,7 @@
     <p>Target {data.package.targetYear}. {data.package.formation}</p>
     <p>{data.package.reference}</p>
     {#each data.package.products as product}
-      <div class="notice"><strong>{product.title}</strong> · Rp {product.priceIdr.toLocaleString('id-ID')} · akses {product.accessDays} hari{#if data.user}<form method="POST" action="?/buy" style="margin-top:12px"><input type="hidden" name="productId" value={product.id} /><button class="button">Beli dan bayar manual</button></form>{:else}<p>Login untuk membeli.</p>{/if}</div>
+      <div class="notice"><strong>{product.title}</strong> · Rp {product.priceIdr.toLocaleString('id-ID')} · akses {product.accessDays} hari{#if data.user}<form method="POST" action={'/paket/' + data.package.id + '?/buy'} style="margin-top:12px"><input type="hidden" name="productId" value={product.id} /><button class="button">Beli dan bayar manual</button></form>{:else}<p>Login untuk membeli.</p>{/if}</div>
     {/each}
     <ul>
       {#each Object.entries(data.package.quotas).filter(([, n]) => n > 0) as [sub, n]}<li>
