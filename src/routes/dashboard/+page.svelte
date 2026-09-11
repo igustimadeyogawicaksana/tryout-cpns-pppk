@@ -1,6 +1,8 @@
 <script lang="ts">
   import ParticipantShell from '$lib/ParticipantShell.svelte';
-  let { data } = $props();
+  import PasswordField from '$lib/PasswordField.svelte';
+  import { enhance } from '$app/forms';
+  let { data, form } = $props();
 </script>
 
 <svelte:head><title>Dashboard saya · Ruang Tryout</title></svelte:head>
@@ -8,6 +10,21 @@
   <p class="eyebrow">RUANG BELAJARMU</p>
   <h1>Halo, {data.name}.</h1>
   <p class="muted">Persiapan dimulai dari langkah yang terarah.</p>
+  {#if form?.passwordSuccess}<p class="notice success" role="status">{form.passwordSuccess}</p>{/if}
+  {#if form?.passwordError}<p class="notice error" role="alert">{form.passwordError}</p>{/if}
+  {#if !data.hasPassword}<section class="participant-card">
+      <h2>Masuk juga dengan email dan password</h2>
+      <p>
+        Akun Anda belum memiliki password. Buat password untuk email akun ini; login Google tetap
+        tersedia.
+      </p>
+      <form method="POST" action="?/setPassword" use:enhance class="stack">
+        <PasswordField />
+        <PasswordField label="Konfirmasi password" name="confirmation" />
+        <p class="muted">Gunakan 12–128 karakter.</p>
+        <button class="button">Buat password</button>
+      </form>
+    </section>{/if}
   {#if data.history.length}<section class="participant-card">
       <h2>Latihan saya</h2>
       {#each data.history as entry}<p>

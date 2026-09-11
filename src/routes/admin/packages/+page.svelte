@@ -104,7 +104,23 @@
           <input type="hidden" name="id" value={p.id} /><button class="button secondary"
             >Terbitkan latihan gratis</button
           >
-        </form>{:else}<a href={'/paket/' + p.id}>Buka detail paket →</a>{/if}
+        </form>{:else if p.status === 'published'}<a href={'/paket/' + p.id}>Buka detail paket →</a
+        >{/if}
+      {#if p.status !== 'archived'}<details>
+          <summary>Arsipkan paket</summary>
+          <p>
+            Paket akan hilang dari katalog dan tidak menerima peserta baru. Sesi yang sudah dimulai
+            serta hasil tetap tersedia. Untuk menerbitkan lagi, buat edisi baru.
+          </p>
+          <form method="POST" action="?/archive" use:enhance class="stack">
+            <input type="hidden" name="id" value={p.id} />
+            <label
+              >Alasan arsip<textarea name="reason" required minlength="10" maxlength="500"
+              ></textarea></label
+            >
+            <button class="button secondary">Arsipkan paket ini</button>
+          </form>
+        </details>{/if}
     </article>{:else}<p>Belum ada paket.</p>{/each}
 </section>
 

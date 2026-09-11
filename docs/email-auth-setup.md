@@ -15,3 +15,8 @@ Atur SMTP_HOST, SMTP_PORT (587 untuk STARTTLS atau 465 TLS), SMTP_USER, SMTP_PAS
 Reset password memakai token Better Auth dan mencabut sesi lama setelah sukses. Form reset menolak konfirmasi berbeda; backend menegakkan panjang password dan validitas token. Permintaan reset/resend menampilkan pesan generik agar tidak mengungkap keberadaan email. Tidak ada penggabungan akun custom; perilaku penautan mengikuti Better Auth dan tetap perlu uji akun Google dengan email yang sama sebelum rilis.
 
 Sumber API: [Better Auth email/password](https://better-auth.com/docs/authentication/email-password).
+## Password dan akun Google
+
+Centang **Tampilkan password** tersedia pada kolom password dan konfirmasi. Setelah pendaftaran diproses, gunakan **Lanjut ke login**. Akun email baru boleh login sebelum verifikasi; memulai ujian tetap membutuhkan email terverifikasi.
+
+Mendaftar ulang dengan email yang sudah digunakan Google tidak membuat password. Masuk dengan Google, buka dashboard lalu isi **Buat password**. Jika sesi sudah terlalu lama, keluar dan login Google kembali. Pengaturan ini memakai Better Auth dan tidak mengganti password yang sudah ada; gunakan pemulihan untuk password yang terlupa.

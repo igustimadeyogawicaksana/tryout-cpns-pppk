@@ -4,7 +4,13 @@ import { readFileSync } from 'node:fs';
 import { openDatabase, migrateDatabase } from '../src/lib/server/database';
 import { examService } from '../src/lib/server/exam-service';
 import { questionService } from '../src/lib/server/question-service';
-import { user, questionVersions, examPackages, examAttempts } from '../src/lib/server/schema';
+import {
+  user,
+  questionVersions,
+  examPackages,
+  examAttempts,
+  auditLog
+} from '../src/lib/server/schema';
 import { subtests, parseBatch } from '../src/lib/question-input';
 import { eq } from 'drizzle-orm';
 function fixture() {
@@ -45,6 +51,33 @@ function fixture() {
   };
   return { db, sqlite, svc, qs, input, versions, setTime: (n: number) => (time = n) };
 }
+test('archiving hides packages and blocks new starts without removing sessions or results', () => {
+  const f = fixture();
+  try {
+    const p = f.svc.create(f.input, 'admin');
+    f.svc.publish(p, 'admin');
+    const attempt = f.svc.start(p, 'student');
+    assert.throws(() => f.svc.archive(p, 'admin', 'short'));
+    assert.equal(f.svc.list().length, 1);
+    f.svc.archive(p, 'admin', 'Edisi latihan sudah ditutup');
+    f.svc.archive(p, 'admin', 'Edisi latihan sudah ditutup');
+    assert.equal(f.svc.list().length, 0);
+    assert.equal(f.svc.list(true)[0].status, 'archived');
+    assert.throws(() => f.svc.details(p));
+    assert.throws(() => f.svc.start(p, 'other'));
+    assert.throws(() => f.svc.publish(p, 'admin'));
+    const view = f.svc.view(attempt, 'student');
+    f.svc.save(attempt, 'student', view.items[0].id, view.items[0].options[0].id, 1);
+    f.svc.submit(attempt, 'student');
+    assert.equal(f.svc.history('student')[0].attempt.status, 'scored');
+    assert.equal(
+      f.db.select().from(auditLog).where(eq(auditLog.action, 'package.archive')).all().length,
+      1
+    );
+  } finally {
+    f.sqlite.close();
+  }
+});
 test('packages enforce quotas and immutable delivery; retries, ownership and grading', () => {
   const f = fixture();
   try {

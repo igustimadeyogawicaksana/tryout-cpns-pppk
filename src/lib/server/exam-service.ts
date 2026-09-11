@@ -217,6 +217,29 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
         { behavior: 'immediate' }
       );
     },
+    archive(id: string, actor: string, reason: string) {
+      const note = reason.trim();
+      if (note.length < 10 || note.length > 500)
+        throw new DomainError('Isi alasan arsip sepanjang 10–500 karakter.');
+      db.transaction(
+        () => {
+          const p = getPackage(id);
+          if (p.status === 'archived') return;
+          db.update(examPackages).set({ status: 'archived' }).where(eq(examPackages.id, id)).run();
+          db.insert(auditLog)
+            .values({
+              id: randomUUID(),
+              actorId: actor,
+              action: 'package.archive',
+              entityId: id,
+              note,
+              createdAt: now()
+            })
+            .run();
+        },
+        { behavior: 'immediate' }
+      );
+    },
     start(id: string, actor: string) {
       const participant = db.select().from(user).where(eq(user.id, actor)).get();
       if (!participant) throw new DomainError('Silakan login.', 401);

@@ -1,5 +1,21 @@
 # Development log
 
+## 2026-09-11 — CONTENT-003: arsip paket
+
+Pengelola dapat mengarsipkan draft/paket terbit dengan alasan wajib yang dicatat dalam audit. Paket hilang dari katalog dan menolak sesi baru; sesi yang sudah dimulai tetap dapat dilanjutkan dari dashboard dan hasil lama tetap dapat dibaca. Arsip berulang tidak menggandakan audit. Paket arsip tidak dapat diterbitkan kembali; buat edisi baru bila diperlukan.
+
+Ditambahkan pengujian transaksi untuk arsip, pelestarian sesi/hasil dan audit serta uji HTTP otorisasi admin dan detail publik. Pengujian login berurutan diberi jeda agar tidak melampaui throttle Better Auth; konfigurasi perlindungan produksi tidak diubah.
+
+Verifikasi gabungan: 10 tes unit lulus; svelte-check 0 error/0 warning; build produksi berhasil. HTTP smoke lulus untuk signup/login sebelum verifikasi, verifikasi/reset, tambah password fixture Google dan login email, proteksi overwrite/CSRF, bank soal API, sesi/hasil dan arsip paket. Tidak mengubah password akun pengguna nyata; pengiriman SMTP nyata dan pengujian lintas perangkat tetap belum lengkap.
+
+## 2026-09-11 — AUTH-003: kejelasan daftar/login dan password akun Google
+
+Ditambahkan centang Tampilkan password pada login, pendaftaran, konfirmasi dan pengaturan password. Notifikasi pendaftaran membawa tombol Lanjut ke login dan digulir ke tampilan setelah respons. Pesan membedakan email baru dari kemungkinan akun lama tanpa mengklaim bahwa pendaftaran ulang mengganti password.
+
+Pemeriksaan akun lokal tanpa mencetak identitas/rahasia menemukan akun Google tanpa credential password. Dashboard sekarang menyediakan pembuatan password melalui Better Auth setPassword untuk pengguna terverifikasi dengan sesi yang memenuhi pemeriksaan keamanan Better Auth. Password yang sudah ada tidak dapat ditimpa melalui action ini. Pengguna menentukan password sendiri; tidak ada password akun nyata diubah oleh agen.
+
+Tes HTTP diperluas untuk login akun email sebelum verifikasi serta fixture akun Google yang menambahkan password, login email, penolakan overwrite, anonim, CSRF dan konfirmasi berbeda. Pengiriman email produksi tetap memerlukan SMTP.
+
 ## 2026-09-11 — CONTENT-003, EXAM-001, RESULT-001: alur latihan gratis
 
 Admin dapat menyusun draft paket dari soal terbit dengan kuota per subtes, jenis CPNS/PPPK dan formasi; publikasi membuka katalog/detail peserta. Isi paket disalin saat dibuat. Peserta terverifikasi dapat mulai/lanjut satu sesi, menyimpan jawaban dengan revision guard, menyelesaikan ujian dan membaca skor/pembahasan. Dashboard menampilkan nama di atas serta riwayat sebenarnya. Navigasi pengelola membedakan bank soal dan paket.

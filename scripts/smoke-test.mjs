@@ -116,6 +116,8 @@ try {
   });
   assert.equal(anonymousPost.status, 303);
   const login = async (email) => {
+    // Keep sequential fixtures below Better Auth's sign-in endpoint throttle.
+    await new Promise((resolve) => setTimeout(resolve, 11000));
     const response = await fetch(origin + '/api/auth/sign-in/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Origin: origin },
@@ -233,6 +235,8 @@ try {
   });
   assert.equal(publicSignup.status, 200, await publicSignup.clone().text());
   assert.ok(!publicSignup.headers.get('set-cookie')?.includes('session_token'));
+  // New email/password accounts can login before verification (exam start remains gated).
+  await login('new@smoke.test');
   const emails = () =>
     readdirSync(env.AUTH_MAIL_TEST_DIR).map((f) =>
       JSON.parse(readFileSync(join(env.AUTH_MAIL_TEST_DIR, f), 'utf8'))
@@ -286,6 +290,49 @@ try {
     actor: env.QUESTIONS_API_USER_ID
   });
   await testExamHttp({ origin, cookie, participantCookie, databasePath: env.DATABASE_PATH });
+  // Simulate a Google-only account in the disposable fixture, retaining its fresh authenticated session.
+  const authFixture = new Database(env.DATABASE_PATH);
+  const participantId = authFixture
+    .prepare("SELECT id FROM user WHERE email = 'participant@smoke.test'")
+    .get().id;
+  authFixture
+    .prepare(
+      "UPDATE account SET provider_id = 'google', password = NULL WHERE user_id = ? AND provider_id = 'credential'"
+    )
+    .run(participantId);
+  const setPassword = (fields, sessionCookie = participantCookie, requestOrigin = origin) =>
+    fetch(origin + '/dashboard?/setPassword', {
+      method: 'POST',
+      redirect: 'manual',
+      headers: { Cookie: sessionCookie, Origin: requestOrigin, Accept: 'text/html' },
+      body: new URLSearchParams(fields)
+    });
+  assert.equal((await setPassword({ password, confirmation: password }, '')).status, 303);
+  assert.equal(
+    (
+      await setPassword(
+        { password, confirmation: password },
+        participantCookie,
+        'https://attacker.invalid'
+      )
+    ).status,
+    403
+  );
+  assert.equal((await setPassword({ password, confirmation: 'different' })).status, 400);
+  assert.equal((await setPassword({ password, confirmation: password })).status, 200);
+  await login('participant@smoke.test');
+  assert.equal(
+    authFixture.prepare('SELECT count(*) AS n FROM account WHERE user_id = ?').get(participantId).n,
+    2
+  );
+  assert.equal(
+    (await setPassword({ password: password + 'new', confirmation: password + 'new' })).status,
+    400
+  );
+  authFixture.close();
+  console.log(
+    'Password setup: fresh authenticated Google-only fixture can add email login; duplicate overwrite, anonymous access, CSRF and mismatch rejected.'
+  );
   console.log('HTTP smoke: authentication, question API and participant exams passed.');
 } finally {
   if (server && server.exitCode === null) {

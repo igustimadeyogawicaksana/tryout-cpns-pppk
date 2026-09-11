@@ -13,7 +13,7 @@
 
 - Semua paket pada alur ini adalah latihan gratis. Tidak ada checkout atau aktivasi hak akses berbayar; skema payment tetap persiapan terpisah.
 - Satu akun mempunyai satu sesi per edisi paket. Membuka kembali paket melanjutkan sesi atau membuka hasil yang sudah selesai. Belum ada retake atau ranking kompetitif.
-- Isi, urutan, opsi dan nilai disalin saat draft paket dibuat. Perubahan bank soal tidak mengubah paket/sesi lama. Untuk koreksi paket, buat edisi baru; pengarsipan paket belum tersedia di UI.
+- Isi, urutan, opsi dan nilai disalin saat draft paket dibuat. Perubahan bank soal tidak mengubah paket/sesi lama. Untuk koreksi paket, buat edisi baru; arsip paket tersedia di admin dengan alasan wajib. Arsip menutup sesi baru dan katalog, sedangkan sesi/hasil lama tetap tersedia dari dashboard.
 - Jumlah soal dan durasi diatur pengelola. Batas teknis saat ini 200 soal dan 240 menit; ini bukan pernyataan jumlah/durasi resmi CPNS atau PPPK. Target 2027 tidak otomatis berarti kurikulumnya telah disahkan atau diverifikasi.
 - Server memegang deadline dan skor. Refresh tidak menambah waktu. Jawaban yang baru diterima setelah deadline ditolak. Worker memeriksa maksimum 100 sesi kedaluwarsa setiap 15 detik; membuka sesi juga memeriksa deadline. Saat aplikasi mati, penilaian dilanjutkan setelah server hidup, memakai jawaban tersimpan dan deadline semula.
 - Browser tidak menerima kunci, nilai opsi atau pembahasan sebelum sesi selesai. Akses sesi dibatasi pemilik. Penyimpanan memakai nomor revisi untuk mencegah tab lain menimpa jawaban tanpa diketahui.

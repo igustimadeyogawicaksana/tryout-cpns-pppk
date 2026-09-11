@@ -81,6 +81,14 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
     const historyHtml = await history.text();
     assert.match(historyHtml, /HTTP practice package/);
     assert.ok(!historyHtml.includes('Belum ada riwayat ujian'));
+    const archive = { id: packageId, reason: 'Edisi pengujian sudah ditutup' };
+    assert.equal((await post('/admin/packages?/archive', archive, participantCookie)).status, 403);
+    assert.equal((await post('/admin/packages?/archive', archive)).status, 200);
+    assert.equal((await fetch(origin + '/paket/' + packageId)).status, 404);
+    assert.equal(
+      (await fetch(origin + attemptPath, { headers: { Cookie: participantCookie } })).status,
+      200
+    );
     console.log(
       'Exam HTTP: admin package publishing, participant start/resume, ownership, hidden keys, save/revision/CSRF, submit retry and dashboard history passed.'
     );

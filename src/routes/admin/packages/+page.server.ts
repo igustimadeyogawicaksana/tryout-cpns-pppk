@@ -10,19 +10,27 @@ export const load: PageServerLoad = ({ locals }) => {
   const s = examService(db);
   return {
     packages: s.list(true),
-    questions: s
-      .publishedQuestions()
-      .map((q) => ({
-        id: q.id,
-        code: q.content.external_key,
-        subtest: q.subtestCode,
-        type: q.examType,
-        formation: q.content.formation_code,
-        prompt: q.content.prompt_md
-      }))
+    questions: s.publishedQuestions().map((q) => ({
+      id: q.id,
+      code: q.content.external_key,
+      subtest: q.subtestCode,
+      type: q.examType,
+      formation: q.content.formation_code,
+      prompt: q.content.prompt_md
+    }))
   };
 };
 export const actions: Actions = {
+  archive: async ({ locals, request }) => {
+    const actor = requireAdmin(locals);
+    const fields = await request.formData();
+    try {
+      examService(db).archive(String(fields.get('id')), actor, String(fields.get('reason') || ''));
+      return { success: 'Paket diarsipkan. Sesi dan hasil peserta tetap tersedia dari dashboard.' };
+    } catch (e) {
+      return actionError(e);
+    }
+  },
   create: async ({ locals, request }) => {
     const actor = requireAdmin(locals);
     const f = await request.formData();

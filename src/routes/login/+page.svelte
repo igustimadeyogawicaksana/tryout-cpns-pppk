@@ -1,6 +1,8 @@
 <script lang="ts">
   import { authClient } from '$lib/auth-client';
   import GoogleLogo from '$lib/GoogleLogo.svelte';
+  import PasswordField from '$lib/PasswordField.svelte';
+  import { tick } from 'svelte';
   let { data } = $props();
   let email = $state(''),
     password = $state(''),
@@ -35,7 +37,11 @@
     try {
       if (data.mode === 'login') {
         const result = await authClient.signIn.email({ email, password });
-        if (result.error) error = 'Email atau password tidak cocok, atau percobaan terlalu sering.';
+        if (result.error)
+          error =
+            result.error.status === 429
+              ? 'Terlalu banyak percobaan. Tunggu satu menit lalu coba lagi.'
+              : 'Email atau password belum cocok. Jika sebelumnya memakai Google, masuk dengan Google lalu pilih Buat password di dashboard. Jika lupa password, gunakan tautan pemulihan.';
         else window.location.href = '/account';
       } else if (data.mode === 'register') {
         const result = await authClient.signUp.email({
@@ -48,7 +54,7 @@
           error = 'Pendaftaran belum berhasil. Periksa data atau coba kembali nanti.';
         else {
           message =
-            'Jika alamat ini dapat didaftarkan, tautan verifikasi sudah disiapkan. Periksa email, lalu masuk ke akun. Jika sudah memiliki akun, gunakan login atau lupa password.';
+            'Permintaan pendaftaran berhasil diproses. Untuk email baru, akun dan password sudah dibuat; silakan masuk. Jika email ini sudah terdaftar, password lama tetap berlaku. Akun Google perlu membuat password dari dashboard setelah masuk dengan Google.';
           password = '';
           confirmation = '';
         }
@@ -74,6 +80,10 @@
       error = 'Koneksi terganggu atau email belum dapat dikirim. Coba kembali nanti.';
     } finally {
       busy = false;
+      await tick();
+      document
+        .getElementById('auth-feedback')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
   async function googleLogin() {
@@ -116,8 +126,13 @@
       {#if data.oauthError || data.invalidLink}<p class="notice error" role="alert">
           Tautan atau proses login belum berhasil. Silakan coba lagi.
         </p>{/if}
-      {#if error}<p class="notice error" role="alert">{error}</p>{/if}
-      {#if message}<p class="notice success" role="status">{message}</p>{/if}
+      {#if error}<p id="auth-feedback" class="notice error" role="alert">{error}</p>{/if}
+      {#if message}<div id="auth-feedback" class="notice success" role="status">
+          <p>{message}</p>
+          {#if data.mode === 'register' || data.mode === 'reset'}<a class="button" href="/login"
+              >Lanjut ke login</a
+            >{/if}
+        </div>{/if}
       {#if ['login', 'register'].includes(data.mode)}
         <button
           class="button secondary full google"
@@ -131,8 +146,8 @@
           Layanan email belum diaktifkan oleh pengelola.
         </p>{/if}
       {#if data.mode !== 'login' && data.localMail}<p class="notice">
-          Mode pengujian lokal: pesan tersimpan di folder privat .local/mail dan belum dikirim ke
-          kotak masuk.
+          Mode pengujian lokal: email belum dikirim ke kotak masuk. Akun baru tetap bisa login;
+          verifikasi diperlukan sebelum mulai ujian.
         </p>{/if}
       <form onsubmit={submit} class="stack">
         {#if data.mode === 'register'}<label
@@ -147,27 +162,21 @@
               maxlength="254"
             /></label
           >{/if}
-        {#if ['login', 'register', 'reset'].includes(data.mode)}<label
-            >Password<input
-              type="password"
-              autocomplete={data.mode === 'login' ? 'current-password' : 'new-password'}
-              bind:value={password}
-              required
-              minlength={data.mode === 'login' ? undefined : 12}
-              maxlength="128"
-            /></label
-          >{/if}
-        {#if ['register', 'reset'].includes(data.mode)}<p class="muted">Gunakan 12–128 karakter.</p>
-          <label
-            >Konfirmasi password<input
-              type="password"
-              autocomplete="new-password"
-              bind:value={confirmation}
-              required
-              minlength="12"
-              maxlength="128"
-            /></label
-          >{/if}
+        {#if ['login', 'register', 'reset'].includes(data.mode)}
+          <PasswordField
+            bind:value={password}
+            autocomplete={data.mode === 'login' ? 'current-password' : 'new-password'}
+            minlength={data.mode === 'login' ? 1 : 12}
+          />
+        {/if}
+        {#if ['register', 'reset'].includes(data.mode)}
+          <p class="muted">Gunakan 12–128 karakter.</p>
+          <PasswordField
+            bind:value={confirmation}
+            label="Konfirmasi password"
+            name="confirmation"
+          />
+        {/if}
         <button
           class="button"
           disabled={busy ||
