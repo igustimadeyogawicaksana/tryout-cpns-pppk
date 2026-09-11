@@ -15,7 +15,7 @@ Terakhir diperbarui: 2026-09-11. P0 = sebelum implementasi terkait; P1 = MVP; P2
 | DATA-002 | P1 | Uji kapasitas SQLite | Done — baseline lokal | APP-001, EXAM-001, RANK-001, DISC-001 | 50/100/300/500 × 110 autosave lulus target direct-service lokal, nol error dan integrity ok. Stall awal didiagnosis sebagai Windows sleep, bukan deadlock SQLite; kapasitas produksi menunggu validasi HTTP/VPS |
 | DEC-001 | P0 | Lengkapi keputusan stack MVP | Done | PLAN-004 | Implementasi memakai SvelteKit/TypeScript/Node/Drizzle, SQLite, Better Auth; Dokploy/R2 tetap target hosting/backup |
 | PROD-001 | P0 | Rapikan aturan ujian dan scope MVP | In progress | — | docs/exam-rules-baseline.md memverifikasi SKD acuan 2024 110 soal/100 menit dan skor, SKB CAT 80/100 soal 90 menit; konflik trial/ranking selesai; aturan SKB per jabatan dan resmi 2027 belum lengkap; dampak EXAM/CONTENT/RESULT dicatat sebelum implementasi |
-| PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Todo | — | Aturan pembelian/ulang/trial/refund tertulis dan dapat diuji |
+| PROD-002 | P0 | Nama, harga, masa akses dan percobaan | Done | — | Pedoman produk, akses, percobaan, pembayaran manual, kedaluwarsa, refund dan disclaimer tersedia di docs/product-and-access-policy.md |
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
 | APP-001 | P1 | Setup aplikasi dan lingkungan | Done | DEC-001 | Setup lokal, migrasi SQLite, typecheck/build dan HTTP smoke lolos; secret/data lokal diabaikan Git |
 | USER-001 | P1 | Beranda, katalog dan dashboard peserta | Done | APP-001 | Halaman publik, filter CPNS/PPPK, dashboard terlindungi dan redirect berdasarkan peran; paket/hasil masih kondisi kosong |
@@ -36,7 +36,7 @@ Terakhir diperbarui: 2026-09-11. P0 = sebelum implementasi terkait; P1 = MVP; P2
 | RANK-002 | P1 | Koreksi penilaian dan finalisasi ranking | Todo | RANK-001 | Revisi diaudit, cohort tidak mencampur aturan, hasil dan generasi ranking konsisten |
 | RESULT-001 | P1 | Hasil dan pembahasan dasar | In progress | EXAM-001, PROD-001 | Hasil/subskor dan pembahasan latihan gratis tersedia hanya sesudah selesai; integrasi hak akses berbayar belum |
 | OPS-001 | P1 | Backup, pemulihan dan pemantauan | Todo | APP-001, DATA-001 | Restore diuji; pantau gagal simpan, pembayaran tertunda dan penggunaan kuota |
-| LEGAL-001 | P1 | Ketentuan produk dan legalitas | Todo | PROD-002, PAY-001 | Tinjau NIB/kewajiban usaha, privasi, refund, hak konten dan disclaimer sebelum rilis |
+| LEGAL-001 | P1 | Ketentuan produk dan legalitas | In progress | PROD-002, PAY-001 | Checklist syarat penggunaan, privasi, refund, hak konten, disclaimer dan keamanan tersedia; tinjauan hukum serta publikasi halaman legal masih tersisa |
 | QA-001 | P1 | Uji alur ujung ke ujung | Todo | PAY-003, EXAM-001, RESULT-001, CONTENT-002, RANK-002 | Input-publish-bayar-ujian-ranking lolos; uji seri, retake, opt-out, gangguan jaringan, double submit dan akses ilegal |
 | RELEASE-001 | P1 | Persiapan peluncuran | Todo | QA-001, DATA-002, OPS-001, OPS-004, LEGAL-001 | Uji kapasitas dan restore lolos; checklist rilis dan biaya ditinjau |
 | NEXT-001 | P2 | Grafik progres dan komunitas | Todo | RELEASE-001 | Prioritas berdasarkan umpan balik; ranking dasar sudah masuk MVP |

@@ -227,6 +227,10 @@ Ditambahkan service pembayaran manual untuk membuat order idempoten, menerima re
 
 Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
 
+## 2026-09-11 — PROD-002 dan LEGAL-001, pedoman produk
+
+Pedoman produk dan akses ditulis di `docs/product-and-access-policy.md`, mencakup paket gratis/berbayar/kompetisi, retake, masa akses, pembayaran manual, order kedaluwarsa, refund, serta disclaimer hasil. Checklist legal dan privasi ditulis di `docs/legal-and-privacy-checklist.md`; publikasi halaman legal dan tinjauan hukum masih tersisa.
+
 ## 2026-09-11 — PAY-003, produk berbayar admin
 
 Ditambahkan halaman admin `/admin/products` untuk membuat produk aktif, menetapkan harga dan masa akses, serta menghubungkannya ke paket tryout terbit. Produk ini menjadi sumber order manual dan pemeriksaan grant akses paket.
