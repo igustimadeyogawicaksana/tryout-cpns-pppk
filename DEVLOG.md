@@ -220,3 +220,9 @@ Paket percobaan `Coba Fitur Jawab Soal` beserta versi soal sintetis `TRY-UI-*`, 
 ## 2026-09-11 — PAY-002, pembayaran manual MVP
 
 Alur pembayaran manual dipilih untuk MVP: transfer bank atau QRIS diverifikasi pengelola sebelum akses dibuka. Status order, payment, event, grant akses, refund, idempotensi, dan jalur migrasi ke gateway otomatis dicatat di `docs/manual-payment-flow.md`. Skema tabel gateway yang sudah ada tetap menjadi kontrak data; UI checkout dan verifikasi admin menjadi pekerjaan PAY-003.
+
+## 2026-09-11 — PAY-003, service dan endpoint pembayaran manual
+
+Ditambahkan service pembayaran manual untuk membuat order idempoten, menerima referensi bukti, memproses review admin, mengubah status order/payment/event, dan membuat grant akses setelah disetujui. Endpoint `POST/PUT /api/payments/manual` memakai kontrak tabel gateway yang sama sehingga provider otomatis dapat ditambahkan kemudian. UI checkout/admin dan uji HTTP masih menjadi pekerjaan lanjutan.
+
+Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
