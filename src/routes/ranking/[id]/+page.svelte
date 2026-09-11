@@ -1,11 +1,28 @@
 <script lang="ts">
   import ParticipantShell from '$lib/ParticipantShell.svelte';
+  import { provinces } from '$lib/provinces';
   let { data } = $props();
+  const pageLink = (page: number | null) =>
+    '?page=' + page + '&province=' + encodeURIComponent(data.province);
 </script>
 
 <svelte:head><title>Ranking paket · Ruang Tryout</title></svelte:head>
 <ParticipantShell user={data.user} isAdmin={data.isAdmin}>
   <h1>Ranking paket</h1>
+  <form method="GET" class="participant-card stack">
+    <label
+      >Wilayah<select name="province" value={data.province}
+        ><option value="">Semua provinsi</option>{#each provinces as p}<option value={p.id}
+            >{p.name}</option
+          >{/each}</select
+      ></label
+    >
+    <button class="button secondary">Tampilkan ranking</button>
+  </form>
+  <p>
+    Provinsi berdasarkan profil saat mulai kompetisi, bukan lokasi terverifikasi. Peringkat dihitung
+    di wilayah yang dipilih.
+  </p>
   <p>
     Skor total tertinggi; nilai sama mendapat peringkat sama. Hanya peserta platform yang bersedia
     tampil. Daftar ditampilkan 20 peserta per halaman.
@@ -19,7 +36,7 @@
   </p>
   {#if data.mine}<p class="notice">
       Posisi saya: {data.mine.rank} · Skor {data.mine.total}/{data.mine.maximum}
-      {#if data.minePage !== data.page}<a href={'?page=' + data.minePage}>Buka halaman saya</a>{/if}
+      {#if data.minePage !== data.page}<a href={pageLink(data.minePage)}>Buka halaman saya</a>{/if}
     </p>{/if}
   {#if data.visible}<form method="POST" action="?/hide">
       <button class="button secondary">Sembunyikan saya dari ranking</button>
@@ -32,10 +49,10 @@
       </li>{:else}<li>Belum ada hasil yang ditampilkan.</li>{/each}
   </ol>
   <nav class="pagination" aria-label="Halaman ranking">
-    {#if data.page > 1}<a class="button secondary" href={'?page=' + (data.page - 1)}>Sebelumnya</a
+    {#if data.page > 1}<a class="button secondary" href={pageLink(data.page - 1)}>Sebelumnya</a
       >{/if}
     <span>Halaman {data.page} dari {data.pages}</span>
-    {#if data.page < data.pages}<a class="button secondary" href={'?page=' + (data.page + 1)}
+    {#if data.page < data.pages}<a class="button secondary" href={pageLink(data.page + 1)}
         >Berikutnya</a
       >{/if}
   </nav>

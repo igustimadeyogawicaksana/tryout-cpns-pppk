@@ -11,6 +11,14 @@ export const user = sqliteTable('user', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull()
 });
+export const participantProfiles = sqliteTable('participant_profiles', {
+  userId: text('user_id')
+    .primaryKey()
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  province: text('province'),
+  updatedAt: integer('updated_at').notNull()
+});
 export const session = sqliteTable(
   'session',
   {
@@ -232,6 +240,7 @@ export const rankingMembers = sqliteTable(
       .notNull()
       .references(() => user.id),
     alias: text('alias').notNull(),
+    province: text('province'),
     visible: integer('visible', { mode: 'boolean' }).notNull().default(false)
   },
   (t) => [uniqueIndex('ranking_member_once').on(t.cohortId, t.userId)]

@@ -89,6 +89,15 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
       (await fetch(origin + attemptPath, { headers: { Cookie: participantCookie } })).status,
       200
     );
+    assert.equal((await post('/profil', { name: 'Tester', province: 'bali' }, '')).status, 303);
+    assert.equal(
+      (await post('/profil', { name: 'Tester', province: 'not-valid' }, participantCookie)).status,
+      400
+    );
+    assert.equal(
+      (await post('/profil', { name: 'Tester', province: 'bali' }, participantCookie)).status,
+      200
+    );
     const competitionDraft = await post('/admin/packages?/create', {
       ...fields,
       title: 'Competition fixture'
@@ -128,6 +137,15 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
     const board = await fetch(origin + rankingPath, { headers: { Cookie: participantCookie } });
     assert.equal(board.status, 200);
     assert.match(await board.text(), /PublicAlias/);
+    await post('/profil', { name: 'Tester', province: 'riau' }, participantCookie);
+    const regional = await fetch(origin + rankingPath + '?province=bali', {
+      headers: { Cookie: participantCookie }
+    });
+    assert.match(await regional.text(), /PublicAlias/);
+    const otherRegion = await fetch(origin + rankingPath + '?province=riau', {
+      headers: { Cookie: participantCookie }
+    });
+    assert.ok(!(await otherRegion.text()).includes('PublicAlias'));
     assert.equal((await post(rankingPath + '?/hide', {}, participantCookie)).status, 303);
     const hiddenBoard = await fetch(origin + rankingPath, {
       headers: { Cookie: participantCookie }

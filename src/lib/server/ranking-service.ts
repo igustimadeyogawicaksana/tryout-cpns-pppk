@@ -7,10 +7,12 @@ import {
   examPackages,
   examAttempts,
   adminUsers,
-  auditLog
+  auditLog,
+  participantProfiles
 } from './schema';
 import { examService } from './exam-service';
 import { DomainError } from './question-service';
+import { validProvince } from '../provinces';
 
 export function rankingService(db: AppDatabase, now = Date.now) {
   const cohortFor = (packageId: string) =>
@@ -70,6 +72,12 @@ export function rankingService(db: AppDatabase, now = Date.now) {
                 cohortId: c.id,
                 userId: actor,
                 alias: alias.trim(),
+                province:
+                  db
+                    .select()
+                    .from(participantProfiles)
+                    .where(eq(participantProfiles.userId, actor))
+                    .get()?.province ?? null,
                 visible
               })
               .run();
@@ -87,7 +95,8 @@ export function rankingService(db: AppDatabase, now = Date.now) {
         .where(and(eq(rankingMembers.cohortId, c.id), eq(rankingMembers.userId, actor)))
         .run();
     },
-    board(packageId: string, actor: string, requestedPage = 1) {
+    board(packageId: string, actor: string, requestedPage = 1, province = '') {
+      if (!validProvince(province)) throw new DomainError('Provinsi tidak valid.');
       examService(db, now).expire();
       return db.transaction(() => {
         const c = cohortFor(packageId);
@@ -119,6 +128,7 @@ export function rankingService(db: AppDatabase, now = Date.now) {
             and(
               eq(rankingMembers.cohortId, c.id),
               eq(rankingMembers.visible, true),
+              province ? eq(rankingMembers.province, province) : undefined,
               eq(examAttempts.status, 'scored'),
               sql`NOT EXISTS (SELECT 1 FROM admin_users WHERE user_id = ${rankingMembers.userId})`
             )
@@ -153,6 +163,7 @@ export function rankingService(db: AppDatabase, now = Date.now) {
           pages,
           pageSize,
           minePage: mineIndex < 0 ? null : Math.floor(mineIndex / pageSize) + 1,
+          province,
           cohort: c,
           count: ranked.length,
           entries: ranked.slice((page - 1) * pageSize, page * pageSize),

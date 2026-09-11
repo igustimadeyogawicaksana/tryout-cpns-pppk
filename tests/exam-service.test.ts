@@ -5,6 +5,7 @@ import { openDatabase, migrateDatabase } from '../src/lib/server/database';
 import { examService } from '../src/lib/server/exam-service';
 import { questionService } from '../src/lib/server/question-service';
 import { rankingService } from '../src/lib/server/ranking-service';
+import { profileService } from '../src/lib/server/profile-service';
 import { adminUsers, rankingMembers } from '../src/lib/server/schema';
 import {
   user,
@@ -81,6 +82,12 @@ test('competition isolation, hidden review, tie ranking and immediate opt-out', 
     assert.throws(() => f.svc.start(p, 'student'));
     assert.throws(() => ranking.board(p, 'student'));
     const actors = ['student', 'other', 'third', 'fourth'];
+    const profiles = profileService(f.db);
+    profiles.save('student', 'Student', 'bali');
+    profiles.save('other', 'Other', 'bali');
+    profiles.save('third', 'Third', 'riau');
+    assert.throws(() => profiles.save('other', 'Changed', 'invalid-province'));
+    assert.equal(profiles.get('other').name, 'Other');
     for (const [index, actor] of actors.entries()) {
       const id = ranking.join(p, actor, 'Alias' + index, true);
       assert.equal(ranking.join(p, actor, 'Ignored', false), id);
@@ -98,6 +105,12 @@ test('competition isolation, hidden review, tie ranking and immediate opt-out', 
         .run();
     }
     const board = ranking.board(p, 'other');
+    profiles.save('other', 'Nama baru', 'riau');
+    assert.equal(ranking.board(p, 'other', 1, 'bali').mine?.rank, 2);
+    assert.equal(ranking.board(p, 'other', 1, 'riau').mine, null);
+    assert.equal(ranking.board(p, 'third', 1, 'riau').mine?.rank, 1);
+    assert.equal(ranking.board(p, 'other', 1, 'aceh').count, 0);
+    assert.throws(() => ranking.board(p, 'other', 1, 'invalid-province'));
     assert.deepEqual(
       board.entries.map((r) => r.rank),
       [1, 2, 2, 4]

@@ -19,6 +19,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | UX-001 | P1 | Wireframe alur inti | Todo | PROD-001, PROD-002, PAY-002 | Alur daftar-bayar-ujian-hasil dan admin nyaman di HP/tablet/desktop |
 | APP-001 | P1 | Setup aplikasi dan lingkungan | Done | DEC-001 | Setup lokal, migrasi SQLite, typecheck/build dan HTTP smoke lolos; secret/data lokal diabaikan Git |
 | USER-001 | P1 | Beranda, katalog dan dashboard peserta | Done | APP-001 | Halaman publik, filter CPNS/PPPK, dashboard terlindungi dan redirect berdasarkan peran; paket/hasil masih kondisi kosong |
+| USER-002 | P1 | Profil peserta | Done | AUTH-001 | Nama dan provinsi opsional, validasi server, identitas dari sesi; provinsi kompetisi dibekukan saat mulai |
 | AUTH-002 | P1 | Daftar/login Google Better Auth | In progress | AUTH-001 | Login/pendaftaran Google lokal berhasil dengan sesi peserta aktif; callback domain produksi dan lintas browser belum diuji |
 | AUTH-003 | P1 | Daftar email, verifikasi dan pemulihan password | In progress | AUTH-001 | Form, centang tampilkan password, notifikasi dan tambah password akun Google tersedia; outbox/uji HTTP tersedia; perlu SMTP nyata dan uji pengiriman produksi |
 | UX-002 | P1 | Validasi lintas perangkat/browser | In progress | USER-001 | Layout responsif dan katalog 320 px diperiksa di browser aplikasi; matriks Chrome/Edge/Firefox/Safari, tablet, landscape dan perangkat fisik masih perlu diuji |
@@ -31,7 +32,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PAY-003 | P1 | Checkout dan verifikasi pembayaran | Todo | AUTH-001, CONTENT-001, PAY-002 | Bayar valid membuka akses sekali; bukti palsu/duplikat/nominal salah tidak membuka akses; ada audit |
 | PAY-004 | P1 | Skema payment gateway | Done | DATA-001 | Produk, snapshot pesanan, payment attempt, event, grant dan refund tersedia di migrasi; constraint SQLite diuji; checkout/webhook/aktivasi akses belum diimplementasikan |
 | EXAM-001 | P1 | Mesin tryout | In progress | AUTH-001, CONTENT-003 | Latihan gratis: timer server, autosave/revision/retry, versi/urutan tetap, submit/timeout idempotent tersedia; uji beban dan perangkat/jaringan lanjutan belum |
-| RANK-001 | P1 | Ranking dasar umum dan provinsi | In progress | EXAM-001, RESULT-001 | Ranking umum per paket, satu sesi, seri, alias/opt-out dan posisi saya tersedia; pagination 20 baris tersedia; provinsi dan snapshot persisten belum |
+| RANK-001 | P1 | Ranking dasar umum dan provinsi | In progress | EXAM-001, RESULT-001 | Ranking umum per paket, satu sesi, seri, alias/opt-out dan posisi saya tersedia; pagination dan ranking provinsi dengan domisili beku tersedia; snapshot persisten belum |
 | RANK-002 | P1 | Koreksi penilaian dan finalisasi ranking | Todo | RANK-001 | Revisi diaudit, cohort tidak mencampur aturan, hasil dan generasi ranking konsisten |
 | RESULT-001 | P1 | Hasil dan pembahasan dasar | In progress | EXAM-001, PROD-001 | Hasil/subskor dan pembahasan latihan gratis tersedia hanya sesudah selesai; integrasi hak akses berbayar belum |
 | OPS-001 | P1 | Backup, pemulihan dan pemantauan | Todo | APP-001, DATA-001 | Restore diuji; pantau gagal simpan, pembayaran tertunda dan penggunaan kuota |

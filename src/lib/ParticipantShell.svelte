@@ -35,6 +35,8 @@
       {#if user}<a
           href="/dashboard"
           aria-current={page.url.pathname === '/dashboard' ? 'page' : undefined}>Dashboard</a
+        ><a href="/profil" aria-current={page.url.pathname === '/profil' ? 'page' : undefined}
+          >Profil</a
         >{/if}
     </nav>
     <div class="account-actions">

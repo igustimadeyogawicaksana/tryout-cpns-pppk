@@ -10,7 +10,8 @@ export const load: PageServerLoad = ({ locals, params, setHeaders, url }) => {
     return rankingService(db).board(
       params.id,
       locals.user.id,
-      Number(url.searchParams.get('page') || 1)
+      Number(url.searchParams.get('page') || 1),
+      url.searchParams.get('province') || ''
     );
   } catch (e) {
     if (e instanceof DomainError) error(e.status, e.message);

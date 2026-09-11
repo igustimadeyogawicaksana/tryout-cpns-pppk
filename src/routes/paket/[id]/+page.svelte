@@ -41,11 +41,12 @@
           /></label
         >
         <label
-          ><input style="width:auto" type="checkbox" name="visible" /> Saya bersedia alias dan skor tampil
-          dalam ranking paket ini.</label
+          ><input style="width:auto" type="checkbox" name="visible" /> Saya bersedia alias, skor dan provinsi
+          saat mulai tampil dalam ranking paket ini.</label
         >
         <p>
-          Jangan gunakan nama lengkap atau email. Persetujuan bisa dicabut dari halaman ranking.
+          Jangan gunakan nama lengkap atau email. Atur provinsi di menu Profil sebelum mulai.
+          Persetujuan bisa dicabut dari halaman ranking.
         </p>
         <a href={'/ranking/' + data.package.id}>Lihat ranking / sembunyikan alias</a>
       {/if}

@@ -1,5 +1,15 @@
 # Development log
 
+## 2026-09-11 — USER-002, RANK-001: profil dan ranking provinsi
+
+Menu Profil memungkinkan peserta mengubah nama tampilan dan provinsi opsional. Validasi server membatasi nama dan pilihan provinsi; identitas pemilik diambil dari sesi, bukan dari form. Migrasi 0004 menambahkan profil dan kolom provinsi pada anggota ranking. Saat bergabung, provinsi disalin secara atomik bersama pendaftaran; perubahan profil tidak mengubah sesi lama dan data lama tidak diisi mundur.
+
+Ranking dapat difilter menurut provinsi, dengan peringkat dihitung setelah filter dan sebelum pagination. Tautan pagination/halaman saya mempertahankan wilayah. Persetujuan bergabung menyebut alias, skor dan provinsi; peserta tanpa provinsi tetap masuk ranking umum jika opt-in. Daftar label mengacu wilayah pada tabel BPS; slug aplikasi bukan kode wilayah resmi. Provinsi tetap pernyataan peserta, bukan verifikasi lokasi.
+
+Tes ditambah untuk validasi profil, kegagalan tanpa perubahan parsial, provinsi beku, posisi lokal, wilayah kosong dan invalid, serta jalur HTTP profil dan filter. Migrasi lokal berhasil.
+
+Verifikasi: 11 tes unit lulus, svelte-check 0 error/0 warning, build produksi dan seluruh HTTP smoke lulus termasuk profil dan provinsi beku. Belum ada uji beban atau matriks browser/perangkat lengkap.
+
 ## 2026-09-11 — RANK-001: halaman ranking
 
 Ranking kini dapat dibuka per 20 peserta dengan tombol sebelumnya/berikutnya dan tautan halaman saya. Posisi dihitung sebelum pembagian halaman, sehingga seri di batas halaman tetap sama. Posisi sendiri tetap tersedia di semua halaman. Parameter halaman tidak valid dibatasi ke rentang yang tersedia. Pengujian ditambah memakai 23 peserta tampil, nilai seri lintas halaman, posisi sendiri dan parameter invalid. Perhitungan masih membaca seluruh hasil eligible; ini perbaikan navigasi, belum optimasi beban melalui snapshot persisten.
