@@ -16,7 +16,7 @@
         >Paket tryout</a
       >
       <a class:nav-active={page.url.pathname.startsWith('/admin/payments')} href="/admin/payments"
-        >Pembayaran</a
+        >Pembayaran{#if data.pendingPayments}<span class="nav-badge">{data.pendingPayments}</span>{/if}</a
       >
       <a class:nav-active={page.url.pathname.startsWith('/admin/products')} href="/admin/products"
         >Produk</a
@@ -56,3 +56,6 @@
     <footer class="workspace-footer">Ruang Tryout <span>Simulasi latihan independen</span></footer>
   </div>
 </div>
+<style>
+  .nav-badge { display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 5px; border-radius:99px; background:#d9544d; color:white; font-size:.72rem; font-weight:700; }
+</style>
