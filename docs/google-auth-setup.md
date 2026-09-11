@@ -6,6 +6,7 @@ Peserta memilih Lanjutkan dengan Google di /login. Pengunjung baru dibuatkan aku
 
 1. Buat OAuth client bertipe **Web application** di Google Cloud Console / Google Auth Platform. Lengkapi konfigurasi aplikasi dan audience. Saat aplikasi Google masih Testing, tambahkan akun yang akan menguji sebagai test user.
 2. Untuk lokal, Authorized JavaScript origin: `http://localhost:5173`. Authorized redirect URI: **`http://localhost:5173/api/auth/callback/google`**. Jangan mencampur localhost dengan 127.0.0.1.
+   Aplikasi mengalihkan tautan lokal `127.0.0.1` ke origin `BETTER_AUTH_URL` agar cookie state OAuth tidak terpisah antar-host.
 3. Isi GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET di `.env` lokal. BETTER_AUTH_URL dan ORIGIN harus sama dengan origin aplikasi. Restart server setelah mengubah konfigurasi. Client Secret tidak boleh ditempel di chat, masuk browser bundle atau GitHub.
 4. Untuk Dokploy, masukkan variabel melalui environment service. Tambahkan callback produksi `https://DOMAIN-ANDA/api/auth/callback/google` pada client Google dan gunakan origin HTTPS yang sama.
 5. Uji akun Google baru → dashboard, logout → login ulang akun sama, pembatalan OAuth → pesan gagal, dan penolakan akun peserta saat membuka /admin/questions.

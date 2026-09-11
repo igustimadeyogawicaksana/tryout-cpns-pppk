@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-11 — AUTH-002: perbaikan origin login Google lokal
+
+Login Google gagal ketika UI dibuka melalui `http://127.0.0.1:5173`, sedangkan `BETTER_AUTH_URL` dan callback Google memakai `http://localhost:5173`. Log menunjukkan POST social sign-in dari 127.0.0.1 mendapat 404; request yang sama pada localhost mendapat 200 dan URL tujuan `accounts.google.com`. Client ID/Secret tersedia tanpa dicetak.
+
+Hook server sekarang mengalihkan antar-host loopback ke origin Better Auth yang dikonfigurasi dengan status 307, mempertahankan path dan query. Ini mencegah OAuth dimulai pada cookie host 127.0.0.1 lalu kembali ke localhost. Perilaku hanya berlaku ketika host asal dan tujuan sama-sama localhost/127.0.0.1; domain produksi tidak diarahkan oleh aturan ini.
+
 ## 2026-09-11 — Koreksi diagnosis DATA-002: stall berasal dari sleep laptop
 
 Kesimpulan sementara “300 tidak selesai” diperiksa ulang. Event System Windows membuktikan laptop sleep pada 20:25:17–20:32:02 saat percobaan 300 pertama. Harness diperbarui untuk menampilkan fixture, pembuatan sesi, setiap blok 10 soal, halaman WAL dan fase submit. Ulangan 300 selesai sekitar 150 detik dengan p95 simpan 5,64 ms, p95 submit 20,45 ms, nol error dan integrity ok.

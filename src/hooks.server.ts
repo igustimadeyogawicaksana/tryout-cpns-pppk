@@ -6,9 +6,25 @@ import { building } from '$app/environment';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import type { Handle } from '@sveltejs/kit';
 import { startExamWorker } from '$lib/server/exam-worker';
+import { env } from '$env/dynamic/private';
 if (!building) startExamWorker();
 
 export const handle: Handle = async ({ event, resolve }) => {
+  // OAuth state cookies are bound to one host. During local development, keep
+  // 127.0.0.1 links on the configured Better Auth origin instead of letting a
+  // flow start on one host and return to the other.
+  if (!building && env.BETTER_AUTH_URL) {
+    const canonical = new URL(env.BETTER_AUTH_URL);
+    const localHosts = new Set(['localhost', '127.0.0.1']);
+    if (
+      localHosts.has(event.url.hostname) &&
+      localHosts.has(canonical.hostname) &&
+      event.url.origin !== canonical.origin
+    ) {
+      const destination = new URL(event.url.pathname + event.url.search, canonical);
+      return new Response(null, { status: 307, headers: { location: destination.toString() } });
+    }
+  }
   event.locals.user = null;
   event.locals.session = null;
   event.locals.isAdmin = false;
