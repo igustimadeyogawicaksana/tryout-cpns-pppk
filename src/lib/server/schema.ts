@@ -213,7 +213,6 @@ export const examAttempts = sqliteTable(
     finishedAt: integer('finished_at')
   },
   (t) => [
-    uniqueIndex('exam_attempt_once').on(t.packageId, t.userId),
     index('exam_attempt_deadline').on(t.status, t.deadlineAt),
     check('exam_attempt_status', sql`${t.status} IN ('in_progress','scored')`)
   ]

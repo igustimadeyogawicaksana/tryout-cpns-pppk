@@ -36,6 +36,13 @@
       "when": 1789112133284,
       "tag": "0004_deep_random",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1789133958541,
+      "tag": "0005_powerful_namor",
+      "breakpoints": true
     }
   ]
 }

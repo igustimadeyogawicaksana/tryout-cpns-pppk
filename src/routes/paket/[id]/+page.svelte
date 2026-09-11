@@ -18,8 +18,9 @@
         </li>{/each}
     </ul>
     <p>
-      Satu sesi per akun untuk edisi ini. Sesi dapat dilanjutkan dengan waktu yang tersisa. Waktu
-      mulai berjalan setelah tombol ditekan. {data.cohort
+      Setiap percobaan disimpan sebagai sesi terpisah. Sesi yang sedang berjalan dapat dilanjutkan;
+      setelah selesai, tombol ini membuat sesi baru agar latihan bisa diulang. Waktu mulai berjalan
+      setelah tombol ditekan. {data.cohort
         ? 'Pembahasan kompetisi tersedia setelah periode ditutup.'
         : 'Hasil dan pembahasan tersedia sesudah selesai; latihan ini tidak masuk ranking.'}
     </p>
@@ -51,7 +52,7 @@
         <a href={'/ranking/' + data.package.id}>Lihat ranking / sembunyikan alias</a>
       {/if}
       <button class="button"
-        >{data.user ? 'Mulai / lanjutkan latihan' : 'Login untuk mengerjakan'}</button
+        >{data.user ? 'Mulai / ulangi latihan' : 'Login untuk mengerjakan'}</button
       >
     </form>
   </section></ParticipantShell

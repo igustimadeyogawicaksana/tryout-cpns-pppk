@@ -1,0 +1,1 @@
+DROP INDEX `exam_attempt_once`;

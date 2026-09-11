@@ -77,7 +77,7 @@
       </p>{/if}
     {#if data.competitive}<a href={'/ranking/' + data.package.id}
         >Lihat ranking / pengaturan tampil</a
-      >{:else}<a href={'/paket/' + data.package.id}>Detail paket</a>{/if}
+      >{:else}<a class="button" href={'/paket/' + data.package.id}>Ulangi latihan</a>{/if}
     {#if data.reviewAvailable}{#each data.items as q}<section class="participant-card result">
           <h3>{q.position + 1}. {q.prompt}</h3>
           <ul>

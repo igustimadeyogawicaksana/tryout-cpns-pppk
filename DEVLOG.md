@@ -206,3 +206,9 @@ Verifikasi perubahan pagination: 11 tes unit lulus, svelte-check 0 error/0 warni
 Halaman menjawab soal disusun dengan pola yang familiar seperti CAT BKN: header timer dan status penyimpanan, panel pertanyaan, pilihan A–E berbentuk kartu, navigasi nomor soal, penanda soal terjawab, progress, tombol sebelumnya/berikutnya, serta konfirmasi sebelum mengakhiri ujian. Tampilan responsif untuk layar kecil.
 
 Identitas resmi BKN, logo, dan elemen merek tidak disalin; halaman tetap menggunakan identitas tryout sendiri. Logika timer berbasis server, autosave/revision, retry, dan submit tetap dipertahankan. Verifikasi: svelte-check tanpa error/warning, build produksi berhasil, dan 11 tes unit lulus.
+
+## 2026-09-11 — EXAM-002, ulangi latihan dan paket uji 20 soal
+
+Sesi yang sudah selesai kini dapat diulang dari halaman hasil. Setiap pengulangan membuat sesi baru, sementara sesi yang masih berjalan tetap dilanjutkan. Indeks unik satu sesi per pengguna dan paket dihapus melalui migrasi `0005_powerful_namor.sql`; riwayat sesi tetap tersimpan.
+
+Paket lokal `Coba Fitur Jawab Soal — 20 Soal` disiapkan untuk percobaan dengan 10 soal TIU dan 10 soal TKP sintetis. Konten ini hanya data uji, bukan soal resmi. Verifikasi: 11 tes unit lulus, svelte-check 0 error/0 warning, dan build produksi berhasil.

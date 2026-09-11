@@ -272,8 +272,9 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
             .select()
             .from(examAttempts)
             .where(and(eq(examAttempts.packageId, id), eq(examAttempts.userId, actor)))
+            .orderBy(desc(examAttempts.startedAt))
             .get();
-          if (old) return old.id;
+          if (old?.status === 'in_progress') return old.id;
           if (cohort && now() >= cohort.endsAt)
             throw new DomainError('Periode kompetisi sudah ditutup.', 409);
           const attemptId = randomUUID(),

@@ -242,7 +242,9 @@ test('deadline finalizes abandoned sessions and rejects late saves', () => {
       f.svc.save(id, 'student', view.items[0].id, view.items[0].options[0].id, 1)
     );
     f.svc.expire();
-    assert.equal(f.svc.start(p, 'student'), id);
+    const retryId = f.svc.start(p, 'student');
+    assert.notEqual(retryId, id);
+    assert.equal(f.svc.view(retryId, 'student').attempt.status, 'in_progress');
   } finally {
     f.sqlite.close();
   }
