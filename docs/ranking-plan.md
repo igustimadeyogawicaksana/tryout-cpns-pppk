@@ -1,6 +1,16 @@
 # Rancangan perankingan MVP
 
-Status: default rancangan produk, bukan aturan seleksi BKN; 2026-09-10. Fitur ranking dasar masuk lingkup MVP berdasarkan permintaan terbaru. Belum diimplementasikan.
+Status: rancangan produk, bukan aturan seleksi BKN. Implementasi awal ranking umum per paket tersedia sejak 2026-09-11; bagian di bawah adalah target lengkap dan belum seluruhnya selesai.
+
+## Implementasi awal yang tersedia
+
+Admin mengaktifkan kompetisi gratis pada paket terbit yang belum memiliki percobaan. Satu paket mempunyai satu periode dan kebijakan total-v1; tidak bisa mengonversi hasil latihan lama menjadi kompetisi. Waktu penutupan ditentukan saat aktivasi dan tidak bisa diubah. Sesi dibatasi deadline paket atau penutupan, mana yang lebih awal.
+
+Peserta terverifikasi memilih alias dan opt-in publikasi, lalu mulai satu sesi. Akun pengelola ditolak. Skor pribadi tersedia setelah submit, tetapi opsi bernilai dan pembahasan baru tersedia setelah penutupan. Ranking hanya bisa dibaca anggota periode atau admin. Ranking umum menggunakan total tertinggi, seri 1/2/2/4, 100 baris teratas dan posisi saya. Opt-out segera menghilangkan baris dan menghitung ulang posisi; tidak ada cache publik. Tidak ada perubahan persetujuan tanpa tindakan peserta.
+
+Tahap ini menghitung hasil tersimpan dalam satu transaksi baca SQLite pada setiap permintaan. Belum memakai generasi snapshot persisten, pembaruan 60 detik atau pagination. Karena itu masih untuk skala awal dan belum dinyatakan siap beban besar. Filter provinsi, invalidasi/koreksi hasil, status final dan retake belum tersedia; UI tetap memberi label sementara. Tidak ada gateway atau paket berbayar yang diaktifkan oleh fitur ini.
+
+Cara mencoba: pengelola membuka Paket tryout → Aktifkan ranking kompetitif pada edisi baru → tentukan waktu penutupan lengkap dengan zona waktu. Peserta membuka detail paket → mengisi alias/persetujuan → mengerjakan → membuka ranking dari hasil. Setelah opt-out, nama alias tidak dipublikasikan lagi pada periode tersebut.
 
 ## Siapa dibandingkan dengan siapa
 

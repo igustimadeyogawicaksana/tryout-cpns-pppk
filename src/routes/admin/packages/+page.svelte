@@ -94,6 +94,25 @@
       <h3>{p.title}</h3>
       <p>{p.examType} · {p.durationMinutes} menit · Target {p.targetYear} · {p.status}</p>
       <p>{p.reference}</p>
+      {#if p.status === 'published'}<details>
+          <summary>Aktifkan ranking kompetitif</summary>
+          <p>
+            Hanya untuk edisi baru yang belum pernah dikerjakan. Satu periode per paket. Penutupan
+            tidak dapat diubah; semua sesi berakhir paling lambat pada waktu tersebut.
+          </p>
+          <form method="POST" action="?/competition" use:enhance class="stack">
+            <input type="hidden" name="id" value={p.id} />
+            <label
+              >Waktu penutupan (ISO, sertakan zona waktu)<input
+                name="endsAt"
+                placeholder="2027-01-20T20:00:00+08:00"
+                required
+                pattern=".*(Z|[+-][0-9]{2}:[0-9]{2})"
+              /></label
+            >
+            <button class="button secondary">Aktifkan kompetisi gratis</button>
+          </form>
+        </details>{/if}
       <p>
         {Object.entries(p.quotas)
           .filter(([, v]) => v > 0)

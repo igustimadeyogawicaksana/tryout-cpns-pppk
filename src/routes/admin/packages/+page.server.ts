@@ -4,6 +4,7 @@ import { requireAdmin } from '$lib/server/access';
 import { examService } from '$lib/server/exam-service';
 import { actionError } from '$lib/server/form-utils';
 import { subtests } from '$lib/question-input';
+import { rankingService } from '$lib/server/ranking-service';
 import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = ({ locals }) => {
   requireAdmin(locals);
@@ -21,6 +22,16 @@ export const load: PageServerLoad = ({ locals }) => {
   };
 };
 export const actions: Actions = {
+  competition: async ({ locals, request }) => {
+    const actor = requireAdmin(locals);
+    const f = await request.formData();
+    try {
+      rankingService(db).create(String(f.get('id')), Date.parse(String(f.get('endsAt'))), actor);
+      return { success: 'Kompetisi diaktifkan. Pembahasan terbuka setelah penutupan.' };
+    } catch (e) {
+      return actionError(e);
+    }
+  },
   archive: async ({ locals, request }) => {
     const actor = requireAdmin(locals);
     const fields = await request.formData();

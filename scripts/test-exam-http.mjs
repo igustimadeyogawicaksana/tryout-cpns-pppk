@@ -89,6 +89,53 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
       (await fetch(origin + attemptPath, { headers: { Cookie: participantCookie } })).status,
       200
     );
+    const competitionDraft = await post('/admin/packages?/create', {
+      ...fields,
+      title: 'Competition fixture'
+    });
+    const competitionId = new URL(
+      competitionDraft.headers.get('location'),
+      origin
+    ).searchParams.get('created');
+    await post('/admin/packages?/publish', { id: competitionId });
+    const competitionFields = {
+      id: competitionId,
+      endsAt: new Date(Date.now() + 600000).toISOString()
+    };
+    assert.equal(
+      (await post('/admin/packages?/competition', competitionFields, participantCookie)).status,
+      403
+    );
+    assert.equal((await post('/admin/packages?/competition', competitionFields)).status, 200);
+    const rankingPath = '/ranking/' + competitionId;
+    assert.equal((await fetch(origin + rankingPath, { redirect: 'manual' })).status, 303);
+    assert.equal(
+      (await fetch(origin + rankingPath, { headers: { Cookie: participantCookie } })).status,
+      403
+    );
+    const joined = await post(
+      '/paket/' + competitionId,
+      { alias: 'PublicAlias', visible: 'on' },
+      participantCookie
+    );
+    assert.equal(joined.status, 303, await joined.clone().text());
+    const competitionAttempt = joined.headers.get('location');
+    assert.equal((await post(competitionAttempt, {}, participantCookie)).status, 303);
+    const hiddenReview = await fetch(origin + competitionAttempt, {
+      headers: { Cookie: participantCookie }
+    });
+    assert.ok(!(await hiddenReview.text()).includes(content.explanation_md));
+    const board = await fetch(origin + rankingPath, { headers: { Cookie: participantCookie } });
+    assert.equal(board.status, 200);
+    assert.match(await board.text(), /PublicAlias/);
+    assert.equal((await post(rankingPath + '?/hide', {}, participantCookie)).status, 303);
+    const hiddenBoard = await fetch(origin + rankingPath, {
+      headers: { Cookie: participantCookie }
+    });
+    assert.ok(!(await hiddenBoard.text()).includes('PublicAlias'));
+    console.log(
+      'Ranking HTTP: admin activation, member-only access, alias consent, sealed review and immediate opt-out passed.'
+    );
     console.log(
       'Exam HTTP: admin package publishing, participant start/resume, ownership, hidden keys, save/revision/CSRF, submit retry and dashboard history passed.'
     );

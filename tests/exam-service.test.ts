@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 import { openDatabase, migrateDatabase } from '../src/lib/server/database';
 import { examService } from '../src/lib/server/exam-service';
 import { questionService } from '../src/lib/server/question-service';
+import { rankingService } from '../src/lib/server/ranking-service';
+import { adminUsers, rankingMembers } from '../src/lib/server/schema';
 import {
   user,
   questionVersions,
@@ -51,6 +53,75 @@ function fixture() {
   };
   return { db, sqlite, svc, qs, input, versions, setTime: (n: number) => (time = n) };
 }
+test('competition isolation, hidden review, tie ranking and immediate opt-out', () => {
+  const f = fixture();
+  try {
+    let time = 1000;
+    const ranking = rankingService(f.db, () => time);
+    f.db.insert(adminUsers).values({ userId: 'admin', createdAt: time }).run();
+    for (const id of ['third', 'fourth'])
+      f.db
+        .insert(user)
+        .values({
+          id,
+          name: id,
+          email: id + '@test.invalid',
+          emailVerified: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .run();
+    const p = f.svc.create(f.input, 'admin');
+    f.svc.publish(p, 'admin');
+    ranking.create(p, 30000, 'admin');
+    assert.throws(() => ranking.create(p, 40000, 'admin'));
+    assert.throws(() => ranking.join(p, 'admin', 'Operator', true));
+    assert.throws(() => ranking.join(p, 'unverified', 'Unverified', true));
+    assert.equal(f.db.select().from(rankingMembers).all().length, 0);
+    assert.throws(() => f.svc.start(p, 'student'));
+    assert.throws(() => ranking.board(p, 'student'));
+    const actors = ['student', 'other', 'third', 'fourth'];
+    for (const [index, actor] of actors.entries()) {
+      const id = ranking.join(p, actor, 'Alias' + index, true);
+      assert.equal(ranking.join(p, actor, 'Ignored', false), id);
+      assert.equal(f.svc.view(id, actor).attempt.deadlineAt, 30000);
+      f.svc.submit(id, actor);
+      const review = f.svc.view(id, actor);
+      assert.equal(review.reviewAvailable, false);
+      assert.ok(!JSON.stringify(review.items).includes('explanation'));
+      assert.ok(review.items.every((q) => q.options.every((o) => !('score' in o))));
+      // Controlled scored fixtures to exercise tied and zero totals independently of grading tests.
+      f.db
+        .update(examAttempts)
+        .set({ result: { total: [10, 5, 5, 0][index], maximum: 10, subscores: {} } })
+        .where(eq(examAttempts.id, id))
+        .run();
+    }
+    const board = ranking.board(p, 'other');
+    assert.deepEqual(
+      board.entries.map((r) => r.rank),
+      [1, 2, 2, 4]
+    );
+    assert.equal(board.mine?.rank, 2);
+    assert.ok(!JSON.stringify(board).includes('@test.invalid'));
+    ranking.hide(p, 'student');
+    assert.deepEqual(
+      ranking.board(p, 'other').entries.map((r) => r.rank),
+      [1, 1, 3]
+    );
+    assert.ok(!ranking.board(p, 'other').entries.some((r) => r.alias === 'Alias0'));
+    const practice = f.svc.create(f.input, 'admin');
+    f.svc.publish(practice, 'admin');
+    f.svc.start(practice, 'student');
+    assert.throws(() => ranking.create(practice, 40000, 'admin'));
+    time = 30000;
+    f.setTime(time);
+    const attempt = f.svc.history('other').find((h) => h.package.id === p)!.attempt.id;
+    assert.equal(f.svc.view(attempt, 'other').reviewAvailable, true);
+  } finally {
+    f.sqlite.close();
+  }
+});
 test('archiving hides packages and blocks new starts without removing sessions or results', () => {
   const f = fixture();
   try {

@@ -1,5 +1,15 @@
 # Development log
 
+## 2026-09-11 — RANK-001: ranking umum per paket
+
+Migrasi 0003 menambahkan periode kompetisi dan anggota unik per pengguna. Admin dapat mengaktifkan satu periode pada paket terbit yang belum pernah dikerjakan, dengan audit. Peserta terverifikasi bergabung memakai alias dan pilihan tampil; pengelola ditolak. Jalur latihan biasa tidak bisa melewati pendaftaran kompetisi. Deadline dibatasi waktu penutupan; pembahasan/nilai opsi disembunyikan server sampai periode tutup, termasuk setelah submit.
+
+Halaman ranking terbatas anggota/admin menampilkan total, seri 1/2/2/4, 100 teratas dan posisi sendiri. Opt-out langsung menghapus baris dari pembacaan berikutnya. Perhitungan memakai transaksi baca konsisten atas hasil tersimpan; generasi snapshot persisten, provinsi, pagination, invalidasi/koreksi dan finalisasi belum dibangun. Paket latihan lama tetap tidak mendapat ranking. Detail batas ini dicatat pada ranking-plan.md.
+
+Migrasi lokal berhasil. Tes ditambahkan untuk isolasi periode, pembatasan akses, rollback anggota tak terverifikasi, penutupan deadline, pembahasan tertunda, seri, nilai nol dan opt-out, serta alur HTTP kompetisi.
+
+Verifikasi: 11 tes unit lulus; svelte-check 0 error/0 warning; build produksi berhasil; HTTP smoke terbaru mencakup aktivasi admin, akses anggota, persetujuan alias, pembahasan tertutup dan opt-out langsung, seluruhnya lulus. Uji beban dan pengujian visual lintas perangkat belum dilakukan pada fitur ranking.
+
 ## 2026-09-11 — CONTENT-003: arsip paket
 
 Pengelola dapat mengarsipkan draft/paket terbit dengan alasan wajib yang dicatat dalam audit. Paket hilang dari katalog dan menolak sesi baru; sesi yang sudah dimulai tetap dapat dilanjutkan dari dashboard dan hasil lama tetap dapat dibaca. Arsip berulang tidak menggandakan audit. Paket arsip tidak dapat diterbitkan kembali; buat edisi baru bila diperlukan.

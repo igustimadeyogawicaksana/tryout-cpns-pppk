@@ -19,11 +19,36 @@
     </ul>
     <p>
       Satu sesi per akun untuk edisi ini. Sesi dapat dilanjutkan dengan waktu yang tersisa. Waktu
-      mulai berjalan setelah tombol ditekan; hasil dan pembahasan tersedia sesudah selesai. Latihan
-      ini belum masuk ranking kompetitif.
+      mulai berjalan setelah tombol ditekan. {data.cohort
+        ? 'Pembahasan kompetisi tersedia setelah periode ditutup.'
+        : 'Hasil dan pembahasan tersedia sesudah selesai; latihan ini tidak masuk ranking.'}
     </p>
     {#if form?.error}<p class="notice error" role="alert">{form.error}</p>{/if}
     <form method="POST">
+      {#if data.cohort}
+        <p>
+          Kompetisi gratis ditutup {new Date(data.cohort.endsAt).toISOString()}. Sisa waktu hingga
+          penutupan dapat lebih pendek dari durasi paket. Skor sama mendapat peringkat sama; ranking
+          hanya peserta platform yang bersedia tampil.
+        </p>
+        <label
+          >Alias publik<input
+            name="alias"
+            minlength="3"
+            maxlength="30"
+            placeholder="Contoh: Pelajar27"
+            required
+          /></label
+        >
+        <label
+          ><input style="width:auto" type="checkbox" name="visible" /> Saya bersedia alias dan skor tampil
+          dalam ranking paket ini.</label
+        >
+        <p>
+          Jangan gunakan nama lengkap atau email. Persetujuan bisa dicabut dari halaman ranking.
+        </p>
+        <a href={'/ranking/' + data.package.id}>Lihat ranking / sembunyikan alias</a>
+      {/if}
       <button class="button"
         >{data.user ? 'Mulai / lanjutkan latihan' : 'Login untuk mengerjakan'}</button
       >

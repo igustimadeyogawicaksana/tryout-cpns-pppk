@@ -70,21 +70,27 @@
             {sub}: {value.score} / {value.maximum}
           </li>{/each}
       </ul>
-      <p>Hasil latihan pribadi; bukan penetapan kelulusan seleksi atau ranking kompetitif.</p>
+      <p>Hasil pada platform ini bukan penetapan kelulusan seleksi resmi.</p>
     </section>
-    {#each data.items as q}<section class="participant-card result">
-        <h3>{q.position + 1}. {q.prompt}</h3>
-        <ul>
-          {#each q.options as o}<li>
-              {o.code}. {o.text} — {o.score} poin {data.attempt.answers[q.id] === o.id
-                ? '(jawaban Anda)'
-                : ''}
-            </li>{/each}
-        </ul>
-        {#if !data.attempt.answers[q.id]}<p>Jawaban kosong: {q.blankScore} poin.</p>{/if}
-        <h4>Pembahasan</h4>
-        <p class="question-text">{q.explanation}</p>
-      </section>{/each}
+    {#if !data.reviewAvailable}<p class="notice">
+        Pembahasan dan nilai pilihan akan tersedia setelah periode kompetisi ditutup.
+      </p>{/if}
+    {#if data.competitive}<a href={'/ranking/' + data.package.id}
+        >Lihat ranking / pengaturan tampil</a
+      >{:else}<a href={'/paket/' + data.package.id}>Detail paket</a>{/if}
+    {#if data.reviewAvailable}{#each data.items as q}<section class="participant-card result">
+          <h3>{q.position + 1}. {q.prompt}</h3>
+          <ul>
+            {#each q.options as o}<li>
+                {o.code}. {o.text} — {o.score} poin {data.attempt.answers[q.id] === o.id
+                  ? '(jawaban Anda)'
+                  : ''}
+              </li>{/each}
+          </ul>
+          {#if !data.attempt.answers[q.id]}<p>Jawaban kosong: {q.blankScore} poin.</p>{/if}
+          <h4>Pembahasan</h4>
+          <p class="question-text">{q.explanation}</p>
+        </section>{/each}{/if}
   {:else}
     <p class="notice">
       Sisa waktu <strong

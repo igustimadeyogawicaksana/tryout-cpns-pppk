@@ -31,7 +31,7 @@ Terakhir diperbarui: 2026-09-10. P0 = sebelum implementasi; P1 = MVP; P2 = lanju
 | PAY-003 | P1 | Checkout dan verifikasi pembayaran | Todo | AUTH-001, CONTENT-001, PAY-002 | Bayar valid membuka akses sekali; bukti palsu/duplikat/nominal salah tidak membuka akses; ada audit |
 | PAY-004 | P1 | Skema payment gateway | Done | DATA-001 | Produk, snapshot pesanan, payment attempt, event, grant dan refund tersedia di migrasi; constraint SQLite diuji; checkout/webhook/aktivasi akses belum diimplementasikan |
 | EXAM-001 | P1 | Mesin tryout | In progress | AUTH-001, CONTENT-003 | Latihan gratis: timer server, autosave/revision/retry, versi/urutan tetap, submit/timeout idempotent tersedia; uji beban dan perangkat/jaringan lanjutan belum |
-| RANK-001 | P1 | Ranking dasar umum dan provinsi | Todo | EXAM-001, RESULT-001 | Cohort sama, percobaan kompetitif pertama, seri 1/2/2/4, privasi, posisi saya dan snapshot atomik sesuai ranking-plan.md |
+| RANK-001 | P1 | Ranking dasar umum dan provinsi | In progress | EXAM-001, RESULT-001 | Ranking umum per paket, satu sesi, seri, alias/opt-out dan posisi saya tersedia; provinsi, snapshot persisten dan pagination belum |
 | RANK-002 | P1 | Koreksi penilaian dan finalisasi ranking | Todo | RANK-001 | Revisi diaudit, cohort tidak mencampur aturan, hasil dan generasi ranking konsisten |
 | RESULT-001 | P1 | Hasil dan pembahasan dasar | In progress | EXAM-001, PROD-001 | Hasil/subskor dan pembahasan latihan gratis tersedia hanya sesudah selesai; integrasi hak akses berbayar belum |
 | OPS-001 | P1 | Backup, pemulihan dan pemantauan | Todo | APP-001, DATA-001 | Restore diuji; pantau gagal simpan, pembayaran tertunda dan penggunaan kuota |

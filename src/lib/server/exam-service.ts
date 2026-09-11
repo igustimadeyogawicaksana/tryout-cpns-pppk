@@ -10,7 +10,9 @@ import {
   user,
   adminUsers,
   questionVersions,
-  auditLog
+  auditLog,
+  rankingCohorts,
+  rankingMembers
 } from './schema';
 import { DomainError } from './question-service';
 import { readinessIssues, scoreAnswer, subtests } from '../question-input';
@@ -252,12 +254,28 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
         () => {
           const p = getPackage(id);
           if (p.status !== 'published') throw new DomainError('Paket belum tersedia.', 404);
+          const cohort = db
+            .select()
+            .from(rankingCohorts)
+            .where(eq(rankingCohorts.packageId, id))
+            .get();
+          if (
+            cohort &&
+            !db
+              .select()
+              .from(rankingMembers)
+              .where(and(eq(rankingMembers.cohortId, cohort.id), eq(rankingMembers.userId, actor)))
+              .get()
+          )
+            throw new DomainError('Daftar melalui halaman ranking paket dahulu.', 403);
           const old = db
             .select()
             .from(examAttempts)
             .where(and(eq(examAttempts.packageId, id), eq(examAttempts.userId, actor)))
             .get();
           if (old) return old.id;
+          if (cohort && now() >= cohort.endsAt)
+            throw new DomainError('Periode kompetisi sudah ditutup.', 409);
           const attemptId = randomUUID(),
             time = now();
           db.insert(examAttempts)
@@ -266,7 +284,7 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
               packageId: id,
               userId: actor,
               startedAt: time,
-              deadlineAt: time + p.durationMinutes * 60000,
+              deadlineAt: Math.min(time + p.durationMinutes * 60000, cohort?.endsAt ?? Infinity),
               answers: {}
             })
             .run();
@@ -287,9 +305,17 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
     },
     view(id: string, actor: string) {
       let row = attempt(id, actor);
+      const cohort = db
+        .select()
+        .from(rankingCohorts)
+        .where(eq(rankingCohorts.packageId, row.packageId))
+        .get();
+      const reviewAvailable = !cohort || now() >= cohort.endsAt;
       if (row.status === 'in_progress' && now() >= row.deadlineAt)
         row = db.transaction(() => finalize(id, 'deadline'), { behavior: 'immediate' });
       return {
+        reviewAvailable,
+        competitive: Boolean(cohort),
         attempt: row,
         package: getPackage(row.packageId),
         serverNow: now(),
@@ -302,9 +328,9 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
             id: o.id,
             code: o.code,
             text: o.text,
-            ...(row.status === 'scored' ? { score: o.score } : {})
+            ...(row.status === 'scored' && reviewAvailable ? { score: o.score } : {})
           })),
-          ...(row.status === 'scored'
+          ...(row.status === 'scored' && reviewAvailable
             ? { explanation: i.content.explanation_md, blankScore: i.content.score_blank }
             : {})
         }))

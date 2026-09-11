@@ -211,6 +211,32 @@ export const examAttempts = sqliteTable(
   ]
 );
 
+export const rankingCohorts = sqliteTable('ranking_cohorts', {
+  id: text('id').primaryKey().notNull(),
+  packageId: text('package_id')
+    .notNull()
+    .unique()
+    .references(() => examPackages.id),
+  endsAt: integer('ends_at').notNull(),
+  policy: text('policy').notNull().default('total-v1'),
+  createdAt: integer('created_at').notNull()
+});
+export const rankingMembers = sqliteTable(
+  'ranking_members',
+  {
+    id: text('id').primaryKey().notNull(),
+    cohortId: text('cohort_id')
+      .notNull()
+      .references(() => rankingCohorts.id),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    alias: text('alias').notNull(),
+    visible: integer('visible', { mode: 'boolean' }).notNull().default(false)
+  },
+  (t) => [uniqueIndex('ranking_member_once').on(t.cohortId, t.userId)]
+);
+
 // Payment preparation only: no gateway requests or access activation yet.
 export const products = sqliteTable(
   'products',
