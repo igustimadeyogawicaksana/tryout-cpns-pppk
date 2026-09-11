@@ -138,4 +138,5 @@ Git lokal diinisialisasi dengan branch main. Commit 201042f menyimpan dua refere
 Pengguna membuat https://github.com/igustimadeyogawicaksana/tryout-cpns-pppk dengan visibilitas public. Repo kosong telah diperiksa melalui GitHub dan origin lokal diarahkan ke repo tersebut. Push pertama ditolak karena Git memakai akun berbeda. Login Git untuk akun pemilik sedang diminta; login browser sudah berhasil, tetapi belum berarti autentikasi Git lokal selesai. Stack tetap belum diputuskan.
 
 Hasil lanjutan: autentikasi Git berhasil dan push main diterima GitHub. Branch main kini melacak origin/main. Preferensi akun Git disetel khusus repositori ini agar unggahan berikutnya memakai akun pemilik. README menautkan repo dan halaman riwayat commit; REPO-002 selesai. Tidak ada perubahan stack atau implementasi aplikasi, dan push tetap dilakukan per pekerjaan, bukan otomatis setiap penyimpanan berkas.
-`nVerifikasi perubahan pagination: 11 tes unit lulus, svelte-check 0 error/0 warning dan build produksi berhasil. Belum diuji visual di seluruh perangkat.
+
+Verifikasi perubahan pagination: 11 tes unit lulus, svelte-check 0 error/0 warning dan build produksi berhasil. Belum diuji visual di seluruh perangkat.
