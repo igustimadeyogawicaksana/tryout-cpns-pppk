@@ -115,7 +115,16 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
     details(id: string, admin = false) {
       const p = getPackage(id);
       if (!admin && p.status !== 'published') throw new DomainError('Paket tidak tersedia.', 404);
-      return { ...p, count: items(id).length };
+      return {
+        ...p,
+        count: items(id).length,
+        products: db
+          .select({ id: products.id, title: products.title, priceIdr: products.priceIdr, accessDays: products.accessDays })
+          .from(productPackages)
+          .innerJoin(products, eq(products.id, productPackages.productId))
+          .where(and(eq(productPackages.packageId, id), eq(products.active, true)))
+          .all()
+      };
     },
     create(input: unknown, actor: string) {
       const parsed = packageInput.safeParse(input);

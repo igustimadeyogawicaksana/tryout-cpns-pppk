@@ -4,6 +4,7 @@ import { examService } from '$lib/server/exam-service';
 import { DomainError } from '$lib/server/question-service';
 import { actionError } from '$lib/server/form-utils';
 import { rankingService } from '$lib/server/ranking-service';
+import { paymentService } from '$lib/server/payment-service';
 import type { PageServerLoad, Actions } from './$types';
 export const load: PageServerLoad = ({ params }) => {
   try {
@@ -17,6 +18,15 @@ export const load: PageServerLoad = ({ params }) => {
   }
 };
 export const actions: Actions = {
+  buy: async ({ locals, params, request }) => {
+    if (!locals.user) redirect(303, '/login');
+    const fields = await request.formData();
+    const productId = String(fields.get('productId') || '');
+    try {
+      const orderId = paymentService(db).createManualOrder(productId, locals.user.id, `web-${locals.user.id}-${productId}`);
+      redirect(303, '/pembayaran/' + orderId);
+    } catch (e) { return actionError(e); }
+  },
   default: async ({ locals, params, request }) => {
     if (!locals.user) redirect(303, '/login');
     let id: string;

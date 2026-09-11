@@ -237,6 +237,12 @@ Kebijakan retake diperjelas: retake gratis tetap aktif untuk pengujian saat peng
 
 Alur order manual diuji dengan data sementara: membuat produk aktif dan paket terbit, membuat order, mengirim referensi bukti, menyetujui pembayaran sebagai admin, lalu memeriksa grant akses. Hasil: payment `succeeded` dan grant akses terbentuk. Semua data uji dibersihkan kembali setelah pengujian.
 
+## 2026-09-11 — Produk uji SKD CPNS lengkap
+
+Disiapkan produk aktif `Tryout SKD CPNS Lengkap — Uji Coba` dengan paket 110 soal sintetis, komposisi 30 TWK, 35 TIU, 45 TKP, durasi 100 menit, harga uji Rp25.000 dan masa akses 30 hari. Halaman detail paket kini menampilkan produk aktif dan tombol membuat order pembayaran manual. Konten diberi label sintetis dan bukan soal resmi.
+
+Verifikasi: svelte-check 0 error/0 warning dan 11 tes unit lulus.
+
 ## 2026-09-11 — PAY-003, produk berbayar admin
 
 Ditambahkan halaman admin `/admin/products` untuk membuat produk aktif, menetapkan harga dan masa akses, serta menghubungkannya ke paket tryout terbit. Produk ini menjadi sumber order manual dan pemeriksaan grant akses paket.
