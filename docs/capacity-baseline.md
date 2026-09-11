@@ -1,6 +1,8 @@
 # DISC-001 — Usulan kapasitas dan anggaran MVP
 
-Diperbarui 2026-09-11. Angka beban berasal dari usulan pengguna; belum merupakan hasil benchmark atau janji kapasitas produksi. Revisi anggaran terakhir menggantikan usulan Rp200.000–350.000/bulan. Stack tetap SQLite, Dokploy, Better Auth dan backup R2.
+Pembaruan setelah DATA-002: lihat [hasil uji kapasitas](capacity-test-results.md). DISC-001 dibuka ulang singkat untuk konfirmasi usulan revisi: batasi rilis awal 50 peserta aktif dan naikkan ke 100 hanya setelah profil HTTP yang sama lulus pada VPS final. Target 300–500 dan 2.000 sesi penuh/12 jam belum didukung hasil uji.
+
+Diperbarui 2026-09-11. DISC-001 ditutup memakai angka berikut sebagai estimasi awal agar DATA-002 dapat berjalan; angka akan dibuka ulang dan direvisi setelah hasil uji nyata tersedia. Ini belum merupakan janji kapasitas produksi. Revisi anggaran terakhir menggantikan usulan Rp200.000–350.000/bulan. Stack tetap SQLite, Dokploy, Better Auth dan backup R2.
 
 ## Dasar perencanaan
 

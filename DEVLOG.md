@@ -1,5 +1,21 @@
 # Development log
 
+## 2026-09-11 — DATA-002 selesai lokal; DISC-001 dibuka ulang untuk revisi
+
+Benchmark repeatable ditambahkan melalui `npm run test:capacity` dan hasilnya dicatat di [docs/capacity-test-results.md](docs/capacity-test-results.md). Paket sintetis berisi 110 soal; setiap peserta menyimpan seluruh 110 jawaban, submit, lalu ranking dibaca. SQLite memakai WAL, `synchronous=FULL` dan satu proses Node sebagaimana implementasi saat ini.
+
+Pada 50 peserta/5.500 autosave: p95 simpan 5,47 ms, p95 submit 21,23 ms, nol error, integrity ok. Pada 100 peserta/11.000 autosave: p95 simpan 5,54 ms, p95 submit 23,17 ms, nol error, integrity ok. Keduanya lulus target lokal p95 500 ms/2 detik. Tes mengecualikan HTTP, auth, TLS, jaringan dan VPS; hasil bukan janji produksi.
+
+Stress 300 masih menulis setelah lebih dari 10 menit dan dihentikan sebelum metrik lengkap; 500 tidak diteruskan karena level lebih rendah belum selesai dalam jendela uji. Keduanya tidak dinyatakan lulus. DATA-002 ditutup sebagai baseline lokal dengan bukti dan batas eksplisit. Validasi pada VPS final tetap menjadi gerbang rilis, tanpa membuat circular dependency baru.
+
+DISC-001 dibuka ulang setelah DATA-002 sesuai alur yang diminta. Usulan revisi berbasis hasil: rilis dengan batas 50 aktif; naik ke 100 setelah tes HTTP/Dokploy lulus pada VPS final. Target 300–500 ditunda sampai optimasi dan benchmark baru. Dengan batas 100, 2.000 sesi penuh berdurasi 100 menit tidak muat dalam 12 jam (kebutuhan rata-rata sekitar 278 aktif); angka musim puncak perlu dijadwalkan lintas hari atau direvisi.
+
+## 2026-09-11 — DISC-001 ditutup sebagai estimasi awal; DATA-002 dimulai
+
+Circular dependency diputus: DISC-001 ditandai Done memakai angka estimasi awal yang sudah disepakati—50–100 peserta aktif, stress 300/500, 100–300 sesi/hari dan puncak 2.000, autosave setiap perubahan, usulan p95 simpan <500 ms/submit <2 detik, serta VPS Rp55.000–100.000/bulan. Angka ini eksplisit akan direvisi, bukan ditahan sampai benchmark selesai.
+
+DATA-002 dimulai dari baseline tersebut. Setelah hasil uji dicatat, DISC-001 akan dibuka ulang singkat untuk konfirmasi/revisi; status awal tidak dipakai untuk mengklaim kapasitas produksi.
+
 ## 2026-09-11 — PROD-001, DISC-001, PAY-001: kajian P0 sebelum implementasi lanjutan
 
 Ditambahkan [acuan ujian](docs/exam-rules-baseline.md), [usulan kapasitas](docs/capacity-baseline.md) dan [perbandingan pembayaran](docs/payment-provider-comparison.md), dengan sumber resmi dan batas verifikasi. Tidak ada perubahan runtime, schema, paket/sesi lama atau transaksi nyata pada pekerjaan ini.

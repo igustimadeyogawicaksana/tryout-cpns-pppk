@@ -13,6 +13,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "tsx --test tests/*.test.ts",
     "test:http": "node scripts/smoke-test.mjs",
+    "test:capacity": "tsx scripts/capacity-test.ts",
     "prepare": "svelte-kit sync",
     "dev:setup": "tsx scripts/setup-local.ts",
     "db:generate": "drizzle-kit generate",
