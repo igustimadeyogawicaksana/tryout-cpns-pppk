@@ -92,68 +92,47 @@
           <p class="question-text">{q.explanation}</p>
         </section>{/each}{/if}
   {:else}
-    <p class="notice">
-      Sisa waktu <strong
-        >{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</strong
-      >
-      · {Object.keys(answers).length}/{data.items.length} terjawab
-    </p>
-    <p role="status">{saving ? 'Menyimpan jawaban…' : saved}</p>
-    {#if error}<p class="notice error" role="alert">
-        {error}
-        {#if pending}<button
-            onclick={() => pending && save(pending.itemId, pending.optionId)}
-            disabled={saving}>Coba simpan lagi</button
-          >{/if}
-        <a data-sveltekit-reload href={'/ujian/' + data.attempt.id}>Muat ulang jawaban server</a>
-      </p>{/if}
-    <nav class="numbers" aria-label="Nomor soal">
-      {#each data.items as q, i}<button
-          class:answered={Boolean(answers[q.id])}
-          aria-current={index === i ? 'step' : undefined}
-          disabled={saving || !!pending}
-          onclick={() => (index = i)}>{i + 1}</button
-        >{/each}
-    </nav>
-    {#if item}<section class="participant-card">
-        <p>{item.subtest} · Soal {index + 1}/{data.items.length}</p>
-        <h2 class="question-text">{item.prompt}</h2>
-        <fieldset disabled={saving || !!pending || remaining === 0}>
-          <legend>Pilih jawaban (tersimpan otomatis)</legend>{#each item.options as o}<label
-              class="choice"
-              ><input
-                type="radio"
-                name={item.id}
-                checked={answers[item.id] === o.id}
-                onchange={() => save(item.id, o.id)}
-              /><span>{o.code}. {o.text}</span></label
-            >{/each}<button class="button secondary" onclick={() => save(item.id, null)}
-            >Kosongkan jawaban</button
-          >
-        </fieldset>
-      </section>{/if}
-    <div class="actions">
-      <button
-        class="button secondary"
-        disabled={index === 0 || saving || !!pending}
-        onclick={() => index--}>Sebelumnya</button
-      ><button
-        class="button secondary"
-        disabled={index === data.items.length - 1 || saving || !!pending}
-        onclick={() => index++}>Berikutnya</button
-      >
-    </div>
-    <section class="participant-card result">
-      <label class="choice"
-        ><input type="checkbox" bind:checked={confirmSubmit} /><span
-          >Saya sudah memeriksa jawaban dan ingin mengakhiri latihan.</span
-        ></label
-      >
-      <form method="POST">
-        <button class="button" disabled={!confirmSubmit || saving || !!pending}
-          >Selesai dan lihat hasil</button
-        >
-      </form>
+    <section class="exam-shell" aria-label="Ruang ujian">
+      <header class="exam-topbar">
+        <div><span class="exam-kicker">TRYOUT CPNS</span><strong>{data.package.title}</strong></div>
+        <div class="exam-status"><span role="status">{saving ? 'Menyimpan…' : saved}</span><strong class:warning={remaining < 60} class="exam-timer" aria-label="Sisa waktu">
+          {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}
+        </strong></div>
+      </header>
+      <div class="exam-layout">
+        <section class="exam-question-panel">
+          <div class="exam-question-meta"><span>{item?.subtest} · Soal {index + 1} dari {data.items.length}</span><span>{Object.keys(answers).length} terjawab</span></div>
+          {#if error}<p class="notice error" role="alert">
+            {error}
+            {#if pending}<button onclick={() => pending && save(pending.itemId, pending.optionId)} disabled={saving}>Coba simpan lagi</button>{/if}
+            <a data-sveltekit-reload href={'/ujian/' + data.attempt.id}>Muat ulang jawaban server</a>
+          </p>{/if}
+          {#if item}<h2 class="question-text">{item.prompt}</h2>
+            <fieldset disabled={saving || !!pending || remaining === 0}>
+              <legend>Pilih salah satu jawaban</legend>
+              {#each item.options as o}<label class="choice cat-choice">
+                <input type="radio" name={item.id} checked={answers[item.id] === o.id} onchange={() => save(item.id, o.id)} />
+                <span class="choice-code">{o.code}</span><span>{o.text}</span>
+              </label>{/each}
+              <button class="button secondary clear-choice" onclick={() => save(item.id, null)}>Kosongkan jawaban</button>
+            </fieldset>{/if}
+          <div class="exam-actions">
+            <button class="button secondary" disabled={index === 0 || saving || !!pending} onclick={() => index--}>← Sebelumnya</button>
+            <button class="button" disabled={index === data.items.length - 1 || saving || !!pending} onclick={() => index++}>Berikutnya →</button>
+          </div>
+        </section>
+        <aside class="exam-nav-panel" aria-label="Navigasi soal">
+          <h3>Navigasi soal</h3>
+          <p class="exam-nav-help">Hijau berarti sudah dijawab. Pilih nomor untuk berpindah.</p>
+          <nav class="numbers" aria-label="Nomor soal">
+            {#each data.items as q, i}<button class:answered={Boolean(answers[q.id])} aria-current={index === i ? 'step' : undefined} disabled={saving || !!pending} onclick={() => (index = i)}>{i + 1}</button>{/each}
+          </nav>
+          <div class="exam-legend"><span class="legend-dot answered-dot"></span>Terjawab <span class="legend-dot"></span>Belum dijawab</div>
+          <div class="exam-progress"><span>Progress</span><strong>{Object.keys(answers).length}/{data.items.length}</strong><div><i style={`width:${(Object.keys(answers).length / data.items.length) * 100}%`}></i></div></div>
+          <label class="submit-check"><input type="checkbox" bind:checked={confirmSubmit} /> Saya sudah memeriksa jawaban.</label>
+          <form method="POST"><button class="button full" disabled={!confirmSubmit || saving || !!pending}>Selesai dan lihat hasil</button></form>
+        </aside>
+      </div>
     </section>
   {/if}</ParticipantShell
 >
@@ -163,7 +142,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin: 20px 0;
+    margin: 18px 0;
   }
   .numbers button {
     min-width: 44px;
@@ -178,6 +157,35 @@
   .numbers button[aria-current] {
     outline: 3px solid #185ee3;
   }
+  .exam-shell { margin-top: 18px; }
+  .exam-topbar { display:flex; justify-content:space-between; align-items:center; gap:18px; background:#102b46; color:white; padding:18px 22px; border-radius:12px 12px 0 0; }
+  .exam-topbar strong { display:block; margin-top:4px; font-size:1.05rem; }
+  .exam-kicker { color:#a9dfca; font-size:.72rem; letter-spacing:.12em; font-weight:700; }
+  .exam-status { display:flex; align-items:center; gap:18px; color:#d9e6ef; font-size:.82rem; }
+  .exam-timer { color:white; background:#25435d; border:1px solid #6c879d; border-radius:7px; padding:9px 14px; font-variant-numeric:tabular-nums; font-size:1.15rem; }
+  .exam-timer.warning { background:#9b3b32; }
+  .exam-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:18px; background:#eef3f6; padding:18px; border-radius:0 0 12px 12px; }
+  .exam-question-panel, .exam-nav-panel { background:white; border:1px solid #dce5e8; border-radius:10px; padding:24px; }
+  .exam-question-meta { display:flex; justify-content:space-between; gap:10px; color:#5c7082; font-size:.84rem; border-bottom:1px solid #e0e7ed; padding-bottom:16px; }
+  .exam-question-panel .question-text { font-size:1.2rem; margin:24px 0; }
+  .cat-choice { border:1px solid #dce5e8; border-radius:8px; margin:10px 0; padding:13px 14px; align-items:center; }
+  .cat-choice:hover { border-color:#185ee3; background:#f5f9ff; }
+  .choice-code { display:grid; place-items:center; width:28px; height:28px; border:1px solid #9fb2c1; border-radius:50%; font-weight:700; color:#35536b; flex:0 0 auto; }
+  .cat-choice input:checked + .choice-code { background:#185ee3; color:white; border-color:#185ee3; }
+  .clear-choice { margin-top:8px; }
+  .exam-actions { display:flex; justify-content:space-between; gap:12px; margin-top:26px; padding-top:18px; border-top:1px solid #e0e7ed; }
+  .exam-nav-panel h3 { margin:0 0 8px; }
+  .exam-nav-help { color:#5c7082; font-size:.84rem; line-height:1.5; }
+  .exam-nav-panel .numbers button { min-width:38px; min-height:38px; }
+  .exam-legend { display:flex; align-items:center; flex-wrap:wrap; gap:6px; color:#5c7082; font-size:.76rem; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; background:#dce5e8; display:inline-block; margin-left:6px; }
+  .answered-dot { background:#d6f3e5; }
+  .exam-progress { margin:24px 0; color:#5c7082; font-size:.82rem; }
+  .exam-progress strong { float:right; color:#18324b; }
+  .exam-progress div { clear:both; height:8px; background:#e7edf1; border-radius:99px; overflow:hidden; margin-top:8px; }
+  .exam-progress i { display:block; height:100%; background:#2e9b71; border-radius:99px; }
+  .submit-check { display:flex; gap:8px; align-items:flex-start; font-size:.84rem; margin-bottom:14px; }
+  .submit-check input { width:auto; min-height:auto; margin-top:3px; }
   .choice {
     display: flex;
     align-items: flex-start;
@@ -192,7 +200,6 @@
     white-space: pre-wrap;
     line-height: 1.6;
   }
-  .actions,
   .result {
     margin-top: 24px;
   }
@@ -203,5 +210,12 @@
   }
   .choice span {
     white-space: pre-wrap;
+  }
+  @media (max-width: 760px) {
+    .exam-layout { grid-template-columns:1fr; padding:10px; }
+    .exam-nav-panel { order:-1; }
+    .exam-topbar { align-items:flex-start; flex-direction:column; padding:16px; }
+    .exam-status { width:100%; justify-content:space-between; }
+    .exam-question-panel, .exam-nav-panel { padding:18px; }
   }
 </style>

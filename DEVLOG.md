@@ -200,3 +200,9 @@ Pengguna membuat https://github.com/igustimadeyogawicaksana/tryout-cpns-pppk den
 Hasil lanjutan: autentikasi Git berhasil dan push main diterima GitHub. Branch main kini melacak origin/main. Preferensi akun Git disetel khusus repositori ini agar unggahan berikutnya memakai akun pemilik. README menautkan repo dan halaman riwayat commit; REPO-002 selesai. Tidak ada perubahan stack atau implementasi aplikasi, dan push tetap dilakukan per pekerjaan, bukan otomatis setiap penyimpanan berkas.
 
 Verifikasi perubahan pagination: 11 tes unit lulus, svelte-check 0 error/0 warning dan build produksi berhasil. Belum diuji visual di seluruh perangkat.
+
+## 2026-09-11 — EXAM-001, tata letak jawab soal bergaya CAT
+
+Halaman menjawab soal disusun dengan pola yang familiar seperti CAT BKN: header timer dan status penyimpanan, panel pertanyaan, pilihan A–E berbentuk kartu, navigasi nomor soal, penanda soal terjawab, progress, tombol sebelumnya/berikutnya, serta konfirmasi sebelum mengakhiri ujian. Tampilan responsif untuk layar kecil.
+
+Identitas resmi BKN, logo, dan elemen merek tidak disalin; halaman tetap menggunakan identitas tryout sendiri. Logika timer berbasis server, autosave/revision, retry, dan submit tetap dipertahankan. Verifikasi: svelte-check tanpa error/warning, build produksi berhasil, dan 11 tes unit lulus.
