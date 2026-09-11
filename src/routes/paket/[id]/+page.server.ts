@@ -22,13 +22,13 @@ export const actions: Actions = {
     if (!locals.user) redirect(303, '/login');
     const fields = await request.formData();
     const productId = String(fields.get('productId') || '');
+    let orderId: string;
     try {
-      const orderId = paymentService(db).createManualOrder(productId, locals.user.id, `web-${locals.user.id}-${productId}`);
-      redirect(303, '/pembayaran/' + orderId);
+      orderId = paymentService(db).createManualOrder(productId, locals.user.id, `web-${locals.user.id}-${productId}`);
     } catch (e) {
-      if (e && typeof e === 'object' && 'status' in e && Number(e.status) >= 300 && Number(e.status) < 400) throw e;
       return actionError(e);
     }
+    redirect(303, '/pembayaran/' + orderId);
   },
   default: async ({ locals, params, request }) => {
     if (!locals.user) redirect(303, '/login');
