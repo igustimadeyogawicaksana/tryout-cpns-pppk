@@ -1,6 +1,6 @@
 # Pendaftaran Google melalui Better Auth
 
-Peserta memilih Lanjutkan dengan Google di /login. Pengunjung baru dibuatkan akun peserta dan masuk /dashboard; pengguna lama masuk melalui /account sesuai perannya. Hak admin hanya dari admin_users. Pendaftaran email/password tetap ditutup, sedangkan akun password lama masih dapat login melalui bagian yang dapat dibuka di halaman login.
+Peserta memilih Lanjutkan dengan Google di /login. Pengunjung baru dibuatkan akun peserta dan masuk /dashboard; pengguna lama masuk melalui /account sesuai perannya. Hak admin hanya dari admin_users. Login email/password dan [pendaftaran email](email-auth-setup.md) juga tersedia; pendaftaran email produksi memerlukan SMTP.
 
 ## Konfigurasi yang masih diperlukan
 

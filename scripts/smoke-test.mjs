@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep, basename } from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
@@ -24,6 +24,8 @@ const env = {
   BETTER_AUTH_SECRET: randomBytes(48).toString('hex'),
   DATABASE_PATH: join(temp, 'test.sqlite'),
   ADMIN_PASSWORD: password,
+  AUTH_MAIL_MODE: 'test',
+  AUTH_MAIL_TEST_DIR: join(temp, 'mail'),
   GOOGLE_CLIENT_ID: 'test-client.apps.googleusercontent.com',
   GOOGLE_CLIENT_SECRET: 'test-only-not-a-real-google-secret'
 };
@@ -228,7 +230,52 @@ try {
     headers: { 'Content-Type': 'application/json', Origin: origin },
     body: JSON.stringify({ email: 'new@smoke.test', name: 'Nobody', password })
   });
-  assert.ok(publicSignup.status >= 400, 'Public signup must stay disabled');
+  assert.equal(publicSignup.status, 200, await publicSignup.clone().text());
+  assert.ok(!publicSignup.headers.get('set-cookie')?.includes('session_token'));
+  const emails = () =>
+    readdirSync(env.AUTH_MAIL_TEST_DIR).map((f) =>
+      JSON.parse(readFileSync(join(env.AUTH_MAIL_TEST_DIR, f), 'utf8'))
+    );
+  const verificationMail = emails().find(
+    (m) => m.to === 'new@smoke.test' && m.subject.startsWith('Verifikasi')
+  );
+  assert.ok(verificationMail);
+  const verified = await fetch(verificationMail.url, { redirect: 'manual' });
+  assert.equal(verified.status, 302);
+  const newCookie = await login('new@smoke.test');
+  assert.equal(
+    (await fetch(origin + '/admin/questions', { headers: { Cookie: newCookie } })).status,
+    403
+  );
+  const resetRequest = await fetch(origin + '/api/auth/request-password-reset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: origin },
+    body: JSON.stringify({ email: 'new@smoke.test', redirectTo: '/login?mode=reset' })
+  });
+  assert.equal(resetRequest.status, 200);
+  const resetMail = emails().find(
+    (m) => m.to === 'new@smoke.test' && m.subject.startsWith('Atur ulang')
+  );
+  assert.ok(resetMail);
+  const resetRedirect = await fetch(resetMail.url, { redirect: 'manual' });
+  const resetUrl = new URL(resetRedirect.headers.get('location'), origin);
+  const reset = await fetch(origin + '/api/auth/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: origin },
+    body: JSON.stringify({
+      token: resetUrl.searchParams.get('token'),
+      newPassword: password + 'changed'
+    })
+  });
+  assert.equal(reset.status, 200, await reset.clone().text());
+  assert.equal(
+    (await fetch(origin + '/dashboard', { headers: { Cookie: newCookie }, redirect: 'manual' }))
+      .status,
+    303
+  );
+  console.log(
+    'Email registration, verification, participant permissions, password reset and session revocation passed using private test outbox.'
+  );
   await testQuestionApi({
     origin,
     apiToken,
@@ -238,7 +285,7 @@ try {
     actor: env.QUESTIONS_API_USER_ID
   });
   console.log(
-    'HTTP smoke: login, admin-only reads/writes, draft persistence, disabled signup and cross-site protection passed.'
+    'HTTP smoke: login, admin-only reads/writes, draft persistence, email lifecycle and cross-site protection passed.'
   );
 } finally {
   if (server && server.exitCode === null) {

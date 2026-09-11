@@ -4,6 +4,7 @@ import { env } from '$env/dynamic/private';
 import { building } from '$app/environment';
 import { db } from './db';
 import * as schema from './schema';
+import { mailEnabled, sendAuthMail } from './auth-mail';
 
 if (!building && (!env.BETTER_AUTH_SECRET || env.BETTER_AUTH_SECRET.length < 32)) {
   throw new Error(
@@ -16,7 +17,24 @@ export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL || 'http://localhost:5173',
   secret: env.BETTER_AUTH_SECRET || 'build-only-placeholder-not-used-by-running-server',
   database: drizzleAdapter(db, { provider: 'sqlite', schema }),
-  emailAndPassword: { enabled: true, disableSignUp: true, minPasswordLength: 12 },
+  emailAndPassword: {
+    enabled: true,
+    disableSignUp: !mailEnabled,
+    minPasswordLength: 12,
+    autoSignIn: false,
+    revokeSessionsOnPasswordReset: true,
+    ...(mailEnabled
+      ? {
+          sendResetPassword: async ({ user, url }: { user: { email: string }; url: string }) =>
+            sendAuthMail(user.email, 'Atur ulang password Ruang Tryout', url)
+        }
+      : {})
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) =>
+      sendAuthMail(user.email, 'Verifikasi email Ruang Tryout', url)
+  },
   socialProviders: googleEnabled
     ? {
         google: {

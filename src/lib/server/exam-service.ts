@@ -7,6 +7,8 @@ import {
   examItems,
   examOptions,
   examAttempts,
+  user,
+  adminUsers,
   questionVersions,
   auditLog
 } from './schema';
@@ -216,6 +218,13 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
       );
     },
     start(id: string, actor: string) {
+      const participant = db.select().from(user).where(eq(user.id, actor)).get();
+      if (!participant) throw new DomainError('Silakan login.', 401);
+      if (
+        !participant.emailVerified &&
+        !db.select().from(adminUsers).where(eq(adminUsers.userId, actor)).get()
+      )
+        throw new DomainError('Verifikasi email sebelum mulai ujian.', 403);
       return db.transaction(
         () => {
           const p = getPackage(id);

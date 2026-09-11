@@ -1,22 +1,77 @@
 <script lang="ts">
   import { authClient } from '$lib/auth-client';
+  import GoogleLogo from '$lib/GoogleLogo.svelte';
   let { data } = $props();
   let email = $state(''),
     password = $state(''),
-    error = $state(''),
+    confirmation = $state(''),
+    name = $state('');
+  let error = $state(''),
+    message = $state(''),
     busy = $state(false);
-  async function login(event: SubmitEvent) {
-    event.preventDefault();
-    busy = true;
+  const titles: Record<string, string> = {
+    login: 'Masuk ke akun',
+    register: 'Daftar dengan email',
+    forgot: 'Lupa password',
+    reset: 'Buat password baru',
+    verify: 'Verifikasi email'
+  };
+  $effect(() => {
+    data.mode;
     error = '';
+    message = '';
+    password = '';
+    confirmation = '';
+  });
+  async function submit(event: SubmitEvent) {
+    event.preventDefault();
+    error = '';
+    message = '';
+    if (['register', 'reset'].includes(data.mode) && password !== confirmation) {
+      error = 'Konfirmasi password belum sama.';
+      return;
+    }
+    busy = true;
     try {
-      const result = await authClient.signIn.email({ email, password });
-      if (result.error)
-        error =
-          'Email atau password tidak cocok, atau percobaan masuk terlalu sering. Silakan coba kembali.';
-      else window.location.href = '/account';
+      if (data.mode === 'login') {
+        const result = await authClient.signIn.email({ email, password });
+        if (result.error) error = 'Email atau password tidak cocok, atau percobaan terlalu sering.';
+        else window.location.href = '/account';
+      } else if (data.mode === 'register') {
+        const result = await authClient.signUp.email({
+          name,
+          email,
+          password,
+          callbackURL: '/login'
+        });
+        if (result.error)
+          error = 'Pendaftaran belum berhasil. Periksa data atau coba kembali nanti.';
+        else {
+          message =
+            'Jika alamat ini dapat didaftarkan, tautan verifikasi sudah disiapkan. Periksa email, lalu masuk ke akun. Jika sudah memiliki akun, gunakan login atau lupa password.';
+          password = '';
+          confirmation = '';
+        }
+      } else if (data.mode === 'forgot') {
+        await authClient.requestPasswordReset({ email, redirectTo: '/login?mode=reset' });
+        message =
+          'Jika akun tersedia, instruksi pengaturan password akan dikirim. Periksa kotak masuk Anda.';
+      } else if (data.mode === 'verify') {
+        await authClient.sendVerificationEmail({ email, callbackURL: '/login' });
+        message =
+          'Jika akun memerlukan verifikasi, tautannya akan dikirim. Periksa kotak masuk Anda.';
+      } else {
+        const result = await authClient.resetPassword({ newPassword: password, token: data.token });
+        if (result.error)
+          error = 'Tautan tidak valid atau kedaluwarsa. Minta tautan baru melalui Lupa password.';
+        else {
+          message = 'Password berhasil diubah. Silakan masuk kembali.';
+          password = '';
+          confirmation = '';
+        }
+      }
     } catch {
-      error = 'Koneksi terganggu. Silakan coba kembali.';
+      error = 'Koneksi terganggu atau email belum dapat dikirim. Coba kembali nanti.';
     } finally {
       busy = false;
     }
@@ -33,19 +88,14 @@
       });
       if (result.error) error = 'Login Google belum berhasil.';
     } catch {
-      error = 'Tidak dapat terhubung ke layanan login.';
+      error = 'Tidak dapat terhubung ke Google.';
     } finally {
       busy = false;
     }
   }
 </script>
 
-<svelte:head
-  ><title>Masuk · Ruang Tryout</title><meta
-    name="description"
-    content="Masuk ke akun Ruang Tryout CPNS dan PPPK."
-  /></svelte:head
->
+<svelte:head><title>{titles[data.mode]} · Ruang Tryout</title></svelte:head>
 <main id="main" class="login-shell">
   <section class="login-story">
     <a class="brand" href="/"
@@ -55,73 +105,121 @@
     <div>
       <p class="eyebrow">RUANG PERSIAPANMU</p>
       <h1>Langkah kecil.<br />Persiapan yang<br /><em>lebih berarti.</em></h1>
-      <p>Masuk dan siapkan langkah belajar untuk tujuan seleksimu.</p>
+      <p>Satu akun untuk menyiapkan langkah belajar CPNS dan PPPK.</p>
     </div>
     <p class="story-foot">CPNS & PPPK <span>Persiapan · Edisi awal</span></p>
   </section>
   <section class="login-panel">
     <div class="login-card">
-      <p class="eyebrow">SELAMAT DATANG KEMBALI</p>
-      <h2>Masuk atau daftar</h2>
-      <p class="muted">
-        Gunakan Google untuk mulai belajar. Akun peserta dibuat saat pertama kali masuk.
-      </p>
-      {#if data.oauthError}<div class="notice error" role="alert">
-          Proses Google belum selesai atau akses dibatalkan. Silakan coba lagi.
-        </div>{/if}
-      {#if error}<div class="notice error" role="alert">{error}</div>{/if}
-      <button
-        class="button secondary full"
-        disabled={busy || !data.googleEnabled}
-        onclick={googleLogin}>Lanjutkan dengan Google</button
-      >
-      {#if !data.googleEnabled}<p class="login-note">
-          Pendaftaran Google belum diaktifkan oleh pengelola.
+      <p class="eyebrow">SELAMAT DATANG</p>
+      <h2>{titles[data.mode]}</h2>
+      {#if data.oauthError || data.invalidLink}<p class="notice error" role="alert">
+          Tautan atau proses login belum berhasil. Silakan coba lagi.
         </p>{/if}
-      <details class="email-login">
-        <summary>Masuk dengan email dan password yang sudah ada</summary>
-        <form onsubmit={login} class="stack">
-          <label
+      {#if error}<p class="notice error" role="alert">{error}</p>{/if}
+      {#if message}<p class="notice success" role="status">{message}</p>{/if}
+      {#if ['login', 'register'].includes(data.mode)}
+        <button
+          class="button secondary full google"
+          disabled={busy || !data.googleEnabled}
+          onclick={googleLogin}><GoogleLogo />Lanjutkan dengan Google</button
+        >
+        {#if !data.googleEnabled}<p class="login-note">Login Google belum diaktifkan.</p>{/if}
+        <p class="divider">atau gunakan email</p>
+      {/if}
+      {#if data.mode !== 'login' && !data.mailEnabled}<p class="notice">
+          Layanan email belum diaktifkan oleh pengelola.
+        </p>{/if}
+      {#if data.mode !== 'login' && data.localMail}<p class="notice">
+          Mode pengujian lokal: pesan tersimpan di folder privat .local/mail dan belum dikirim ke
+          kotak masuk.
+        </p>{/if}
+      <form onsubmit={submit} class="stack">
+        {#if data.mode === 'register'}<label
+            >Nama<input autocomplete="name" bind:value={name} required maxlength="100" /></label
+          >{/if}
+        {#if data.mode !== 'reset'}<label
             >Email<input
               type="email"
               autocomplete="username"
               bind:value={email}
               required
-              placeholder="nama@domain.id"
+              maxlength="254"
             /></label
-          >
-          <label
+          >{/if}
+        {#if ['login', 'register', 'reset'].includes(data.mode)}<label
             >Password<input
               type="password"
-              autocomplete="current-password"
+              autocomplete={data.mode === 'login' ? 'current-password' : 'new-password'}
               bind:value={password}
               required
+              minlength={data.mode === 'login' ? undefined : 12}
+              maxlength="128"
             /></label
+          >{/if}
+        {#if ['register', 'reset'].includes(data.mode)}<p class="muted">Gunakan 12–128 karakter.</p>
+          <label
+            >Konfirmasi password<input
+              type="password"
+              autocomplete="new-password"
+              bind:value={confirmation}
+              required
+              minlength="12"
+              maxlength="128"
+            /></label
+          >{/if}
+        <button
+          class="button"
+          disabled={busy ||
+            (data.mode !== 'login' && !data.mailEnabled) ||
+            (data.mode === 'reset' && !data.token)}
+          >{busy
+            ? 'Memproses…'
+            : data.mode === 'login'
+              ? 'Masuk'
+              : data.mode === 'register'
+                ? 'Buat akun peserta'
+                : data.mode === 'reset'
+                  ? 'Simpan password'
+                  : 'Kirim tautan'}</button
+        >
+      </form>
+      <nav class="auth-links" aria-label="Pilihan akun">
+        {#if data.mode === 'login'}<a href="/login?mode=register">Belum punya akun? Daftar</a><a
+            href="/login?mode=forgot">Lupa password?</a
           >
-          <button class="button" disabled={busy}
-            >{busy ? 'Memeriksa akun…' : 'Masuk ke akun'}
-            <span aria-hidden="true">↗</span></button
-          >
-        </form>
-      </details>
-      <p class="login-note">
-        Pendaftaran peserta menggunakan Google. Login password tersedia untuk akun yang sudah
-        disiapkan, termasuk pengelola.
-      </p>
+        {:else}<a href="/login">Kembali ke login</a>{/if}
+        {#if data.mode !== 'verify'}<a href="/login?mode=verify">Kirim ulang verifikasi email</a
+          >{/if}
+      </nav>
     </div>
   </section>
 </main>
 
 <style>
-  .email-login {
-    margin-top: 24px;
+  .google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: white;
+    color: #1f1f1f;
+    font-family: Arial, sans-serif;
   }
-  .email-login summary {
-    cursor: pointer;
-    padding: 12px 0;
-    line-height: 1.5;
+  .divider {
+    text-align: center;
+    color: #667789;
+    margin: 24px 0;
   }
-  .email-login form {
-    margin-top: 16px;
+  .auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 20px;
+  }
+  .auth-links a {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    min-height: 44px;
   }
 </style>

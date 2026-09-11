@@ -5,6 +5,9 @@
 
 <svelte:head><title>Dashboard saya · Ruang Tryout</title></svelte:head>
 <ParticipantShell user={data.user} isAdmin={data.isAdmin}>
+  {#if !data.emailVerified && !data.isAdmin}<p class="notice">
+      Verifikasi email sebelum mulai ujian. <a href="/login?mode=verify">Kirim tautan verifikasi</a>
+    </p>{/if}
   <p class="eyebrow">RUANG BELAJARMU</p>
   <h1>Halo, {data.name}.</h1>
   <p class="muted">Persiapan dimulai dari langkah yang terarah.</p>

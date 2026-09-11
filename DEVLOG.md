@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-11 — AUTH-003, logo Google dan pendaftaran email
+
+Ditambahkan logo G lokal pada tombol Google serta form login email yang langsung terlihat, daftar nama/email/password/konfirmasi, lupa password, reset dan kirim ulang verifikasi. Better Auth membuka signup bila pengiriman email tersedia; auto-signin signup dimatikan dan reset mencabut sesi lama. Dashboard menandai email belum terverifikasi; service mulai ujian menolak peserta belum terverifikasi. Admin lama tetap dapat login.
+
+Development memakai outbox privat .local/mail tanpa pengiriman eksternal. Produksi memerlukan SMTP dan MAIL_FROM; konfigurasi Compose/example serta panduan ditambahkan. Uji HTTP mencakup signup/verifikasi/reset melalui outbox sementara dan penolakan akses admin. Pengiriman SMTP nyata belum dikonfigurasi/diuji. Pekerjaan paket/ujian/ranking masih perlu penyambungan UI dan pengujian lanjutan.
+
 ## 2026-09-11 — AUTH-002, login Google lokal berhasil
 
 Pengguna memasang credential OAuth di environment privat dan menyelesaikan pemilihan akun/persetujuan Google. Pengguna mengonfirmasi nama tampil di dashboard. Pemeriksaan database read-only menemukan akun provider Google dengan nama terisi, email terverifikasi, sesi aktif dan peran peserta tanpa admin_users. Tidak mencatat email, nama, token atau credential ke dokumentasi. Alur daftar/login Google lokal berhasil; callback domain produksi dan pengujian lintas browser tetap belum diverifikasi.

@@ -3,5 +3,5 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = ({ locals, setHeaders }) => {
   if (!locals.user) redirect(303, '/login');
   setHeaders({ 'Cache-Control': 'private, no-store' });
-  return { name: locals.user.name };
+  return { name: locals.user.name, emailVerified: locals.user.emailVerified };
 };
