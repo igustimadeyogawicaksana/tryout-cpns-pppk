@@ -233,6 +233,10 @@ Pedoman produk dan akses ditulis di `docs/product-and-access-policy.md`, mencaku
 
 Kebijakan retake diperjelas: retake gratis tetap aktif untuk pengujian saat pengembangan, tetapi target final sebelum rilis adalah satu percobaan untuk paket gratis dan kuota percobaan eksplisit untuk produk berbayar.
 
+## 2026-09-11 — PAY-003, uji end-to-end lokal
+
+Alur order manual diuji dengan data sementara: membuat produk aktif dan paket terbit, membuat order, mengirim referensi bukti, menyetujui pembayaran sebagai admin, lalu memeriksa grant akses. Hasil: payment `succeeded` dan grant akses terbentuk. Semua data uji dibersihkan kembali setelah pengujian.
+
 ## 2026-09-11 — PAY-003, produk berbayar admin
 
 Ditambahkan halaman admin `/admin/products` untuk membuat produk aktif, menetapkan harga dan masa akses, serta menghubungkannya ke paket tryout terbit. Produk ini menjadi sumber order manual dan pemeriksaan grant akses paket.
