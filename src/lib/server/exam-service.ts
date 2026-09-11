@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { and, eq, lte, asc, desc } from 'drizzle-orm';
+import { and, eq, lte, gt, asc, desc } from 'drizzle-orm';
 import { z } from 'zod';
 import type { AppDatabase } from './database';
 import {
@@ -12,7 +12,12 @@ import {
   questionVersions,
   auditLog,
   rankingCohorts,
-  rankingMembers
+  rankingMembers,
+  productPackages,
+  products,
+  orderPackages,
+  accessGrants,
+  orders
 } from './schema';
 import { DomainError } from './question-service';
 import { readinessIssues, scoreAnswer, subtests } from '../question-input';
@@ -254,6 +259,30 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
         () => {
           const p = getPackage(id);
           if (p.status !== 'published') throw new DomainError('Paket belum tersedia.', 404);
+          const paidProduct = db
+            .select({ id: products.id, priceIdr: products.priceIdr })
+            .from(productPackages)
+            .innerJoin(products, eq(products.id, productPackages.productId))
+            .where(and(eq(productPackages.packageId, id), eq(products.active, true)))
+            .all()
+            .find((product) => product.priceIdr > 0);
+          if (paidProduct) {
+            const grant = db
+              .select({ id: accessGrants.id })
+              .from(accessGrants)
+              .innerJoin(orderPackages, eq(orderPackages.id, accessGrants.orderPackageId))
+              .innerJoin(orders, eq(orders.id, orderPackages.orderId))
+              .where(
+                and(
+                  eq(orderPackages.packageId, id),
+                  eq(orders.userId, actor),
+                  lte(accessGrants.startsAt, now()),
+                  gt(accessGrants.expiresAt, now())
+                )
+              )
+              .get();
+            if (!grant) throw new DomainError('Selesaikan pembayaran untuk membuka paket ini.', 402);
+          }
           const cohort = db
             .select()
             .from(rankingCohorts)

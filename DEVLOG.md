@@ -232,3 +232,9 @@ Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
 Ditambahkan halaman `/pembayaran/[id]` untuk menampilkan nominal/instruksi pembayaran dan mengirim referensi bukti, serta `/admin/payments` untuk menyetujui atau menolak pembayaran manual. Persetujuan membuat grant akses sesuai masa produk; penolakan tidak membuka akses. Konfigurasi rekening/QRIS dibaca dari environment dan tidak masuk Git.
 
 Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning. Uji HTTP dengan produk aktif dan kredensial admin masih perlu dilakukan.
+
+## 2026-09-11 — PAY-003, pembatasan akses paket berbayar
+
+Mesin ujian kini memeriksa `access_grants` yang masih berlaku untuk paket yang terhubung ke produk aktif dengan harga di atas nol. Paket gratis tetap dapat dimulai langsung; paket berbayar tanpa grant ditolak dengan instruksi menyelesaikan pembayaran.
+
+Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
