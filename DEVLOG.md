@@ -227,6 +227,12 @@ Ditambahkan service pembayaran manual untuk membuat order idempoten, menerima re
 
 Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
 
+## 2026-09-11 — PAY-003, produk berbayar admin
+
+Ditambahkan halaman admin `/admin/products` untuk membuat produk aktif, menetapkan harga dan masa akses, serta menghubungkannya ke paket tryout terbit. Produk ini menjadi sumber order manual dan pemeriksaan grant akses paket.
+
+Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
+
 ## 2026-09-11 — PAY-003, UI checkout dan verifikasi
 
 Ditambahkan halaman `/pembayaran/[id]` untuk menampilkan nominal/instruksi pembayaran dan mengirim referensi bukti, serta `/admin/payments` untuk menyetujui atau menolak pembayaran manual. Persetujuan membuat grant akses sesuai masa produk; penolakan tidak membuka akses. Konfigurasi rekening/QRIS dibaca dari environment dan tidak masuk Git.
