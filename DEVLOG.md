@@ -314,4 +314,18 @@ Verifikasi: distribusi 30/35/45 terkonfirmasi dan 13 tes unit lulus. Sebelum pro
 
 Catatan perbaikan: paket yang sudah terbit memakai snapshot `exam_items`, sehingga script juga menyegarkan snapshot tersebut. Tanpa langkah ini, bank soal versi baru belum terlihat pada paket lama.
 
-Perbaikan lanjutan: template berulang diganti dengan generator soal unik per nomor. TWK memakai fakta kewarganegaraan yang berbeda konteks, TIU memakai deret numerik dengan hasil dan pembahasan terhitung, sedangkan TKP memakai skenario berbeda dengan respons terbaik yang jelas. Generator menolak prompt duplikat; hasil akhir terverifikasi 30/30, 35/35, dan 45/45 prompt unik.
+Catatan historis yang dikoreksi: pemeriksaan terdahulu hanya membandingkan teks lengkap dengan nomor latihan, sehingga angka “30/30, 35/35, 45/45 unik” tidak membuktikan keunikan substansi. Template masih berulang dan `exam_options` masih menyimpan teks/skor lama. Kelulusan 13 tes aplikasi saat itu juga tidak membuktikan mutu editorial butir.
+
+## 2026-09-12 — CONTENT-005, edisi ulang dan konsistensi ujian
+
+110 butir ditulis satu per satu dalam `scripts/content/skd-reviewed.ts` dan `skd-tkp.ts`: TWK enam butir per tema nasionalisme, integritas, bela negara, pilar negara, dan bahasa; TIU 15 numerik, 10 verbal/logika, 10 figural simbol; TKP 45 situasi di enam tema, masing-masing opsi memiliki alasan bobot. Rubrik TKP adalah rubrik latihan lokal, bukan kunci resmi BKN. Kunci pilihan tunggal mengikuti identitas opsi ketika urutannya diputar; pembahasan tidak merujuk huruf yang bisa berubah saat pengacakan.
+
+Script lama yang menimpa versi terbit dinonaktifkan dan menjadi pintu ke pemasang edisi baru. Default hanya preview. `--apply` memerlukan database yang sudah ada, memakai DATABASE_PATH, membuat backup SQLite konsisten, membuat revisi dengan audit melalui service, dan menerbitkan paket latihan lokal baru. Versi serta paket trial lama diarsipkan; tidak ada penghapusan sesi/hasil/transaksi maupun penimpaan isi dan opsi lama. Ketidakkonsistenan pada riwayat trial akibat overwrite sebelumnya tidak direkonstruksi secara spekulatif; riwayat itu bukan hasil latihan valid untuk dibandingkan dengan edisi baru.
+
+Dampak EXAM-001/RESULT-001/RANK-002: paket baru mempunyai item dan opsi baru yang konsisten, tanpa menimpa jawaban, hasil, atau snapshot ranking lama. Edisi lokal ini gratis untuk pengecekan konten, tidak terhubung produk pembayaran atau cohort ranking lama. QRIS asli/VPS tetap ditunda.
+
+Verifikasi: 15 tes lulus, termasuk duplikasi yang hanya berbeda nomor ditolak, kunci numerik diperiksa terhadap jawaban yang dihitung terpisah, pemeriksaan seluruh teks opsi saat delivery, dan submit 110 butir menghasilkan 550 (terbaik), 45 (salah TWK/TIU dan TKP bobot 1), 0 (kosong). Instalasi ulang idempotent dan snapshot/sesi lama tetap sama. Batas verifikasi: tidak ada sertifikasi soal resmi, kalibrasi kesulitan atau review editor manusia; pemeriksaan otomatis tidak membuktikan semua kemiripan semantik telah hilang.
+
+Paket lokal baru: `/paket/1aeed3d7-b930-4328-ac91-9b79975d565d`. Cadangan sebelum pemasangan: `backups/before-content-edition-1789204017198.sqlite` (tidak masuk Git).
+
+Pemeriksaan akhir: `svelte-check` 0 error/0 warning. Server lokal dinyalakan kembali; halaman paket mengembalikan HTTP 200 dan browser menampilkan komposisi 110 soal serta tombol Mulai / ulangi latihan. Tidak ada sesi ujian pengguna yang dimulai oleh pemeriksaan halaman ini.
