@@ -1,14 +1,19 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { auth } from '$lib/server/auth';
-import { account } from '$lib/server/schema';
-import { and, eq } from 'drizzle-orm';
+import { account, orders } from '$lib/server/schema';
+import { and, eq, desc } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { examService } from '$lib/server/exam-service';
 export const load: PageServerLoad = ({ locals, setHeaders }) => {
   if (!locals.user) redirect(303, '/login');
   setHeaders({ 'Cache-Control': 'private, no-store' });
   return {
+    purchases: db.select({
+      id: orders.id, title: orders.productTitle, amount: orders.amountIdr,
+      status: orders.status, expiresAt: orders.expiresAt
+    }).from(orders).where(eq(orders.userId, locals.user.id)).orderBy(desc(orders.createdAt)).limit(50).all()
+      .map((order) => ({ ...order, status: order.status === 'pending' && order.expiresAt <= Date.now() ? 'expired' : order.status })),
     name: locals.user.name,
     hasPassword: Boolean(
       db

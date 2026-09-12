@@ -42,7 +42,21 @@
   {#if !data.emailVerified && !data.isAdmin}<p class="notice">
       Verifikasi email sebelum mulai ujian. <a href="/login?mode=verify">Kirim tautan verifikasi</a>
     </p>{/if}
-  <nav class="quick-grid" aria-label="Akses cepat"><a href="/paket"><Icon name="book" size={21} /><span>Materi</span></a><a href="/paket"><Icon name="target" size={21} /><span>Tryout</span></a><a href="/dashboard"><Icon name="chart" size={21} /><span>Progres</span></a><a href="/paket"><Icon name="users" size={21} /><span>Ranking</span></a></nav>
+  <nav class="quick-grid" aria-label="Akses cepat">
+    <a href="/paket"><Icon name="target" size={21} /><span>Paket tryout</span></a>
+    <a href="#purchases"><Icon name="package" size={21} /><span>Pembelian saya</span></a>
+    <a href="/profil"><Icon name="user" size={21} /><span>Profil saya</span></a>
+  </nav>
+  <section id="purchases" class="participant-card">
+    <h2>Pembelian saya</h2>
+    <p>Buka pesanan untuk melihat status, mengirim bukti, atau melanjutkan ke paket yang dibeli. Menampilkan hingga 50 pesanan terbaru.</p>
+    {#each data.purchases as purchase}
+      <div class="history-item">
+        <div class="history-head"><strong>{purchase.title}</strong><span class="status-pill">{({ pending: 'Menunggu pembayaran', review_required: 'Perlu ditinjau', paid: 'Dibayar', expired: 'Kedaluwarsa', cancelled: 'Dibatalkan', refunded: 'Dikembalikan', partially_refunded: 'Dikembalikan sebagian' } as Record<string, string>)[purchase.status] ?? purchase.status}</span></div>
+        <div class="history-foot"><span>Rp {purchase.amount.toLocaleString('id-ID')}</span><a href={'/pembayaran/' + purchase.id}>Buka pesanan &rarr;</a></div>
+      </div>
+    {:else}<p class="muted">Belum ada pembelian. Pilih paket untuk melihat pilihan yang tersedia.</p>{/each}
+  </section>
   <div class="cards next-grid">
     <section class="participant-card next-card">
       <span class="icon-badge amber"><Icon name="package" size={20} /></span><div><h2>Pilih latihan berikutnya</h2><p>Jelajahi paket CPNS dan PPPK yang telah diterbitkan pengelola.</p></div><a class="button" href="/paket">Jelajahi paket</a>
@@ -71,7 +85,7 @@
   .status-pill { padding:5px 9px; border-radius:999px; background:var(--color-teal-bg); color:var(--color-teal-fg); font-size:.72rem; font-weight:650; }
   .progress { height: 9px; margin-top: 12px; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
   .progress span { display: block; height: 100%; border-radius: inherit; background: var(--color-accent); transition: width 350ms ease; }
-  .quick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:24px 0; }
+  .quick-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:24px 0; }
   .quick-grid a { display:grid; gap:11px; padding:18px; background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); color:var(--color-body); }
   .quick-grid a:hover { border-color:var(--color-primary); color:var(--color-primary); }
   .next-grid { grid-template-columns:1fr !important; }

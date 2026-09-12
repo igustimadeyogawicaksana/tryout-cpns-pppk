@@ -299,3 +299,9 @@ Koreksi hasil setelah penutupan cohort tersedia dari halaman pengelola paket. Se
 Riwayat koreksi menyimpan nilai sebelum/sesudah, pelaku, alasan, policy dan perpindahan revisi. Snapshot final tidak ditimpa: penutupan menghasilkan generasi pertama dan koreksi menghasilkan generasi berikutnya. Generasi baru mengambil skor terkoreksi sambil mempertahankan alias, provinsi dan visibilitas dari snapshot sebelumnya. Pembuatan snapshot ditolak apabila satu cohort berisi hasil dengan policy berbeda. Migrasi `0007_watery_cable.sql` mempertahankan data lama dengan default `total-v1` dan generasi 1.
 
 Verifikasi lokal: migrasi terhadap SQLite aktif berhasil; 13 tes lulus termasuk penolakan policy campuran, akses admin, konflik revisi, audit koreksi, dua generasi persisten, konsistensi nilai ranking, dan identitas snapshot; `svelte-check` selesai tanpa error atau warning. QRIS asli dan deployment VPS tetap ditunda sesuai arahan.
+
+## 2026-09-12 — UX-002 dan USER-003, beranda responsif dan riwayat pembelian
+
+Beranda diperbesar tipografinya dan panel dekoratif diganti menjadi pilihan jalur CPNS/PPPK yang langsung membuka filter paket. Dashboard mengganti tautan cepat yang belum punya tujuan nyata dengan Paket tryout, Pembelian saya, dan Profil saya. Riwayat pembelian milik akun yang sedang masuk kini tampil dengan status, nominal, dan tautan ke pesanan; data pesanan dibatasi ke pemiliknya dan tidak di-cache.
+
+Verifikasi lokal: tampilan diperiksa pada lebar 320, 390, 768, dan 1440 piksel; tidak ada overflow horizontal. `svelte-check` 0 error/0 warning, 13 tes unit lulus, dan smoke test HTTP lulus termasuk isolasi riwayat pembelian antar akun. QRIS asli, VPS, dan fitur backlog lain tetap mengikuti urutan prioritas yang sudah ditetapkan.

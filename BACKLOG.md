@@ -55,4 +55,7 @@ Tambahan dari arah self-hosting:
 | OPS-003 | P1 | Volume SQLite persisten di Dokploy | Todo | APP-001, DISC-001 | Ukur kebutuhan sesuai docs/capacity-baseline.md: usulan volume 40 GiB/host 80 GB disesuaikan paket dalam anggaran; satu penulis, WAL persisten, cadangan restore, alarm disk dan redeploy/restore teruji |
 | DATA-003 | P2 | Latihan migrasi SQLite ke PostgreSQL | Todo | DATA-001, APP-001 | Tipe, ID, auth, jawaban, pembayaran dan akses tervalidasi; prosedur cutover/rollback diuji |
 
+| UX-002 | P1 | Responsif lintas perangkat dan hierarki beranda | Done | — | Beranda terbaca pada ponsel/tablet/desktop; panel samping punya tujuan; tidak ada overflow horizontal |
+| USER-003 | P1 | Riwayat pembelian pengguna | Done | PAY-003 | Pesanan milik akun tampil dengan status, nominal, tautan detail; isolasi antar akun teruji |
+
 Gunakan Todo → In progress → Done; Blocked harus menyebut hambatan konkret. Saat menyelesaikan pekerjaan, tambahkan bukti di DEVLOG.md dan referensikan ID pada commit. Backlog Markdown ini adalah sumber pelacakan awal; GitHub Issues/Project belum dibuat.

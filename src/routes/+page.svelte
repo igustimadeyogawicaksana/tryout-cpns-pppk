@@ -26,16 +26,14 @@
           >{data.user ? 'Dashboard saya' : 'Masuk akun'}</a
         >
       </div>
-      <div class="hero-stats" aria-label="Ringkasan latihan"><span><strong>110</strong> soal</span><span><strong>100</strong> menit</span><span><strong>Gratis</strong> untuk mencoba</span></div>
     </div>
-    <aside class="product-visual" aria-label="Contoh tampilan soal">
-      <div class="visual-orbit"></div><span class="float-check"><Icon name="check" size={20} /></span><span class="float-letter">A</span>
-      <div class="question-mockup">
-        <div class="mock-head"><span>Soal 18 dari 110</span><strong>82:14</strong></div>
-        <div class="mock-line wide"></div><div class="mock-line"></div>
-        <div class="mock-choice"><b>A</b><i></i></div><div class="mock-choice selected"><b>B</b><i></i></div><div class="mock-choice"><b>C</b><i></i></div>
-        <div class="mock-progress"><span></span></div>
-      </div>
+    <aside class="start-panel" aria-labelledby="start-title">
+      <p class="eyebrow">Mulai dari tujuanmu</p>
+      <h2 id="start-title">Mau latihan apa hari ini?</h2>
+      <p>Pilih jalur untuk melihat paket, komposisi soal, dan masa aksesnya.</p>
+      <a class="path-link" href="/paket?jenis=CPNS"><span class="icon-badge blue"><Icon name="target" size={22} /></span><span><strong>Latihan CPNS</strong><small>Persiapan TWK, TIU, dan TKP</small></span><span aria-hidden="true">→</span></a>
+      <a class="path-link" href="/paket?jenis=PPPK"><span class="icon-badge coral"><Icon name="book" size={22} /></span><span><strong>Latihan PPPK</strong><small>Materi sesuai jenis seleksi dan formasi</small></span><span aria-hidden="true">→</span></a>
+      <a class="resume-link" href={data.user ? '/dashboard' : '/login'}>{data.user ? 'Lanjutkan latihan dari dashboard →' : 'Sudah punya akun? Masuk →'}</a>
     </aside>
   </section>
   <section class="why">
@@ -80,7 +78,7 @@
 <style>
   .hero {
     display: grid;
-    grid-template-columns: 1.35fr 1fr;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
     gap: 48px;
     align-items: center;
     margin: 12px 0 72px;
@@ -93,28 +91,17 @@
     max-width: 570px;
     margin-bottom: 28px;
   }
-  .hero-stats { display:flex; margin-top:30px; color:var(--color-body); font-size:.8rem; }
-  .hero-stats span { padding:0 18px; border-right:1px solid var(--color-border); }
-  .hero-stats span:first-child { padding-left:0; }
-  .hero-stats span:last-child { border:0; }
-  .hero-stats strong { display:block; color:var(--color-ink); font-size:1rem; }
-  .product-visual { min-height:390px; position:relative; display:grid; place-items:center; }
-  .visual-orbit { position:absolute; width:330px; height:330px; border-radius:50%; background:rgba(16,185,129,.14); }
-  .question-mockup { width:min(350px,86%); background:white; border:1px solid var(--color-border-strong); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-md); position:relative; transform:rotate(1.5deg); }
-  .mock-head { display:flex; justify-content:space-between; color:var(--color-muted); font-size:.72rem; margin-bottom:24px; }
-  .mock-head strong { color:var(--color-primary); }
-  .mock-line { width:72%; height:7px; background:#e2e8f0; border-radius:99px; margin:9px 0; }
-  .mock-line.wide { width:95%; }
-  .mock-choice { display:flex; align-items:center; gap:12px; border:1px solid var(--color-border); border-radius:8px; padding:9px; margin-top:10px; }
-  .mock-choice b { width:25px; height:25px; display:grid; place-items:center; border:1px solid var(--color-border-strong); border-radius:50%; font-size:.7rem; }
-  .mock-choice i { height:6px; width:72%; background:#e2e8f0; border-radius:99px; }
-  .mock-choice.selected { background:#eff6ff; border-color:var(--color-primary); }
-  .mock-choice.selected b { background:var(--color-primary); border-color:var(--color-primary); color:white; }
-  .mock-progress { height:6px; background:#e2e8f0; border-radius:99px; margin-top:20px; overflow:hidden; }
-  .mock-progress span { display:block; width:42%; height:100%; background:var(--color-accent); }
-  .float-check,.float-letter { position:absolute; z-index:2; display:grid; place-items:center; width:48px; height:48px; border-radius:50%; background:white; box-shadow:var(--shadow-md); }
-  .float-check { color:var(--color-teal-fg); top:30px; right:20px; }
-  .float-letter { color:var(--color-primary); font-weight:700; bottom:40px; left:18px; }
+  .hero h1 { font-size:clamp(2.4rem, 4.8vw, 3.6rem); font-weight:750; line-height:1.12; }
+  .start-panel { min-width:0; padding:30px; background:white; border:1px solid var(--color-border); border-radius:20px; box-shadow:var(--shadow-sm); }
+  .start-panel h2 { font-size:1.65rem; line-height:1.3; }
+  .path-link { display:flex; align-items:center; gap:14px; padding:18px 0; border-bottom:1px solid var(--color-border); min-height:80px; }
+  .path-link > span:nth-child(2) { flex:1; min-width:0; }
+  .path-link strong,.path-link small { display:block; }
+  .path-link strong { font-size:1.1rem; }
+  .path-link small { margin-top:5px; font-size:.9rem; color:var(--color-body); }
+  .path-link:hover,.resume-link:hover { color:var(--color-primary); }
+  .resume-link { display:block; margin-top:22px; font-weight:600; line-height:1.6; }
+  .why h2,.goals > h2 { font-size:clamp(1.6rem,3vw,2rem); }
   .why { margin:0 0 64px; }
   .why-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:28px; }
   .why-grid article { border-top:1px solid var(--color-border); padding-top:22px; }
@@ -129,8 +116,8 @@
       gap: 28px;
       margin-bottom: 48px;
     }
-    .product-visual { min-height:340px; }
+    .start-panel { padding:24px; }
     .why-grid { grid-template-columns:1fr; gap:18px; }
   }
-  @media (max-width:500px) { .hero-stats span { padding:0 10px; } .question-mockup { width:88%; } }
+  @media (max-width:500px) { .hero .actions { flex-direction:column; } .start-panel { padding:20px; } }
 </style>

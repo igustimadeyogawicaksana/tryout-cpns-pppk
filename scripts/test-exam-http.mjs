@@ -90,6 +90,14 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
     const checkoutPath = bought.headers.get('location');
     assert.match(checkoutPath, /^\/pembayaran\//);
     assert.equal((await purchase()).headers.get('location'), checkoutPath);
+    const purchasesPage = await fetch(origin + '/dashboard', { headers: { Cookie: participantCookie } });
+    assert.equal(purchasesPage.status, 200);
+    assert.match(purchasesPage.headers.get('cache-control'), /no-store/);
+    assert.ok((await purchasesPage.text()).includes(checkoutPath));
+    const otherDashboard = await fetch(origin + '/dashboard', { headers: { Cookie: cookie } });
+    assert.equal(otherDashboard.status, 200);
+    assert.ok(!(await otherDashboard.text()).includes(checkoutPath));
+
     assert.equal((await fetch(origin + checkoutPath, { headers: { Cookie: participantCookie } })).status, 200);
     assert.equal((await fetch(origin + checkoutPath, { headers: { Cookie: cookie } })).status, 404);
     assert.equal((await post('/paket/' + packageId + '?/start', {}, participantCookie)).status, 402);

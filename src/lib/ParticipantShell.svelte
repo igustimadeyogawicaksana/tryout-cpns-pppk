@@ -117,6 +117,7 @@
     color: inherit;
   }
   .site-main {
+    overflow-wrap: anywhere;
     width: min(1160px, 100%);
     margin: 0 auto;
     padding: 48px 24px 72px;
@@ -196,6 +197,11 @@
     }
   }
   @media (max-width: 520px) {
+    .site-header { column-gap: 6px; }
+    .account-actions { font-size: .85rem; }
+    :global(.participant .button) { white-space: normal; text-align: center; }
+    :global(.participant .history-head), :global(.participant .history-foot) { flex-wrap: wrap; }
+    :global(.participant .participant-card) { padding: 20px; }
     nav { justify-content: flex-start; gap: 8px 14px; }
     nav a { font-size: .83rem; }
     nav a :global(svg) { display: none; }
