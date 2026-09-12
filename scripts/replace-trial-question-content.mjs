@@ -24,14 +24,43 @@ const tkp = [
 ];
 
 const choose = (arr, index) => arr[index % arr.length];
+const twkFacts = [
+  ['Lambang sila pertama Pancasila adalah …', ['Bintang', 'Rantai', 'Pohon beringin', 'Kepala banteng', 'Padi dan kapas'], 'A', 'Bintang melambangkan sila Ketuhanan Yang Maha Esa.'],
+  ['Semboyan Bhinneka Tunggal Ika berasal dari kitab …', ['Negarakertagama', 'Sutasoma', 'Pararaton', 'Arjunawiwaha', 'Nagarakretagama'], 'B', 'Bhinneka Tunggal Ika berasal dari Kakawin Sutasoma karya Mpu Tantular.'],
+  ['UUD 1945 disahkan pada tanggal …', ['17 Agustus 1945', '18 Agustus 1945', '20 Mei 1908', '28 Oktober 1928', '10 November 1945'], 'B', 'UUD 1945 disahkan oleh PPKI pada 18 Agustus 1945.'],
+  ['Lembaga yang berwenang mengubah dan menetapkan UUD adalah …', ['DPR', 'MPR', 'DPD', 'Mahkamah Konstitusi', 'Presiden'], 'B', 'UUD 1945 memberikan kewenangan perubahan dan penetapan UUD kepada MPR.'],
+  ['Warna putih pada bendera Indonesia melambangkan …', ['Keberanian', 'Kesucian', 'Keadilan', 'Kemakmuran', 'Persatuan'], 'B', 'Warna putih melambangkan kesucian.'],
+  ['Sumpah Pemuda diikrarkan pada tahun …', ['1908', '1928', '1945', '1955', '1998'], 'B', 'Sumpah Pemuda diikrarkan pada Kongres Pemuda II tahun 1928.'],
+  ['Contoh pengamalan sila kedua adalah …', ['Menolong korban bencana tanpa membeda-bedakan', 'Memaksakan keyakinan', 'Mengutamakan daerah sendiri', 'Menghindari musyawarah', 'Mengabaikan aturan'], 'A', 'Kemanusiaan yang adil dan beradab mendorong kepedulian tanpa diskriminasi.'],
+  ['Musyawarah untuk mufakat merupakan pengamalan sila ke …', ['Satu', 'Dua', 'Tiga', 'Empat', 'Lima'], 'D', 'Musyawarah untuk mufakat merupakan inti sila keempat.'],
+  ['Bahasa Indonesia berkedudukan sebagai bahasa negara sejak …', ['Sumpah Pemuda', 'Proklamasi', 'Dekrit Presiden', 'Reformasi', 'Konferensi Asia Afrika'], 'B', 'Bahasa Indonesia ditegaskan sebagai bahasa persatuan dalam Sumpah Pemuda dan sebagai bahasa negara dalam UUD 1945.'],
+  ['Sikap yang tepat terhadap produk budaya daerah adalah …', ['Merendahkan', 'Melestarikan dan menghargai', 'Menghapus', 'Mengklaim milik sendiri', 'Membatasi'], 'B', 'Menghargai dan melestarikan budaya memperkuat identitas nasional.']
+];
+const makeGenerated = (row, index) => {
+  if (row.subtest_code === 'TWK') {
+    const [prompt, options, correct, explanation] = twkFacts[index % twkFacts.length];
+    return [row.topic_code || 'NASIONALISME', `${prompt} (Latihan ${index + 1})`, options, correct, explanation];
+  }
+  if (row.subtest_code === 'TIU') {
+    const n = index + 3; const answer = n * 7 + 4; const options = [answer - 8, answer - 3, answer, answer + 5, answer + 9].map(String);
+    return ['NUMERIK', `Jika pola bertambah 7 dimulai dari ${n}, nilai suku berikutnya setelah ${n * 7 - 3} adalah … (Latihan ${index + 1})`, options, 'C', `Nilai berikutnya diperoleh dengan menambahkan 7: ${n * 7 - 3} + 7 = ${answer}.`];
+  }
+  const situations = ['antrean layanan', 'rapat tim', 'verifikasi dokumen', 'keamanan akun', 'target laporan'];
+  const action = ['menjelaskan prosedur dengan sopan', 'membagi tugas dan menyepakati tenggat', 'memeriksa data sebelum memproses', 'melaporkan melalui kanal resmi', 'menyampaikan risiko dan estimasi'];
+  const topic = row.topic_code; const context = situations[index % situations.length]; const best = action[index % action.length];
+  const options = [best, 'Mengabaikan sampai masalah hilang', 'Menyalahkan pihak lain tanpa klarifikasi', 'Melewati prosedur agar cepat', 'Menyimpan masalah tanpa laporan'];
+  return [topic, `Dalam situasi ${context} nomor ${index + 1}, tindakan paling tepat adalah …`, options, 'A', `Pilihan A paling tepat karena menunjukkan ${best.toLowerCase()} dengan tetap menjaga aturan dan pelayanan.`];
+};
 const tx = db.transaction(() => {
-  const rows = db.prepare("select qv.id,qv.content,qv.subtest_code from question_versions qv join questions q on q.id=qv.question_id where q.external_key like 'CPNS-SKD-TRIAL-%' order by q.external_key").all();
+  const rows = db.prepare("select qv.id,qv.content,qv.subtest_code,qv.topic_code from question_versions qv join questions q on q.id=qv.question_id where q.external_key like 'CPNS-SKD-TRIAL-%' order by q.external_key").all();
   const update = db.prepare('update question_versions set content=?, topic_code=?, updated_at=? where id=?');
   const updateItems = db.prepare('update exam_items set content=? where version_id=?');
   const now = Date.now();
+  const prompts = new Set();
   rows.forEach((row, index) => {
-    const bank = row.subtest_code === 'TWK' ? twk : row.subtest_code === 'TIU' ? tiu : tkp;
-    const [topic, prompt, options, correct, explanation] = choose(bank, index);
+    const [topic, prompt, options, correct, explanation] = makeGenerated(row, index);
+    if (prompts.has(prompt)) throw new Error(`Duplicate prompt generated at ${index + 1}`);
+    prompts.add(prompt);
     const content = JSON.parse(row.content);
     content.topic_code = topic;
     content.prompt_md = prompt;

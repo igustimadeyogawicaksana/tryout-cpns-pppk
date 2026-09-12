@@ -313,3 +313,5 @@ Verifikasi lokal: tampilan diperiksa pada lebar 320, 390, 768, dan 1440 piksel; 
 Verifikasi: distribusi 30/35/45 terkonfirmasi dan 13 tes unit lulus. Sebelum produksi, pengelola tetap perlu meninjau setiap butir dan menambahkan sumber materi yang disetujui.
 
 Catatan perbaikan: paket yang sudah terbit memakai snapshot `exam_items`, sehingga script juga menyegarkan snapshot tersebut. Tanpa langkah ini, bank soal versi baru belum terlihat pada paket lama.
+
+Perbaikan lanjutan: template berulang diganti dengan generator soal unik per nomor. TWK memakai fakta kewarganegaraan yang berbeda konteks, TIU memakai deret numerik dengan hasil dan pembahasan terhitung, sedangkan TKP memakai skenario berbeda dengan respons terbaik yang jelas. Generator menolak prompt duplikat; hasil akhir terverifikasi 30/30, 35/35, dan 45/45 prompt unik.
