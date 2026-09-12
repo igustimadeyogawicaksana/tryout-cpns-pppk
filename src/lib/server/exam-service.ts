@@ -351,6 +351,7 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
           id: i.id,
           position: i.position,
           subtest: i.content.subtest_code,
+          topic: i.content.topic_code,
           prompt: i.content.prompt_md,
           options: options(i.id).map((o) => ({
             id: o.id,

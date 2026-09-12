@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
   import ParticipantShell from '$lib/ParticipantShell.svelte';
+  import QuestionFigure from '$lib/QuestionFigure.svelte';
   let { data, form } = $props();
   let index = $state(0),
     saving = $state(false),
@@ -14,6 +15,15 @@
   );
   let confirmSubmit = $state(false);
   const item = $derived(data.items[index]);
+  const sections = $derived([...new Set(data.items.map(q => q.subtest))]);
+  let questionBody = $state<HTMLDivElement>();
+  function topicLabel(code: string) {
+    return code.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
+  function move(next: number) {
+    index = next;
+    if (questionBody) questionBody.scrollTop = 0;
+  }
   onMount(() => {
     const start = performance.now();
     const seconds = Math.max(0, (data.attempt.deadlineAt - data.serverNow) / 1000);
@@ -81,54 +91,60 @@
         >Lihat ranking / pengaturan tampil</a
       >{:else}<a class="button" href={'/paket/' + data.package.id}>Ulangi latihan</a>{/if}
     {#if data.reviewAvailable}{#each data.items as q}<section class="participant-card result">
-          <h3>{q.position + 1}. {q.prompt}</h3>
+          <p class="topic-label">{q.subtest} · {topicLabel(q.topic)}</p>
+          <h3>{q.position + 1}. {#if q.topic.startsWith('FIGURAL')}<QuestionFigure text={q.prompt} />{:else}{q.prompt}{/if}</h3>
           <ul>
             {#each q.options as o}<li>
-                {o.code}. {o.text} — {o.score} poin {data.attempt.answers[q.id] === o.id
+                {o.code}. {#if q.topic.startsWith('FIGURAL')}<QuestionFigure text={o.text} />{:else}{o.text}{/if} — {o.score} poin {data.attempt.answers[q.id] === o.id
                   ? '(jawaban Anda)'
                   : ''}
               </li>{/each}
           </ul>
           {#if !data.attempt.answers[q.id]}<p>Jawaban kosong: {q.blankScore} poin.</p>{/if}
           <h4>Pembahasan</h4>
-          <p class="question-text">{q.explanation}</p>
+          <p class="question-text">{#if q.topic.startsWith('FIGURAL')}<QuestionFigure text={q.explanation ?? ''} />{:else}{q.explanation}{/if}</p>
         </section>{/each}{/if}
   {:else}
     <section class="exam-shell" aria-label="Ruang ujian">
       <header class="exam-topbar">
-        <div><span class="exam-kicker">TRYOUT CPNS</span><strong>{data.package.title}</strong></div>
+        <div><span class="exam-kicker">TRYOUT {data.package.examType}</span><strong>{data.package.title}</strong></div>
         <div class="exam-status"><span role="status">{saving ? 'Menyimpan…' : saved}</span><strong class:warning={remaining < 60} class="exam-timer" aria-label="Sisa waktu">
           {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}
         </strong></div>
       </header>
       <div class="exam-layout">
         <section class="exam-question-panel">
-          <div class="exam-question-meta"><span>{item?.subtest} · Soal {index + 1} dari {data.items.length}</span><span>{Object.keys(answers).length} terjawab</span></div>
+          <div class="exam-question-meta"><div><strong>{item?.subtest} · {topicLabel(item?.topic ?? '')}</strong><span class="question-counter">Soal {index + 1} dari {data.items.length}</span></div><span>{Object.keys(answers).length} terjawab</span></div>
+          <!-- This scrollable region needs keyboard focus for Arrow/PageDown scrolling. -->
+          <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+          <div class="question-body" bind:this={questionBody} tabindex="0" role="region" aria-label="Pertanyaan dan pilihan jawaban">
           {#if error}<p class="notice error" role="alert">
             {error}
             {#if pending}<button onclick={() => pending && save(pending.itemId, pending.optionId)} disabled={saving}>Coba simpan lagi</button>{/if}
             <a data-sveltekit-reload href={'/ujian/' + data.attempt.id}>Muat ulang jawaban server</a>
           </p>{/if}
-          {#if item}<h2 class="question-text">{item.prompt}</h2>
+          {#if item}<h2 class="question-text">{#if item.topic.startsWith('FIGURAL')}<QuestionFigure text={item.prompt} />{:else}{item.prompt}{/if}</h2>
             <fieldset disabled={saving || !!pending || remaining === 0}>
               <legend>Pilih salah satu jawaban</legend>
               {#each item.options as o}<label class="choice cat-choice">
                 <input type="radio" name={item.id} checked={answers[item.id] === o.id} onchange={() => save(item.id, o.id)} />
-                <span class="choice-code">{o.code}</span><span>{o.text}</span>
+                <span class="choice-code">{o.code}</span><span>{#if item.topic.startsWith('FIGURAL')}<QuestionFigure text={o.text} />{:else}{o.text}{/if}</span>
               </label>{/each}
               <button class="button secondary clear-choice" onclick={() => save(item.id, null)}>Kosongkan jawaban</button>
             </fieldset>{/if}
+          </div>
           <div class="exam-actions">
-            <button class="button secondary" disabled={index === 0 || saving || !!pending} onclick={() => index--}>← Sebelumnya</button>
-            <button class="button" disabled={index === data.items.length - 1 || saving || !!pending} onclick={() => index++}>Berikutnya →</button>
+            <button class="button secondary" disabled={index === 0 || saving || !!pending} onclick={() => move(index - 1)}>← Sebelumnya</button>
+            <button class="button" disabled={index === data.items.length - 1 || saving || !!pending} onclick={() => move(index + 1)}>Berikutnya →</button>
           </div>
         </section>
         <aside class="exam-nav-panel" aria-label="Navigasi soal">
           <h3>Navigasi soal</h3>
           <p class="exam-nav-help">Hijau berarti sudah dijawab. Pilih nomor untuk berpindah.</p>
-          <nav class="numbers" aria-label="Nomor soal">
-            {#each data.items as q, i}<button class:answered={Boolean(answers[q.id])} aria-current={index === i ? 'step' : undefined} disabled={saving || !!pending} onclick={() => (index = i)}>{i + 1}</button>{/each}
-          </nav>
+          <nav class="subtest-tabs" aria-label="Pilih subtes">{#each sections as sub}<button class:active={item?.subtest === sub} disabled={saving || !!pending} aria-pressed={item?.subtest === sub} onclick={() => move(data.items.findIndex(q => q.subtest === sub))}>{sub}</button>{/each}</nav>
+          <div class="number-scroll"><nav class="numbers" aria-label={`Nomor soal ${item?.subtest}`}>
+            {#each data.items as q, i}{#if q.subtest === item?.subtest}<button class:answered={Boolean(answers[q.id])} aria-current={index === i ? 'step' : undefined} aria-label={`Soal ${i + 1}, ${topicLabel(q.topic)}, ${answers[q.id] ? 'terjawab' : 'belum dijawab'}`} title={topicLabel(q.topic)} disabled={saving || !!pending} onclick={() => move(i)}>{i + 1}</button>{/if}{/each}
+          </nav></div>
           <div class="exam-legend"><span class="legend-dot answered-dot"></span>Terjawab <span class="legend-dot"></span>Belum dijawab</div>
           <div class="exam-progress"><span>Progress</span><strong>{Object.keys(answers).length}/{data.items.length}</strong><div><i style={`width:${(Object.keys(answers).length / data.items.length) * 100}%`}></i></div></div>
           <label class="submit-check"><input type="checkbox" bind:checked={confirmSubmit} /> Saya sudah memeriksa jawaban.</label>
@@ -160,13 +176,21 @@
     outline: 3px solid #185ee3;
   }
   .exam-shell { margin-top: 18px; }
+  .question-counter { display:block; margin-top:6px; }
+  .topic-label { color:#456278; font-size:.9rem; }
+  .exam-question-panel { display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:clamp(460px,72dvh,800px); min-width:0; box-sizing:border-box; }
+  .question-body { overflow-y:auto; scrollbar-gutter:stable; min-height:0; padding-right:10px; }
+  .subtest-tabs { display:flex; flex-wrap:wrap; gap:6px; }
+  .subtest-tabs button { min-height:44px; padding:8px; border:1px solid #cad6df; border-radius:6px; background:white; }
+  .subtest-tabs button.active { background:#185ee3; color:white; }
+  .number-scroll { max-height:300px; overflow-y:auto; padding:4px; }
   .exam-topbar { display:flex; justify-content:space-between; align-items:center; gap:18px; background:#102b46; color:white; padding:18px 22px; border-radius:12px 12px 0 0; }
   .exam-topbar strong { display:block; margin-top:4px; font-size:1.05rem; }
   .exam-kicker { color:#a9dfca; font-size:.72rem; letter-spacing:.12em; font-weight:700; }
   .exam-status { display:flex; align-items:center; gap:18px; color:#d9e6ef; font-size:.82rem; }
   .exam-timer { color:white; background:#25435d; border:1px solid #6c879d; border-radius:7px; padding:9px 14px; font-variant-numeric:tabular-nums; font-size:1.15rem; }
   .exam-timer.warning { background:#9b3b32; }
-  .exam-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:18px; background:#eef3f6; padding:18px; border-radius:0 0 12px 12px; }
+  .exam-layout { display:grid; align-items:start; grid-template-columns:minmax(0,1fr) 280px; gap:18px; background:#eef3f6; padding:18px; border-radius:0 0 12px 12px; }
   .exam-question-panel, .exam-nav-panel { background:white; border:1px solid #dce5e8; border-radius:10px; padding:24px; }
   .exam-question-meta { display:flex; justify-content:space-between; gap:10px; color:#5c7082; font-size:.84rem; border-bottom:1px solid #e0e7ed; padding-bottom:16px; }
   .exam-question-panel .question-text { font-size:1.2rem; margin:24px 0; }
@@ -178,7 +202,8 @@
   .cat-choice:has(input:focus-visible) { outline:3px solid #93c5fd; outline-offset:2px; }
   .cat-choice input:checked + .choice-code { background:var(--color-primary); color:white; border-color:var(--color-primary); }
   .clear-choice { margin-top:8px; }
-  .exam-actions { display:flex; justify-content:space-between; gap:12px; margin-top:26px; padding-top:18px; border-top:1px solid #e0e7ed; }
+  .exam-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; padding-top:14px; border-top:1px solid #e0e7ed; background:white; }
+  .exam-actions .button { min-height:48px; white-space:normal; padding:10px 8px; }
   .exam-nav-panel h3 { margin:0 0 8px; }
   .exam-nav-help { color:#5c7082; font-size:.84rem; line-height:1.5; }
   .exam-nav-panel .numbers button { min-width:38px; min-height:38px; }
@@ -195,7 +220,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 16px 0;
+    padding: 13px 14px;
   }
   .choice input {
     width: auto;
@@ -216,9 +241,11 @@
   .choice span {
     white-space: pre-wrap;
   }
+  .exam-timer { white-space:nowrap; flex-shrink:0; }
   @media (max-width: 760px) {
     .exam-layout { grid-template-columns:1fr; padding:10px; }
-    .exam-nav-panel { order:-1; }
+    .exam-nav-panel { order:1; }
+    .exam-question-meta { font-size:.8rem; }
     .exam-topbar { align-items:flex-start; flex-direction:column; padding:16px; }
     .exam-status { width:100%; justify-content:space-between; }
     .exam-question-panel, .exam-nav-panel { padding:18px; }

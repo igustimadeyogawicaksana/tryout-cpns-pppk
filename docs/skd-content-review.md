@@ -22,6 +22,6 @@ Jangan mengubah JSON `exam_items` saja: layar dan penilaian menggunakan `exam_op
 - Periksa apakah soal pilihan tunggal memiliki tepat satu jawaban yang dapat dipertahankan.
 - Periksa urutan bobot dan alasan setiap opsi TKP; tidak mengklaim bobot resmi.
 - Tinjau variasi tingkat kesulitan dan kemiripan substansi. Normalisasi nomor mencegah trik duplikasi lama, tetapi bukan pemeriksa semantik menyeluruh.
-- Periksa keterbacaan simbol figural pada perangkat sasaran. Edisi ini memakai simbol teks, belum berupa aset gambar kompleks.
+- Periksa keterbacaan figural pada perangkat sasaran. Simbol pada topik FIGURAL kini dirender menjadi SVG orisinal pada soal, opsi, dan pembahasan. Ini pola latihan sederhana, bukan salinan gambar soal resmi BKN atau aset gambar kompleks.
 
 Tes otomatis memeriksa 110 butir/550 opsi dan jalur jawaban sampai hasil. Kelulusan tes aplikasi tidak menggantikan pemeriksaan editorial tersebut.

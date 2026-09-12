@@ -329,3 +329,8 @@ Verifikasi: 15 tes lulus, termasuk duplikasi yang hanya berbeda nomor ditolak, k
 Paket lokal baru: `/paket/1aeed3d7-b930-4328-ac91-9b79975d565d`. Cadangan sebelum pemasangan: `backups/before-content-edition-1789204017198.sqlite` (tidak masuk Git).
 
 Pemeriksaan akhir: `svelte-check` 0 error/0 warning. Server lokal dinyalakan kembali; halaman paket mengembalikan HTTP 200 dan browser menampilkan komposisi 110 soal serta tombol Mulai / ulangi latihan. Tidak ada sesi ujian pengguna yang dimulai oleh pemeriksaan halaman ini.
+## 2026-09-13 — EXAM-001 / UX-002, navigasi stabil dan figural
+
+Panel soal memiliki area isi yang dapat digulir dengan tombol sebelumnya/berikutnya tetap di bawah panel. Sidebar tidak lagi meregangkan panel mengikuti 110 nomor; nomor dibagi per subtes TWK/TIU/TKP. Topik dari snapshot soal ditampilkan di soal, navigasi, dan pembahasan. Figural memakai SVG orisinal untuk pola panah dan geometri pada teks, opsi, serta pembahasan; bukan klaim gambar resmi BKN. Timer tidak terpecah pada layar kecil.
+
+Verifikasi lokal: 15 tes lulus, pemeriksaan Svelte 0 error/0 warning dan build berhasil sebelum penyempurnaan CSS kecil. Posisi tombol saat berpindah dua soal desktop sama (selisih kurang dari 0,001 px). Viewport 390 dan 320 px diperiksa; pada 320 px tidak ada overflow horizontal dan delapan SVG tampil di soal rotasi beserta opsinya. Matriks browser/perangkat fisik tetap belum lengkap. Sesi trial lokal dibuat tanpa memilih jawaban atau submit untuk pemeriksaan UI. Tidak ada perubahan isi database, skor, pembayaran, atau ranking.
