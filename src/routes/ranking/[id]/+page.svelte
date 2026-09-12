@@ -30,10 +30,11 @@
   <p>
     {data.count} peserta dinilai dan tampil · diperbarui {new Date(data.updatedAt).toISOString()}
   </p>
-  <p>
-    Ranking sementara. Penutupan: {new Date(data.cohort.endsAt).toISOString()}. Ini bukan peringkat
-    seleksi resmi.
-  </p>
+  {#if data.generation}
+    <p>Ranking final · generasi {data.generation} · aturan {data.policy}. Ini bukan peringkat seleksi resmi.</p>
+  {:else}
+    <p>Ranking sementara. Penutupan: {new Date(data.cohort.endsAt).toISOString()}. Ini bukan peringkat seleksi resmi.</p>
+  {/if}
   {#if data.mine}<p class="notice">
       Posisi saya: {data.mine.rank} · Skor {data.mine.total}/{data.mine.maximum}
       {#if data.minePage !== data.page}<a href={pageLink(data.minePage)}>Buka halaman saya</a>{/if}

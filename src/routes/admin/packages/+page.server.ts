@@ -10,7 +10,10 @@ export const load: PageServerLoad = ({ locals }) => {
   requireAdmin(locals);
   const s = examService(db);
   return {
-    packages: s.list(true),
+    packages: s.list(true).map((item) => ({
+      ...item,
+      cohort: rankingService(db).cohortFor(item.id) ?? null
+    })),
     questions: s.publishedQuestions().map((q) => ({
       id: q.id,
       code: q.content.external_key,

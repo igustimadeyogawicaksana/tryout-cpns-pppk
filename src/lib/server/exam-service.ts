@@ -307,7 +307,8 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
               userId: actor,
               startedAt: time,
               deadlineAt: Math.min(time + p.durationMinutes * 60000, cohort?.endsAt ?? Infinity),
-              answers: {}
+              answers: {},
+              scoringPolicy: cohort?.policy ?? 'total-v1'
             })
             .run();
           return attemptId;

@@ -6,7 +6,7 @@ import { examService } from '../src/lib/server/exam-service';
 import { questionService } from '../src/lib/server/question-service';
 import { rankingService } from '../src/lib/server/ranking-service';
 import { profileService } from '../src/lib/server/profile-service';
-import { adminUsers, rankingMembers, rankingSnapshots, products, productPackages, orders, orderPackages, accessGrants } from '../src/lib/server/schema';
+import { adminUsers, rankingMembers, rankingSnapshots, rankingSnapshotEntries, resultCorrections, products, productPackages, orders, orderPackages, accessGrants } from '../src/lib/server/schema';
 import {
   user,
   questionVersions,
@@ -100,7 +100,7 @@ test('competition isolation, hidden review, tie ranking and immediate opt-out', 
       // Controlled scored fixtures to exercise tied and zero totals independently of grading tests.
       f.db
         .update(examAttempts)
-        .set({ result: { total: [10, 5, 5, 0][index], maximum: 10, subscores: {} } })
+        .set({ result: { total: [10, 5, 5, 0][index], maximum: 10, subscores: { TIU: { score: [10, 5, 5, 0][index], maximum: 10 } } } })
         .where(eq(examAttempts.id, id))
         .run();
     }
@@ -156,10 +156,24 @@ test('competition isolation, hidden review, tie ranking and immediate opt-out', 
     f.setTime(time);
     const frozen = ranking.board(p, 'other');
     const otherAttempt = f.svc.history('other').find((h) => h.package.id === p)!.attempt.id;
-    f.db.update(examAttempts).set({ result: { total: 999, maximum: 999, subscores: {} } }).where(eq(examAttempts.id, otherAttempt)).run();
+    f.db.update(examAttempts).set({ result: { total: 9, maximum: 10, subscores: { TIU: { score: 9, maximum: 10 } } } }).where(eq(examAttempts.id, otherAttempt)).run();
     f.db.update(rankingMembers).set({ alias: 'Changed after close' }).where(eq(rankingMembers.userId, 'other')).run();
     assert.deepEqual(ranking.board(p, 'other').entries, frozen.entries);
     assert.equal(f.db.select().from(rankingSnapshots).all().length, 1);
+    f.db.update(examAttempts).set({ scoringPolicy: 'different-v2' }).where(eq(examAttempts.id, otherAttempt)).run();
+    assert.throws(() => ranking.correct(otherAttempt, 'admin', 1, { total: 7, maximum: 10, subscores: { TIU: { score: 7, maximum: 10 } } }, 'Koreksi hasil setelah audit soal'), /aturan/);
+    f.db.update(examAttempts).set({ scoringPolicy: 'total-v1' }).where(eq(examAttempts.id, otherAttempt)).run();
+    assert.throws(() => ranking.correct(otherAttempt, 'student', 1, { total: 7, maximum: 10, subscores: { TIU: { score: 7, maximum: 10 } } }, 'Koreksi hasil setelah audit soal'), /pengelola/);
+    const correction = ranking.correct(otherAttempt, 'admin', 1, { total: 7, maximum: 10, subscores: { TIU: { score: 7, maximum: 10 } } }, 'Koreksi hasil setelah audit soal');
+    assert.equal(correction.generation, 2);
+    assert.equal(f.db.select().from(resultCorrections).all().length, 1);
+    assert.equal(f.db.select().from(rankingSnapshots).all().length, 2);
+    assert.equal(ranking.board(p, 'other').generation, 2);
+    assert.ok(ranking.board(p, 'other').entries.some((entry) => entry.alias === 'Alias1' && entry.total === 7));
+    assert.ok(!ranking.board(p, 'other').entries.some((entry) => entry.alias === 'Changed after close'));
+    const snapshots = f.db.select().from(rankingSnapshots).all().sort((a, b) => a.generation - b.generation);
+    assert.deepEqual(f.db.select().from(rankingSnapshotEntries).where(eq(rankingSnapshotEntries.snapshotId, snapshots[0].id)).all().map((entry) => entry.total).sort((a, b) => b - a), [5, 5, 0, ...Array(20).fill(0)]);
+    assert.throws(() => ranking.correct(otherAttempt, 'admin', 1, { total: 6, maximum: 10, subscores: { TIU: { score: 6, maximum: 10 } } }, 'Koreksi kedua memakai revisi lama'), /Muat ulang/);
     const attempt = f.svc.history('other').find((h) => h.package.id === p)!.attempt.id;
     assert.equal(f.svc.view(attempt, 'other').reviewAvailable, true);
   } finally {

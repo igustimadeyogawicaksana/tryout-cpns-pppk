@@ -125,6 +125,7 @@
           >
         </form>{:else if p.status === 'published'}<a href={'/paket/' + p.id}>Buka detail paket →</a
         >{/if}
+      {#if p.cohort}<p><a href={'/admin/rankings/' + p.id}>Audit hasil & generasi ranking →</a></p>{/if}
       {#if p.status !== 'archived'}<details>
           <summary>Arsipkan paket</summary>
           <p>

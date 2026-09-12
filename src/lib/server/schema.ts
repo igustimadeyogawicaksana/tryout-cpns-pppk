@@ -200,6 +200,8 @@ export const examAttempts = sqliteTable(
     startedAt: integer('started_at').notNull(),
     deadlineAt: integer('deadline_at').notNull(),
     revision: integer('revision').notNull().default(1),
+    resultRevision: integer('result_revision').notNull().default(1),
+    scoringPolicy: text('scoring_policy').notNull().default('total-v1'),
     status: text('status', { enum: ['in_progress', 'scored'] })
       .notNull()
       .default('in_progress'),
@@ -214,6 +216,7 @@ export const examAttempts = sqliteTable(
   },
   (t) => [
     index('exam_attempt_deadline').on(t.status, t.deadlineAt),
+    check('exam_result_revision_positive', sql`${t.resultRevision} > 0`),
     check('exam_attempt_status', sql`${t.status} IN ('in_progress','scored')`)
   ]
 );
@@ -463,9 +466,15 @@ export const refunds = sqliteTable(
 
 export const rankingSnapshots = sqliteTable('ranking_snapshots', {
   id: text('id').primaryKey().notNull(),
-  cohortId: text('cohort_id').notNull().unique().references(() => rankingCohorts.id),
+  cohortId: text('cohort_id').notNull().references(() => rankingCohorts.id),
+  generation: integer('generation').notNull().default(1),
+  policy: text('policy').notNull().default('total-v1'),
+  reason: text('reason').notNull().default('Penutupan cohort'),
   generatedAt: integer('generated_at').notNull()
-});
+}, (t) => [
+  uniqueIndex('ranking_snapshot_generation').on(t.cohortId, t.generation),
+  check('ranking_snapshot_generation_positive', sql`${t.generation} > 0`)
+]);
 export const rankingSnapshotEntries = sqliteTable(
   'ranking_snapshot_entries',
   {
@@ -479,4 +488,33 @@ export const rankingSnapshotEntries = sqliteTable(
     visible: integer('visible', { mode: 'boolean' }).notNull().default(true)
   },
   (t) => [uniqueIndex('ranking_snapshot_user').on(t.snapshotId, t.userId)]
+);
+
+export const resultCorrections = sqliteTable(
+  'result_corrections',
+  {
+    id: text('id').primaryKey().notNull(),
+    attemptId: text('attempt_id').notNull().references(() => examAttempts.id),
+    cohortId: text('cohort_id').notNull().references(() => rankingCohorts.id),
+    fromRevision: integer('from_revision').notNull(),
+    toRevision: integer('to_revision').notNull(),
+    policy: text('policy').notNull(),
+    previousResult: text('previous_result', { mode: 'json' }).$type<{
+      total: number;
+      maximum: number;
+      subscores: Record<string, { score: number; maximum: number }>;
+    }>().notNull(),
+    correctedResult: text('corrected_result', { mode: 'json' }).$type<{
+      total: number;
+      maximum: number;
+      subscores: Record<string, { score: number; maximum: number }>;
+    }>().notNull(),
+    reason: text('reason').notNull(),
+    actorId: text('actor_id').notNull().references(() => user.id),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [
+    uniqueIndex('result_correction_revision').on(t.attemptId, t.toRevision),
+    check('result_correction_revision_valid', sql`${t.toRevision} = ${t.fromRevision} + 1`)
+  ]
 );

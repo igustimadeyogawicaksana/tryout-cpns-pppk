@@ -278,3 +278,10 @@ Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning. Uji HTTP denga
 Mesin ujian kini memeriksa `access_grants` yang masih berlaku untuk paket yang terhubung ke produk aktif dengan harga di atas nol. Paket gratis tetap dapat dimulai langsung; paket berbayar tanpa grant ditolak dengan instruksi menyelesaikan pembayaran.
 
 Verifikasi: 11 tes unit lulus dan svelte-check 0 error/0 warning.
+## 2026-09-12 — RANK-002, koreksi hasil dan generasi ranking
+
+Koreksi hasil setelah penutupan cohort tersedia dari halaman pengelola paket. Setiap percobaan kini menyimpan aturan penilaian dan revisi hasil. Koreksi hanya menerima struktur subtes serta nilai maksimum yang sama, menghitung total dari subskor, memerlukan alasan, dan menolak revisi lama maupun akun non-pengelola.
+
+Riwayat koreksi menyimpan nilai sebelum/sesudah, pelaku, alasan, policy dan perpindahan revisi. Snapshot final tidak ditimpa: penutupan menghasilkan generasi pertama dan koreksi menghasilkan generasi berikutnya. Generasi baru mengambil skor terkoreksi sambil mempertahankan alias, provinsi dan visibilitas dari snapshot sebelumnya. Pembuatan snapshot ditolak apabila satu cohort berisi hasil dengan policy berbeda. Migrasi `0007_watery_cable.sql` mempertahankan data lama dengan default `total-v1` dan generasi 1.
+
+Verifikasi lokal: migrasi terhadap SQLite aktif berhasil; 13 tes lulus termasuk penolakan policy campuran, akses admin, konflik revisi, audit koreksi, dua generasi persisten, konsistensi nilai ranking, dan identitas snapshot; `svelte-check` selesai tanpa error atau warning. QRIS asli dan deployment VPS tetap ditunda sesuai arahan.
