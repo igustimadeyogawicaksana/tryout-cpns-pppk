@@ -65,5 +65,5 @@
   .meta span, .composition span { display: inline-flex; align-items: center; gap: 7px; }
   .composition { margin: 22px 0; }
   .composition span { padding: 8px 12px; border-radius: 999px; background: var(--color-accent-soft); color: #065f46; font-size: .85rem; font-weight: 650; }
-  .price-box { padding: 24px; border-radius: var(--radius-lg); background: linear-gradient(135deg, #eff6ff, #ecfdf5); border-color: #bfdbfe; box-shadow: var(--shadow-sm); }
+  .price-box { padding: 24px; border-radius: var(--radius-lg); background: #eff6ff; border-color: #bfdbfe; box-shadow: var(--shadow-sm); }
 </style>

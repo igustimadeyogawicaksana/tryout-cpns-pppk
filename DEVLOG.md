@@ -1,5 +1,13 @@
 # Development log
 
+## 2026-09-12 — Revisi visual flat dan kartu jawaban tunggal
+
+Brief visual kedua menggantikan arah dekorasi sebelumnya. Tampilan peserta kini memakai gaya flat dengan radius dan bayangan lebih kecil, empat warna badge bermakna konsisten, label kecil yang lebih tenang, serta tombol dan filter warna solid. Beranda memakai mockup kartu soal, statistik ringkas, tiga alasan menggunakan ruangtryout, dan dua kartu jalur bertint. Dashboard memiliki tiga ringkasan berbasis data yang sudah tersedia, kartu riwayat dengan status/progress, empat akses cepat, dan ajakan memilih latihan. Katalog memisahkan jumlah soal, durasi dan tahun, menampilkan badge kategori/status, tombol penuh, serta keterangan transparansi.
+
+Pada halaman ujian, input radio tetap tersedia untuk keyboard dan pembaca layar tetapi disembunyikan secara visual. Badge huruf menjadi satu-satunya indikator terlihat; seluruh kartu dapat diklik, dengan state hover, fokus dan terpilih yang jelas. Timer, navigasi nomor, progress, penyimpanan jawaban dan submit tidak diubah.
+
+Verifikasi visual dilakukan pada beranda, dashboard dan katalog di viewport normal, serta beranda pada 390 × 844. Pemeriksaan halaman login tetap melalui kompilasi karena sesi aktif mengalihkan `/login`; pemeriksaan kartu jawaban tidak membuat sesi ujian baru. Pemeriksaan Svelte, tes aplikasi dan build dicatat setelah validasi akhir.
+
 ## 2026-09-12 — Penyegaran visual ruangtryout
 
 Design token global dirapikan untuk warna, gradient, radius, bayangan dan jarak. Beranda memakai kartu peta persiapan bergradient dengan pola dekoratif dan ikon; navigasi peserta, metadata paket, kategori CPNS/PPPK, dashboard serta detail paket memakai ikon garis yang konsisten. Kartu paket memperoleh aksen kategori, filter aktif memakai gradient, hasil dashboard memakai progress bar, dan panel autentikasi memperoleh gradient, dekorasi serta indikator manfaat. Animasi masuk dan hover ringan menghormati pengaturan reduced motion.

@@ -170,10 +170,13 @@
   .exam-question-panel, .exam-nav-panel { background:white; border:1px solid #dce5e8; border-radius:10px; padding:24px; }
   .exam-question-meta { display:flex; justify-content:space-between; gap:10px; color:#5c7082; font-size:.84rem; border-bottom:1px solid #e0e7ed; padding-bottom:16px; }
   .exam-question-panel .question-text { font-size:1.2rem; margin:24px 0; }
-  .cat-choice { border:1px solid #dce5e8; border-radius:8px; margin:10px 0; padding:13px 14px; align-items:center; }
-  .cat-choice:hover { border-color:#185ee3; background:#f5f9ff; }
+  .cat-choice { border:1px solid #dce5e8; border-radius:8px; margin:10px 0; padding:13px 14px; align-items:center; cursor:pointer; transition:border-color 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+  .cat-choice:hover { border-color:#93c5fd; box-shadow:var(--shadow-sm); }
+  .cat-choice:has(input:checked) { border-color:var(--color-primary); background:#eff6ff; box-shadow:0 0 0 1px var(--color-primary); }
   .choice-code { display:grid; place-items:center; width:28px; height:28px; border:1px solid #9fb2c1; border-radius:50%; font-weight:700; color:#35536b; flex:0 0 auto; }
-  .cat-choice input:checked + .choice-code { background:#185ee3; color:white; border-color:#185ee3; }
+  .cat-choice input { position:absolute; width:1px; height:1px; min-height:0; opacity:0; pointer-events:none; }
+  .cat-choice:has(input:focus-visible) { outline:3px solid #93c5fd; outline-offset:2px; }
+  .cat-choice input:checked + .choice-code { background:var(--color-primary); color:white; border-color:var(--color-primary); }
   .clear-choice { margin-top:8px; }
   .exam-actions { display:flex; justify-content:space-between; gap:12px; margin-top:26px; padding-top:18px; border-top:1px solid #e0e7ed; }
   .exam-nav-panel h3 { margin:0 0 8px; }

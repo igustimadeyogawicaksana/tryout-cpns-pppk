@@ -138,8 +138,9 @@
     min-width: 180px;
   }
   :global(.participant h1) {
-    font-size: clamp(2rem, 5.5vw, 4rem);
-    line-height: 1.12;
+    font-size: clamp(2.25rem, 4.5vw, 2.5rem);
+    line-height: 1.15;
+    font-weight: 600;
     letter-spacing: -0.04em;
     margin: 16px 0 24px;
   }

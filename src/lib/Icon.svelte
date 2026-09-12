@@ -17,5 +17,10 @@
   {:else if name === 'check'}<path d="m5 12 4 4L19 6"/>
   {:else if name === 'info'}<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>
   {:else if name === 'chart'}<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+  {:else if name === 'monitor'}<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9h4M7 12h7"/>
+  {:else if name === 'users'}<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+  {:else if name === 'list'}<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+  {:else if name === 'flame'}<path d="M12 22c4 0 7-3 7-7 0-3-2-5-4-7 0 2-1 3-2 4 0-4-2-7-5-9 0 4-3 7-3 12 0 4 3 7 7 7Z"/><path d="M9 18c0-2 1-3 3-5 0 2 3 3 3 5a3 3 0 0 1-6 0Z"/>
+  {:else if name === 'award'}<circle cx="12" cy="8" r="5"/><path d="M8.5 12 7 22l5-3 5 3-1.5-10"/>
   {/if}
 </svg>

@@ -9,20 +9,27 @@
   --color-accent-soft: #d1fae5;
   --color-warm: #f59e0b;
   --color-warm-soft: #fef3c7;
+  --color-blue-bg: #e6f1fb;
+  --color-blue-fg: #185fa5;
+  --color-teal-bg: #e1f5ee;
+  --color-teal-fg: #0f6e56;
+  --color-coral-bg: #f5c4b3;
+  --color-coral-fg: #993c1d;
+  --color-amber-bg: #fac775;
+  --color-amber-fg: #633806;
   --color-ink: #0f172a;
   --color-body: #475569;
   --color-muted: #94a3b8;
   --color-surface: #fff;
   --color-bg: #f8fafc;
   --color-border: #e2e8f0;
-  --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
-  --gradient-accent: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+  --gradient-dark: #0f172a;
+  --gradient-accent: #2563eb;
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.12);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 16px;
@@ -148,6 +155,7 @@ hr {
   font-weight: 700;
   letter-spacing: 0.16em;
   margin-bottom: 14px;
+  text-transform: lowercase;
 }
 .button {
   display: inline-flex;
@@ -250,7 +258,7 @@ hr {
   pointer-events: none;
 }
 .login-story h1 {
-  font-size: clamp(2.7rem, 4.6vw, 4.8rem);
+  font-size: clamp(2.35rem, 4vw, 2.5rem);
   line-height: 1.08;
   font-weight: 600;
   letter-spacing: -0.05em;
@@ -581,6 +589,11 @@ td small {
   background: #d9f0e6;
   color: #28654e;
 }
+.icon-badge { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.icon-badge.blue { background: var(--color-blue-bg); color: var(--color-blue-fg); }
+.icon-badge.teal { background: var(--color-teal-bg); color: var(--color-teal-fg); }
+.icon-badge.coral { background: var(--color-coral-bg); color: var(--color-coral-fg); }
+.icon-badge.amber { background: var(--color-amber-bg); color: var(--color-amber-fg); }
 .pill.subtle {
   background: #eef2f7;
   color: #58728d;
