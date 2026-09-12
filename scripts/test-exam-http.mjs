@@ -34,12 +34,12 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
     assert.equal((await fetch(origin + '/paket/' + packageId)).status, 404);
     assert.equal((await post('/admin/packages?/publish', { id: packageId })).status, 200);
     assert.equal((await fetch(origin + '/paket/' + packageId)).status, 200);
-    assert.equal((await post('/paket/' + packageId, {}, '')).status, 303);
-    const started = await post('/paket/' + packageId, {}, participantCookie);
+    assert.equal((await post('/paket/' + packageId + '?/start', {}, '')).status, 303);
+    const started = await post('/paket/' + packageId + '?/start', {}, participantCookie);
     assert.equal(started.status, 303, await started.clone().text());
     const attemptPath = started.headers.get('location');
     assert.equal(
-      (await post('/paket/' + packageId, {}, participantCookie)).headers.get('location'),
+      (await post('/paket/' + packageId + '?/start', {}, participantCookie)).headers.get('location'),
       attemptPath
     );
     assert.equal((await fetch(origin + attemptPath, { headers: { Cookie: cookie } })).status, 404);
@@ -81,6 +81,27 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
     const historyHtml = await history.text();
     assert.match(historyHtml, /HTTP practice package/);
     assert.ok(!historyHtml.includes('Belum ada riwayat ujian'));
+    // Exercise the actual checkout actions, not only direct service calls.
+    db.prepare("INSERT INTO products(id,title,price_idr,access_days,active,created_at) VALUES('http-product','HTTP paid trial',25000,30,1,1)").run();
+    db.prepare("INSERT INTO product_packages(id,product_id,package_id) VALUES('http-link','http-product',?)").run(packageId);
+    const purchase = () => post('/paket/' + packageId + '?/buy', { productId: 'http-product' }, participantCookie);
+    const bought = await purchase();
+    assert.equal(bought.status, 303, await bought.clone().text());
+    const checkoutPath = bought.headers.get('location');
+    assert.match(checkoutPath, /^\/pembayaran\//);
+    assert.equal((await purchase()).headers.get('location'), checkoutPath);
+    assert.equal((await fetch(origin + checkoutPath, { headers: { Cookie: participantCookie } })).status, 200);
+    assert.equal((await fetch(origin + checkoutPath, { headers: { Cookie: cookie } })).status, 404);
+    assert.equal((await post('/paket/' + packageId + '?/start', {}, participantCookie)).status, 402);
+    const proof = await post(checkoutPath + '?/proof', { reference: 'HTTP-TRANSFER-001' }, participantCookie);
+    assert.equal(proof.status, 200, await proof.clone().text());
+    const payment = db.prepare('SELECT * FROM payments WHERE order_id=?').get(checkoutPath.split('/').pop());
+    assert.equal(payment.status, 'review_required');
+    const approved = await post('/admin/payments?/review', { paymentId: payment.id, approved: 'true' });
+    assert.equal(approved.status, 200, await approved.clone().text());
+    assert.equal(db.prepare('SELECT status FROM payments WHERE id=?').get(payment.id).status, 'succeeded');
+    assert.equal((await post('/paket/' + packageId + '?/start', {}, participantCookie)).status, 303);
+    console.log('Checkout HTTP: purchase, retry, ownership, proof, admin approval and paid exam access passed.');
     const archive = { id: packageId, reason: 'Edisi pengujian sudah ditutup' };
     assert.equal((await post('/admin/packages?/archive', archive, participantCookie)).status, 403);
     assert.equal((await post('/admin/packages?/archive', archive)).status, 200);
@@ -123,7 +144,7 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
       403
     );
     const joined = await post(
-      '/paket/' + competitionId,
+      '/paket/' + competitionId + '?/start',
       { alias: 'PublicAlias', visible: 'on' },
       participantCookie
     );

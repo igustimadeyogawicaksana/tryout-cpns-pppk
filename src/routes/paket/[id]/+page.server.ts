@@ -30,7 +30,7 @@ export const actions: Actions = {
     }
     redirect(303, '/pembayaran/' + orderId);
   },
-  default: async ({ locals, params, request }) => {
+  start: async ({ locals, params, request }) => {
     if (!locals.user) redirect(303, '/login');
     let id: string;
     try {

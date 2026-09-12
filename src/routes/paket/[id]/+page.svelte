@@ -28,7 +28,7 @@
         : 'Hasil dan pembahasan tersedia sesudah selesai; latihan ini tidak masuk ranking.'}
     </p>
     {#if form?.error}<p class="notice error" role="alert">{form.error}</p>{/if}
-    <form method="POST">
+    <form method="POST" action="?/start">
       {#if data.cohort}
         <p>
           Kompetisi gratis ditutup {new Date(data.cohort.endsAt).toISOString()}. Sisa waktu hingga

@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-12 — Perbaikan akar error POST paket dan checkout
+
+Halaman paket mencampur action default dan action bernama buy, sehingga SvelteKit menolak POST dengan 500. Action mulai diubah menjadi start dan seluruh form/tes start kompetisi disesuaikan. Perubahan redirect/URL sebelumnya tidak mengatasi akar error ini. Hasil smoke sebelumnya memakai build lama sehingga tidak membuktikan source terbaru lulus.
+
+Ditambahkan pengujian HTTP checkout pada database sementara: beli dan retry, akses halaman pembayaran berdasarkan pemilik, kirim referensi, persetujuan admin, penolakan mulai sebelum bayar dan izin mulai setelah grant. Data pengguna lokal tidak diubah. Validasi dilakukan terhadap build yang baru dibuat; kesiapan pembayaran produksi masih memerlukan audit bukti, nominal, kedaluwarsa dan pencabutan akses.
+
 ## 2026-09-11 — AUTH-002: timeout koneksi Google setelah perbaikan origin
 
 Log callback terbaru menunjukkan `UND_ERR_CONNECT_TIMEOUT` saat Better Auth menghubungi Google. Pengujian tanpa token/secret ke endpoint Google menemukan GET sertifikat gagal dengan resolusi default dan berhasil (200) menggunakan Node `--dns-result-order=ipv4first`. Perintah dev ditambah preferensi IPv4 dan server lokal dijalankan ulang. Respons GET 404 dari endpoint token berarti endpoint terjangkau tetapi metode GET tidak didukung; bukan bukti token exchange berhasil. Penyelesaian OAuth dengan akun nyata masih harus dicoba pengguna. Browser saat diagnosis masih memiliki sesi admin; itu tidak membuktikan percobaan Google terbaru berhasil.
