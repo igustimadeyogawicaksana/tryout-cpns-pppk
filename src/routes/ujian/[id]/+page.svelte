@@ -73,7 +73,9 @@
       <p>Hasil pada platform ini bukan penetapan kelulusan seleksi resmi.</p>
     </section>
     {#if !data.reviewAvailable}<p class="notice">
-        Pembahasan dan nilai pilihan akan tersedia setelah periode kompetisi ditutup.
+        {data.paid && !data.accessActive
+          ? 'Masa akses paket sudah berakhir atau dicabut. Ringkasan hasil tetap tersedia; aktifkan akses untuk membuka pembahasan.'
+          : 'Pembahasan dan nilai pilihan akan tersedia setelah periode kompetisi ditutup.'}
       </p>{/if}
     {#if data.competitive}<a href={'/ranking/' + data.package.id}
         >Lihat ranking / pengaturan tampil</a

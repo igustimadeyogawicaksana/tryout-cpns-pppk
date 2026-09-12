@@ -7,15 +7,16 @@ Pembayaran MVP memakai transfer bank atau QRIS merchant/pribadi yang diverifikas
 1. Peserta memilih produk dan membuat pesanan. Harga, judul produk, masa akses, dan paket yang dibeli disalin ke `orders` dan `order_packages`.
 2. Sistem membuat satu `payments` dengan `provider=manual`, `environment=production`, status `pending`, nominal yang sama dengan pesanan, serta kunci idempotensi.
 3. Halaman pembayaran menampilkan nomor pesanan, nominal, rekening/QRIS dari konfigurasi publik, batas pembayaran, dan instruksi pengiriman bukti.
-4. Peserta mengirim nominal transfer, waktu transfer, nama pengirim, dan referensi transaksi. Data masuk sebagai `payment_events` dengan status `received`; sistem tidak membuka akses otomatis.
+4. Peserta mengirim nominal transfer, waktu transfer, nama pengirim, dan referensi transaksi. Detail audit masuk ke `manual_payment_proofs`, sedangkan event idempoten masuk ke `payment_events`; sistem tidak membuka akses otomatis.
 5. Peserta dapat mengirim ulang bukti dengan event key berbeda. Event yang sama tidak boleh diproses dua kali.
 
 ## Alur pengelola
 
 1. Pengelola memeriksa mutasi rekening atau dashboard QRIS dan mencocokkan nominal, waktu, referensi, serta pemesan.
 2. Jika cocok, pengelola memproses event menjadi `verified=true`, mengubah `payments.status` dan `orders.status` menjadi `succeeded`/`paid`, lalu membuat satu `access_grants` untuk setiap `order_packages`.
-3. Jika tidak cocok, event diberi status `failed` atau `ignored` dengan alasan audit. Akses tidak diberikan.
-4. Refund memakai tabel `refunds`; pencabutan akses menyimpan `revoked_at` dan `revoke_reason`.
+3. Jika tidak cocok, bukti ditolak dengan alasan audit dan peserta dapat memperbaiki bukti selama order belum kedaluwarsa. Akses tidak diberikan.
+4. Order pending/review yang melewati 24 jam menjadi `expired` dan tidak dapat disetujui.
+5. Refund memakai tabel `refunds`; pencabutan akses menyimpan `revoked_at`, `revoke_reason`, dan audit admin.
 
 ## Kontrak yang disiapkan untuk gateway
 

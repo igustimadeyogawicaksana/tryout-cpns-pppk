@@ -393,6 +393,29 @@ export const paymentEvents = sqliteTable(
     check('payment_event_verified', sql`${t.status} != 'processed' OR ${t.verified} = 1`)
   ]
 );
+export const manualPaymentProofs = sqliteTable(
+  'manual_payment_proofs',
+  {
+    id: text('id').primaryKey().notNull(),
+    paymentId: text('payment_id').notNull().references(() => payments.id),
+    submittedBy: text('submitted_by').notNull().references(() => user.id),
+    reference: text('reference').notNull(),
+    senderName: text('sender_name').notNull(),
+    amountIdr: integer('amount_idr').notNull(),
+    paidAt: integer('paid_at').notNull(),
+    status: text('status', { enum: ['pending', 'approved', 'rejected'] }).notNull().default('pending'),
+    reviewNote: text('review_note'),
+    reviewedBy: text('reviewed_by').references(() => user.id),
+    reviewedAt: integer('reviewed_at'),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [
+    uniqueIndex('manual_proof_reference').on(t.paymentId, t.reference),
+    index('manual_proof_status').on(t.status, t.createdAt),
+    check('manual_proof_amount_valid', sql`typeof(${t.amountIdr}) = 'integer' AND ${t.amountIdr} BETWEEN 1 AND 1000000000`),
+    check('manual_proof_status_valid', sql`${t.status} IN ('pending','approved','rejected')`)
+  ]
+);
 // Owner and package are derived through order_packages -> orders; no mismatched user IDs.
 export const accessGrants = sqliteTable(
   'access_grants',
@@ -436,4 +459,24 @@ export const refunds = sqliteTable(
     ),
     check('refund_status_valid', sql`${t.status} IN ('requested','pending','succeeded','failed')`)
   ]
+);
+
+export const rankingSnapshots = sqliteTable('ranking_snapshots', {
+  id: text('id').primaryKey().notNull(),
+  cohortId: text('cohort_id').notNull().unique().references(() => rankingCohorts.id),
+  generatedAt: integer('generated_at').notNull()
+});
+export const rankingSnapshotEntries = sqliteTable(
+  'ranking_snapshot_entries',
+  {
+    id: text('id').primaryKey().notNull(),
+    snapshotId: text('snapshot_id').notNull().references(() => rankingSnapshots.id),
+    userId: text('user_id').notNull().references(() => user.id),
+    alias: text('alias').notNull(),
+    province: text('province'),
+    total: integer('total').notNull(),
+    maximum: integer('maximum').notNull(),
+    visible: integer('visible', { mode: 'boolean' }).notNull().default(true)
+  },
+  (t) => [uniqueIndex('ranking_snapshot_user').on(t.snapshotId, t.userId)]
 );

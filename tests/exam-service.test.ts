@@ -6,7 +6,7 @@ import { examService } from '../src/lib/server/exam-service';
 import { questionService } from '../src/lib/server/question-service';
 import { rankingService } from '../src/lib/server/ranking-service';
 import { profileService } from '../src/lib/server/profile-service';
-import { adminUsers, rankingMembers } from '../src/lib/server/schema';
+import { adminUsers, rankingMembers, rankingSnapshots, products, productPackages, orders, orderPackages, accessGrants } from '../src/lib/server/schema';
 import {
   user,
   questionVersions,
@@ -154,11 +154,35 @@ test('competition isolation, hidden review, tie ranking and immediate opt-out', 
     assert.throws(() => ranking.create(practice, 40000, 'admin'));
     time = 30000;
     f.setTime(time);
+    const frozen = ranking.board(p, 'other');
+    const otherAttempt = f.svc.history('other').find((h) => h.package.id === p)!.attempt.id;
+    f.db.update(examAttempts).set({ result: { total: 999, maximum: 999, subscores: {} } }).where(eq(examAttempts.id, otherAttempt)).run();
+    f.db.update(rankingMembers).set({ alias: 'Changed after close' }).where(eq(rankingMembers.userId, 'other')).run();
+    assert.deepEqual(ranking.board(p, 'other').entries, frozen.entries);
+    assert.equal(f.db.select().from(rankingSnapshots).all().length, 1);
     const attempt = f.svc.history('other').find((h) => h.package.id === p)!.attempt.id;
     assert.equal(f.svc.view(attempt, 'other').reviewAvailable, true);
   } finally {
     f.sqlite.close();
   }
+});
+test('paid results keep summary but require an active, non-revoked grant for review', () => {
+  const f = fixture();
+  try {
+    const p = f.svc.create(f.input, 'admin'); f.svc.publish(p, 'admin');
+    f.db.insert(products).values({ id: 'paid-product', title: 'Paid', priceIdr: 10000, accessDays: 30, active: true, createdAt: 1 }).run();
+    f.db.insert(productPackages).values({ id: 'paid-link', productId: 'paid-product', packageId: p }).run();
+    assert.throws(() => f.svc.start(p, 'student'), /pembayaran/);
+    f.db.insert(orders).values({ id: 'paid-order', userId: 'student', productId: 'paid-product', productTitle: 'Paid', amountIdr: 10000, accessDays: 30, status: 'paid', idempotencyKey: 'paid-key', requestHash: 'hash', createdAt: 1, expiresAt: 100000, paidAt: 1 }).run();
+    f.db.insert(orderPackages).values({ id: 'paid-order-package', orderId: 'paid-order', packageId: p }).run();
+    f.db.insert(accessGrants).values({ id: 'paid-grant', orderPackageId: 'paid-order-package', startsAt: 1, expiresAt: 100000, createdAt: 1 }).run();
+    const attempt = f.svc.start(p, 'student'); f.svc.submit(attempt, 'student');
+    assert.equal(f.svc.view(attempt, 'student').reviewAvailable, true);
+    f.db.update(accessGrants).set({ revokedAt: 2000, revokeReason: 'Refund pengguna' }).where(eq(accessGrants.id, 'paid-grant')).run();
+    const revoked = f.svc.view(attempt, 'student');
+    assert.equal(revoked.attempt.status, 'scored'); assert.equal(revoked.reviewAvailable, false);
+    assert.ok(!JSON.stringify(revoked.items).includes('explanation'));
+  } finally { f.sqlite.close(); }
 });
 test('archiving hides packages and blocks new starts without removing sessions or results', () => {
   const f = fixture();

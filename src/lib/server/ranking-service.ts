@@ -8,7 +8,9 @@ import {
   examAttempts,
   adminUsers,
   auditLog,
-  participantProfiles
+  participantProfiles,
+  rankingSnapshots,
+  rankingSnapshotEntries
 } from './schema';
 import { examService } from './exam-service';
 import { DomainError } from './question-service';
@@ -94,6 +96,8 @@ export function rankingService(db: AppDatabase, now = Date.now) {
         .set({ visible: false })
         .where(and(eq(rankingMembers.cohortId, c.id), eq(rankingMembers.userId, actor)))
         .run();
+      const snapshot = db.select().from(rankingSnapshots).where(eq(rankingSnapshots.cohortId, c.id)).get();
+      if (snapshot) db.update(rankingSnapshotEntries).set({ visible: false }).where(and(eq(rankingSnapshotEntries.snapshotId, snapshot.id), eq(rankingSnapshotEntries.userId, actor))).run();
     },
     board(packageId: string, actor: string, requestedPage = 1, province = '') {
       if (!validProvince(province)) throw new DomainError('Provinsi tidak valid.');
@@ -109,12 +113,13 @@ export function rankingService(db: AppDatabase, now = Date.now) {
         const admin = db.select().from(adminUsers).where(eq(adminUsers.userId, actor)).get();
         if (!membership && !admin)
           throw new DomainError('Ikuti kompetisi dahulu untuk melihat ranking.', 403);
-        // One SQLite read transaction gives a consistent generation; no identity cache survives opt-out.
-        const rows = db
+        const liveRows = () => db
           .select({
             userId: rankingMembers.userId,
             alias: rankingMembers.alias,
-            result: examAttempts.result
+            province: rankingMembers.province,
+            total: sql<number>`json_extract(${examAttempts.result}, '$.total')`,
+            maximum: sql<number>`json_extract(${examAttempts.result}, '$.maximum')`
           })
           .from(rankingMembers)
           .innerJoin(
@@ -128,27 +133,32 @@ export function rankingService(db: AppDatabase, now = Date.now) {
             and(
               eq(rankingMembers.cohortId, c.id),
               eq(rankingMembers.visible, true),
-              province ? eq(rankingMembers.province, province) : undefined,
               eq(examAttempts.status, 'scored'),
               sql`NOT EXISTS (SELECT 1 FROM admin_users WHERE user_id = ${rankingMembers.userId})`
             )
           )
-          .orderBy(
-            desc(sql`json_extract(${examAttempts.result}, '$.total')`),
-            rankingMembers.alias,
-            rankingMembers.userId
-          )
           .all();
+        let snapshot = db.select().from(rankingSnapshots).where(eq(rankingSnapshots.cohortId, c.id)).get();
+        if (!snapshot && now() >= c.endsAt) {
+          const snapshotId = randomUUID(), generatedAt = now();
+          db.insert(rankingSnapshots).values({ id: snapshotId, cohortId: c.id, generatedAt }).run();
+          for (const row of liveRows()) db.insert(rankingSnapshotEntries).values({ id: randomUUID(), snapshotId, userId: row.userId, alias: row.alias, province: row.province, total: row.total, maximum: row.maximum, visible: true }).run();
+          snapshot = { id: snapshotId, cohortId: c.id, generatedAt };
+          db.insert(auditLog).values({ id: randomUUID(), actorId: actor, action: 'ranking.snapshot', entityId: c.id, note: 'Snapshot ranking final total-v1 dibuat', createdAt: generatedAt }).run();
+        }
+        const rows = snapshot
+          ? db.select({ userId: rankingSnapshotEntries.userId, alias: rankingSnapshotEntries.alias, province: rankingSnapshotEntries.province, total: rankingSnapshotEntries.total, maximum: rankingSnapshotEntries.maximum }).from(rankingSnapshotEntries).where(and(eq(rankingSnapshotEntries.snapshotId, snapshot.id), eq(rankingSnapshotEntries.visible, true), province ? eq(rankingSnapshotEntries.province, province) : undefined)).orderBy(desc(rankingSnapshotEntries.total), rankingSnapshotEntries.alias, rankingSnapshotEntries.userId).all()
+          : liveRows().filter((row) => !province || row.province === province).sort((a, b) => b.total - a.total || a.alias.localeCompare(b.alias) || a.userId.localeCompare(b.userId));
         let rank = 0,
           previous: number | undefined;
         const ranked = rows.map((r, index) => {
-          if (r.result!.total !== previous) rank = index + 1;
-          previous = r.result!.total;
+          if (r.total !== previous) rank = index + 1;
+          previous = r.total;
           return {
             alias: r.alias,
             rank,
-            total: r.result!.total,
-            maximum: r.result!.maximum,
+            total: r.total,
+            maximum: r.maximum,
             mine: r.userId === actor
           };
         });
@@ -169,9 +179,9 @@ export function rankingService(db: AppDatabase, now = Date.now) {
           entries: ranked.slice((page - 1) * pageSize, page * pageSize),
           mine: ranked.find((r) => r.mine) ?? null,
           visible: membership?.visible ?? false,
-          updatedAt: now()
+          updatedAt: snapshot?.generatedAt ?? now()
         };
-      });
+      }, { behavior: 'immediate' });
     }
   };
 }

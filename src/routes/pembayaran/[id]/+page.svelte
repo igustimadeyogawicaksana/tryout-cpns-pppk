@@ -22,6 +22,9 @@
     {#if form?.error}<p class="notice error" role="alert">{form.error}</p>{/if}
     {#if data.order.status === 'pending' || data.order.status === 'review_required'}
       <form method="POST" action="?/proof" use:enhance class="stack">
+        <label>Nama pengirim<input name="senderName" minlength="2" maxlength="100" required /></label>
+        <label>Nominal transfer<input name="amountIdr" type="number" value={data.order.amountIdr} readonly required /></label>
+        <label>Waktu transfer<input name="paidAt" type="datetime-local" required /></label>
         <label>Referensi bukti pembayaran<input name="reference" minlength="3" maxlength="200" placeholder="Contoh: BCA 123456 / nama pengirim" required /></label>
         <button class="button">Kirim bukti pembayaran</button>
       </form>

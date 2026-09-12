@@ -21,7 +21,13 @@ export const actions: Actions = {
     if (!locals.user) redirect(303, '/login');
     const fields = await request.formData();
     try {
-      paymentService(db).submitManualProof(params.id, locals.user.id, String(fields.get('reference') || ''));
+      const paidAt = Date.parse(String(fields.get('paidAt') || ''));
+      paymentService(db).submitManualProof(params.id, locals.user.id, {
+        reference: String(fields.get('reference') || ''),
+        senderName: String(fields.get('senderName') || ''),
+        amountIdr: Number(fields.get('amountIdr')),
+        paidAt
+      });
       return { success: 'Bukti pembayaran sudah dikirim dan menunggu verifikasi pengelola.' };
     } catch (e) {
       return actionError(e);

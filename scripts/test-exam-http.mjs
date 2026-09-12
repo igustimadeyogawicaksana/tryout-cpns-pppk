@@ -93,7 +93,7 @@ export async function testExamHttp({ origin, cookie, participantCookie, database
     assert.equal((await fetch(origin + checkoutPath, { headers: { Cookie: participantCookie } })).status, 200);
     assert.equal((await fetch(origin + checkoutPath, { headers: { Cookie: cookie } })).status, 404);
     assert.equal((await post('/paket/' + packageId + '?/start', {}, participantCookie)).status, 402);
-    const proof = await post(checkoutPath + '?/proof', { reference: 'HTTP-TRANSFER-001' }, participantCookie);
+    const proof = await post(checkoutPath + '?/proof', { reference: 'HTTP-TRANSFER-001', senderName: 'HTTP Tester', amountIdr: '25000', paidAt: new Date().toISOString() }, participantCookie);
     assert.equal(proof.status, 200, await proof.clone().text());
     const payment = db.prepare('SELECT * FROM payments WHERE order_id=?').get(checkoutPath.split('/').pop());
     assert.equal(payment.status, 'review_required');

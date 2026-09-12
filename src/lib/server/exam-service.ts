@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { and, eq, lte, gt, asc, desc } from 'drizzle-orm';
+import { and, eq, isNull, lte, gt, asc, desc } from 'drizzle-orm';
 import { z } from 'zod';
 import type { AppDatabase } from './database';
 import {
@@ -53,6 +53,12 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
     const p = db.select().from(examPackages).where(eq(examPackages.id, id)).get();
     if (!p) throw new DomainError('Paket tidak ditemukan.', 404);
     return p;
+  }
+  function paidProductFor(packageId: string) {
+    return db.select({ id: products.id }).from(productPackages).innerJoin(products, eq(products.id, productPackages.productId)).where(and(eq(productPackages.packageId, packageId), gt(products.priceIdr, 0))).get();
+  }
+  function activeGrantFor(packageId: string, actor: string) {
+    return db.select({ id: accessGrants.id }).from(accessGrants).innerJoin(orderPackages, eq(orderPackages.id, accessGrants.orderPackageId)).innerJoin(orders, eq(orders.id, orderPackages.orderId)).where(and(eq(orderPackages.packageId, packageId), eq(orders.userId, actor), lte(accessGrants.startsAt, now()), gt(accessGrants.expiresAt, now()), isNull(accessGrants.revokedAt))).get();
   }
   function attempt(id: string, actor: string) {
     const row = db
@@ -268,30 +274,7 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
         () => {
           const p = getPackage(id);
           if (p.status !== 'published') throw new DomainError('Paket belum tersedia.', 404);
-          const paidProduct = db
-            .select({ id: products.id, priceIdr: products.priceIdr })
-            .from(productPackages)
-            .innerJoin(products, eq(products.id, productPackages.productId))
-            .where(and(eq(productPackages.packageId, id), eq(products.active, true)))
-            .all()
-            .find((product) => product.priceIdr > 0);
-          if (paidProduct) {
-            const grant = db
-              .select({ id: accessGrants.id })
-              .from(accessGrants)
-              .innerJoin(orderPackages, eq(orderPackages.id, accessGrants.orderPackageId))
-              .innerJoin(orders, eq(orders.id, orderPackages.orderId))
-              .where(
-                and(
-                  eq(orderPackages.packageId, id),
-                  eq(orders.userId, actor),
-                  lte(accessGrants.startsAt, now()),
-                  gt(accessGrants.expiresAt, now())
-                )
-              )
-              .get();
-            if (!grant) throw new DomainError('Selesaikan pembayaran untuk membuka paket ini.', 402);
-          }
+          if (paidProductFor(id) && !activeGrantFor(id, actor)) throw new DomainError('Selesaikan pembayaran untuk membuka paket ini.', 402);
           const cohort = db
             .select()
             .from(rankingCohorts)
@@ -312,7 +295,7 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
             .where(and(eq(examAttempts.packageId, id), eq(examAttempts.userId, actor)))
             .orderBy(desc(examAttempts.startedAt))
             .get();
-          if (old?.status === 'in_progress') return old.id;
+          if (old && (old.status === 'in_progress' || cohort)) return old.id;
           if (cohort && now() >= cohort.endsAt)
             throw new DomainError('Periode kompetisi sudah ditutup.', 409);
           const attemptId = randomUUID(),
@@ -349,11 +332,16 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
         .from(rankingCohorts)
         .where(eq(rankingCohorts.packageId, row.packageId))
         .get();
-      const reviewAvailable = !cohort || now() >= cohort.endsAt;
+      const paid = Boolean(paidProductFor(row.packageId));
+      const accessActive = !paid || Boolean(activeGrantFor(row.packageId, actor));
+      if (row.status === 'in_progress' && !accessActive) throw new DomainError('Akses paket sudah berakhir atau dicabut.', 403);
+      const reviewAvailable = (!cohort || now() >= cohort.endsAt) && accessActive;
       if (row.status === 'in_progress' && now() >= row.deadlineAt)
         row = db.transaction(() => finalize(id, 'deadline'), { behavior: 'immediate' });
       return {
         reviewAvailable,
+        accessActive,
+        paid,
         competitive: Boolean(cohort),
         attempt: row,
         package: getPackage(row.packageId),
@@ -382,6 +370,7 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
       return db.transaction(
         () => {
           const row = attempt(id, actor);
+          if (paidProductFor(row.packageId) && !activeGrantFor(row.packageId, actor)) throw new DomainError('Akses paket sudah berakhir atau dicabut.', 403);
           if (row.status !== 'in_progress' || now() >= row.deadlineAt)
             throw new DomainError('Ujian sudah selesai.', 409);
           if (row.revision !== revision)
@@ -410,6 +399,7 @@ export function examService(db: AppDatabase, now: () => number = Date.now) {
       return db.transaction(
         () => {
           const row = attempt(id, actor);
+          if (row.status === 'in_progress' && paidProductFor(row.packageId) && !activeGrantFor(row.packageId, actor)) throw new DomainError('Akses paket sudah berakhir atau dicabut.', 403);
           return finalize(id, now() >= row.deadlineAt ? 'deadline' : 'manual');
         },
         { behavior: 'immediate' }

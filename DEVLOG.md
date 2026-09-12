@@ -1,5 +1,15 @@
 # Development log
 
+## 2026-09-12 — PAY-003, RESULT-001, RANK-001 stabil lokal
+
+Pembayaran manual kini menyimpan bukti terstruktur (pengirim, nominal, waktu, referensi), memvalidasi nominal dan waktu, mengaudit persetujuan/penolakan, mengakhiri order setelah 24 jam, serta mendukung pencabutan grant dengan alasan. Bukti yang ditolak dapat diperbaiki selama order masih berlaku. QRIS asli dan gateway tetap ditunda.
+
+Ringkasan hasil berbayar tetap dapat dilihat setelah sesi selesai, sedangkan nilai pilihan dan pembahasan hanya dikirim ketika grant masih aktif. Grant kedaluwarsa/dicabut juga menolak mulai, simpan, dan submit sesi aktif. Paket yang pernah ditandai berbayar tidak berubah gratis hanya karena produknya dinonaktifkan.
+
+Ranking kompetisi tetap dinamis sampai periode berakhir. Akses pertama setelah penutupan membuat satu snapshot persisten berisi alias, provinsi dan skor; perubahan hasil atau profil sesudahnya tidak mengubah snapshot. Opt-out tetap segera menyembunyikan entri snapshot. Satu peserta tidak dapat membuat sesi kompetisi kedua.
+
+Verifikasi lokal: migrasi SQLite berhasil, 13 tes unit lulus, svelte-check 0 error/0 warning, build produksi berhasil, dan smoke HTTP checkout/auth/bank soal/ujian/ranking lulus.
+
 ## 2026-09-12 — Perbaikan akar error POST paket dan checkout
 
 Halaman paket mencampur action default dan action bernama buy, sehingga SvelteKit menolak POST dengan 500. Action mulai diubah menjadi start dan seluruh form/tes start kompetisi disesuaikan. Perubahan redirect/URL sebelumnya tidak mengatasi akar error ini. Hasil smoke sebelumnya memakai build lama sehingga tidak membuktikan source terbaru lulus.
