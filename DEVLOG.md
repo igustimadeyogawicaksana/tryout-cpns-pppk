@@ -311,3 +311,5 @@ Verifikasi lokal: tampilan diperiksa pada lebar 320, 390, 768, dan 1440 piksel; 
 110 soal `CPNS-SKD-TRIAL` pada database lokal diperbarui menjadi butir latihan orisinal yang terbagi sesuai subtes: 30 TWK, 35 TIU, dan 45 TKP. Setiap butir memiliki topik, lima opsi, kunci, bobot TKP, dan pembahasan yang selaras dengan subtes. Script `scripts/replace-trial-question-content.mjs` dapat dijalankan ulang pada database lokal; soal tetap diberi label latihan dan bukan soal resmi BKN.
 
 Verifikasi: distribusi 30/35/45 terkonfirmasi dan 13 tes unit lulus. Sebelum produksi, pengelola tetap perlu meninjau setiap butir dan menambahkan sumber materi yang disetujui.
+
+Catatan perbaikan: paket yang sudah terbit memakai snapshot `exam_items`, sehingga script juga menyegarkan snapshot tersebut. Tanpa langkah ini, bank soal versi baru belum terlihat pada paket lama.
