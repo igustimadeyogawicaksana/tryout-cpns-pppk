@@ -27,6 +27,7 @@ const choose = (arr, index) => arr[index % arr.length];
 const tx = db.transaction(() => {
   const rows = db.prepare("select qv.id,qv.content,qv.subtest_code from question_versions qv join questions q on q.id=qv.question_id where q.external_key like 'CPNS-SKD-TRIAL-%' order by q.external_key").all();
   const update = db.prepare('update question_versions set content=?, topic_code=?, updated_at=? where id=?');
+  const updateItems = db.prepare('update exam_items set content=? where version_id=?');
   const now = Date.now();
   rows.forEach((row, index) => {
     const bank = row.subtest_code === 'TWK' ? twk : row.subtest_code === 'TIU' ? tiu : tkp;
@@ -39,6 +40,7 @@ const tx = db.transaction(() => {
     content.explanation_md = explanation;
     content.source_note = 'Soal latihan orisinal untuk simulasi aplikasi; bukan soal resmi BKN dan perlu ditinjau pengelola.';
     update.run(JSON.stringify(content), topic, now, row.id);
+    updateItems.run(JSON.stringify(content), row.id);
   });
   console.log(`Updated ${rows.length} trial questions.`);
 });
