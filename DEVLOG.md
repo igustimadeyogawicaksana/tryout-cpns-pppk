@@ -1,5 +1,11 @@
 # Development log
 
+## 2026-09-12 — Penyegaran visual ruangtryout
+
+Design token global dirapikan untuk warna, gradient, radius, bayangan dan jarak. Beranda memakai kartu peta persiapan bergradient dengan pola dekoratif dan ikon; navigasi peserta, metadata paket, kategori CPNS/PPPK, dashboard serta detail paket memakai ikon garis yang konsisten. Kartu paket memperoleh aksen kategori, filter aktif memakai gradient, hasil dashboard memakai progress bar, dan panel autentikasi memperoleh gradient, dekorasi serta indikator manfaat. Animasi masuk dan hover ringan menghormati pengaturan reduced motion.
+
+Struktur informasi, teks, alur dan logika backend tidak diubah. Tampilan diperiksa langsung pada beranda, katalog dan dashboard di lebar browser normal serta beranda pada viewport 390 × 844; navigasi menyesuaikan menjadi dua baris pada tablet dan tetap terbaca pada ponsel. Halaman login tidak dapat ditampilkan dalam sesi pemeriksaan karena akun aktif dialihkan ke ruang pengelola, tetapi komponen lolos pemeriksaan Svelte dan build.
+
 ## 2026-09-12 — PAY-003, RESULT-001, RANK-001 stabil lokal
 
 Pembayaran manual kini menyimpan bukti terstruktur (pengirim, nominal, waktu, referensi), memvalidasi nominal dan waktu, mengaudit persetujuan/penolakan, mengakhiri order setelah 24 jam, serta mendukung pencabutan grant dengan alasan. Bukti yang ditolak dapat diperbaiki selama order masih berlaku. QRIS asli dan gateway tetap ditunda.

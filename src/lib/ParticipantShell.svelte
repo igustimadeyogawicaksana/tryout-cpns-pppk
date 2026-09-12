@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { authClient } from '$lib/auth-client';
+  import Icon from '$lib/Icon.svelte';
   import type { Snippet } from 'svelte';
   let {
     user,
@@ -28,15 +29,15 @@
       ><span class="brand-mark">r.</span> ruang<span>tryout</span></a
     >
     <nav aria-label="Navigasi peserta">
-      <a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}>Beranda</a>
+      <a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Icon name="home" size={16} />Beranda</a>
       <a href="/paket" aria-current={page.url.pathname === '/paket' ? 'page' : undefined}
-        >Paket tryout</a
+        ><Icon name="package" size={16} />Paket tryout</a
       >
       {#if user}<a
           href="/dashboard"
-          aria-current={page.url.pathname === '/dashboard' ? 'page' : undefined}>Dashboard</a
+          aria-current={page.url.pathname === '/dashboard' ? 'page' : undefined}><Icon name="dashboard" size={16} />Dashboard</a
         ><a href="/profil" aria-current={page.url.pathname === '/profil' ? 'page' : undefined}
-          >Profil</a
+          ><Icon name="user" size={16} />Profil</a
         >{/if}
     </nav>
     <div class="account-actions">
@@ -62,7 +63,7 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: #f8faf9;
+    background: var(--color-bg);
   }
   .site-header {
     display: flex;
@@ -73,6 +74,9 @@
     padding: 20px max(20px, calc((100vw - 1160px) / 2));
     background: white;
     border-bottom: 1px solid #e0e7ed;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 10;
   }
   .site-brand {
     display: flex;
@@ -101,6 +105,8 @@
     font-weight: 600;
     min-height: 44px;
   }
+  nav a { display: inline-flex; align-items: center; gap: 7px; color: var(--color-body); transition: color 150ms ease; }
+  nav a:hover { color: var(--color-primary); }
   nav a[aria-current] {
     color: #185ee3;
     box-shadow: inset 0 -2px #185ee3;
@@ -145,11 +151,14 @@
   }
   :global(.participant .participant-card) {
     border: 1px solid #dce5e8;
-    border-radius: 18px;
+    border-radius: var(--radius-lg);
     padding: 28px;
     background: white;
     min-width: 0;
+    box-shadow: var(--shadow-sm);
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
   }
+  :global(.participant .participant-card:hover) { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
   :global(.participant p) {
     line-height: 1.7;
   }
@@ -161,7 +170,7 @@
     outline: 3px solid #185ee3;
     outline-offset: 4px;
   }
-  @media (max-width: 700px) {
+  @media (max-width: 900px) {
     .site-header {
       gap: 10px;
       padding: 14px 16px;
@@ -170,6 +179,7 @@
       order: 3;
       width: 100%;
       gap: 20px;
+      justify-content: center;
     }
     .site-main {
       padding: 28px 16px 48px;
@@ -183,6 +193,11 @@
     .account-actions {
       gap: 8px;
     }
+  }
+  @media (max-width: 520px) {
+    nav { justify-content: flex-start; gap: 8px 14px; }
+    nav a { font-size: .83rem; }
+    nav a :global(svg) { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     :global(.participant *) {

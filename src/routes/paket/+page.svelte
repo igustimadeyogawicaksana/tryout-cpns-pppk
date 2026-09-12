@@ -1,5 +1,6 @@
 <script lang="ts">
   import ParticipantShell from '$lib/ParticipantShell.svelte';
+  import Icon from '$lib/Icon.svelte';
   let { data } = $props();
 </script>
 
@@ -20,11 +21,11 @@
   </nav>
   <div class="cards">
     {#each data.packages.filter((p) => data.kind === 'Semua' || p.examType === data.kind) as p}<article
-        class="participant-card"
+        class="participant-card package-card {p.examType.toLowerCase()}"
       >
-        <span class="pill">{p.examType} · Gratis</span>
+        <span class="pill category">{p.examType} · Gratis</span>
         <h2>{p.title}</h2>
-        <p>{p.durationMinutes} menit · Target {p.targetYear}</p>
+        <p class="meta"><span><Icon name="clock" size={17} />{p.durationMinutes} menit</span><span><Icon name="calendar" size={17} />Target {p.targetYear}</span></p>
         <p>{p.reference}</p>
         <a class="button secondary" href={'/paket/' + p.id}>Detail paket</a>
       </article>{/each}
@@ -52,11 +53,22 @@
     border-radius: 30px;
     text-decoration: none;
     background: white;
+    transition: transform 150ms ease, box-shadow 150ms ease, color 150ms ease;
   }
   .filters a.active {
-    background: #102b46;
+    background: var(--gradient-accent);
     color: white;
+    border-color: transparent;
+    box-shadow: var(--shadow-md);
   }
+  .filters a:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .package-card { border-left-width: 4px !important; }
+  .package-card.cpns { border-left-color: var(--color-primary) !important; }
+  .package-card.pppk { border-left-color: var(--color-warm) !important; }
+  .package-card.cpns .category { background: #dbeafe; color: #1d4ed8; }
+  .package-card.pppk .category { background: var(--color-warm-soft); color: #92400e; }
+  .meta { display: flex; flex-wrap: wrap; gap: 16px; }
+  .meta span { display: inline-flex; align-items: center; gap: 6px; }
   .empty {
     text-align: center;
     padding: 64px 24px !important;

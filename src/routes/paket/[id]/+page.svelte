@@ -1,5 +1,6 @@
 <script lang="ts">
   import ParticipantShell from '$lib/ParticipantShell.svelte';
+  import Icon from '$lib/Icon.svelte';
   let { data, form } = $props();
 </script>
 
@@ -9,17 +10,15 @@
   <p class="eyebrow">{data.package.examType} · LATIHAN GRATIS</p>
   <h1>{data.package.title}</h1>
   <section class="participant-card">
-    <h2>{data.package.count} soal · {data.package.durationMinutes} menit</h2>
-    <p>Target {data.package.targetYear}. {data.package.formation}</p>
+    <h2>{data.package.count} soal</h2>
+    <p class="meta"><span><Icon name="clock" size={18} />{data.package.durationMinutes} menit</span><span><Icon name="calendar" size={18} />Target {data.package.targetYear}</span></p>
     <p>{data.package.reference}</p>
     {#each data.package.products as product}
-      <div class="notice"><strong>{product.title}</strong> · Rp {product.priceIdr.toLocaleString('id-ID')} · akses {product.accessDays} hari{#if data.user}<form method="POST" action={'/paket/' + data.package.id + '?/buy'} style="margin-top:12px"><input type="hidden" name="productId" value={product.id} /><button class="button">Beli dan bayar manual</button></form>{:else}<p>Login untuk membeli.</p>{/if}</div>
+      <div class="notice price-box"><strong>{product.title}</strong> · Rp {product.priceIdr.toLocaleString('id-ID')} · akses {product.accessDays} hari{#if data.user}<form method="POST" action={'/paket/' + data.package.id + '?/buy'} style="margin-top:12px"><input type="hidden" name="productId" value={product.id} /><button class="button">Beli dan bayar manual</button></form>{:else}<p>Login untuk membeli.</p>{/if}</div>
     {/each}
-    <ul>
-      {#each Object.entries(data.package.quotas).filter(([, n]) => n > 0) as [sub, n]}<li>
-          {sub}: {n} soal
-        </li>{/each}
-    </ul>
+    <div class="composition">
+      {#each Object.entries(data.package.quotas).filter(([, n]) => n > 0) as [sub, n]}<span><Icon name="book" size={15} />{sub}: {n} soal</span>{/each}
+    </div>
     <p>
       Setiap percobaan disimpan sebagai sesi terpisah. Sesi yang sedang berjalan dapat dilanjutkan;
       setelah selesai, tombol ini membuat sesi baru agar latihan bisa diulang. Waktu mulai berjalan
@@ -60,3 +59,11 @@
     </form>
   </section></ParticipantShell
 >
+
+<style>
+  .meta, .composition { display: flex; flex-wrap: wrap; gap: 12px; }
+  .meta span, .composition span { display: inline-flex; align-items: center; gap: 7px; }
+  .composition { margin: 22px 0; }
+  .composition span { padding: 8px 12px; border-radius: 999px; background: var(--color-accent-soft); color: #065f46; font-size: .85rem; font-weight: 650; }
+  .price-box { padding: 24px; border-radius: var(--radius-lg); background: linear-gradient(135deg, #eff6ff, #ecfdf5); border-color: #bfdbfe; box-shadow: var(--shadow-sm); }
+</style>

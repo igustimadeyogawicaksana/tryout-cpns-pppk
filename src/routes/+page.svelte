@@ -1,5 +1,6 @@
 <script lang="ts">
   import ParticipantShell from '$lib/ParticipantShell.svelte';
+  import Icon from '$lib/Icon.svelte';
   let { data } = $props();
 </script>
 
@@ -30,11 +31,11 @@
       <p class="eyebrow">PETA PERSIAPAN</p>
       <h2>Satu langkah<br />setiap hari.</h2>
       <ol>
-        <li><strong>Pilih jalur</strong><span>CPNS atau PPPK</span></li>
-        <li><strong>Kenali materi</strong><span>Sesuaikan dengan jenis seleksi</span></li>
-        <li><strong>Latihan bertahap</strong><span>Paket latihan sedang disiapkan</span></li>
+        <li><i><Icon name="compass" size={20} /></i><div><strong>Pilih jalur</strong><span>CPNS atau PPPK</span></div></li>
+        <li><i><Icon name="book" size={20} /></i><div><strong>Kenali materi</strong><span>Sesuaikan dengan jenis seleksi</span></div></li>
+        <li><i><Icon name="target" size={20} /></i><div><strong>Latihan bertahap</strong><span>Paket latihan sedang disiapkan</span></div></li>
       </ol>
-      <span class="pill">Edisi awal · Paket segera hadir</span>
+      <span class="pill"><Icon name="sparkles" size={14} /> Edisi awal · Paket segera hadir</span>
     </aside>
   </section>
   <section>
@@ -86,20 +87,28 @@
   .path-card {
     padding: 36px;
     border-radius: 24px;
-    background: #e4f1e9;
+    background: linear-gradient(145deg, #ecfdf5, #dbeafe);
     border: 1px solid #c4dfd0;
     transform: rotate(1deg);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
   }
+  .path-card:after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(37,99,235,.18) 1px, transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(to bottom left, #000, transparent 62%); pointer-events: none; }
   .path-card h2 {
     font-size: 2rem;
     line-height: 1.2;
   }
   .path-card ol {
-    padding-left: 24px;
+    padding: 0;
+    list-style: none;
     display: grid;
     gap: 20px;
     margin: 24px 0 32px;
   }
+  .path-card li { display: flex; gap: 14px; align-items: center; position: relative; z-index: 1; }
+  .path-card li i { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.72); color: var(--color-primary); box-shadow: var(--shadow-sm); flex: 0 0 auto; }
+  .path-card .pill { gap: 7px; position: relative; z-index: 1; }
   .path-card li span {
     display: block;
     color: #526b60;

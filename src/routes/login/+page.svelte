@@ -3,6 +3,7 @@
   import GoogleLogo from '$lib/GoogleLogo.svelte';
   import PasswordField from '$lib/PasswordField.svelte';
   import { tick } from 'svelte';
+  import Icon from '$lib/Icon.svelte';
   let { data } = $props();
   let email = $state(''),
     password = $state(''),
@@ -116,6 +117,7 @@
       <p class="eyebrow">RUANG PERSIAPANMU</p>
       <h1>Langkah kecil.<br />Persiapan yang<br /><em>lebih berarti.</em></h1>
       <p>Satu akun untuk menyiapkan langkah belajar CPNS dan PPPK.</p>
+      <ul class="trust-list"><li><Icon name="check" size={17} />Paket tersusun dan ditinjau</li><li><Icon name="check" size={17} />Progres tersimpan di akun</li><li><Icon name="check" size={17} />Tampilan ujian yang terarah</li></ul>
     </div>
     <p class="story-foot">CPNS & PPPK <span>Persiapan · Edisi awal</span></p>
   </section>
@@ -145,10 +147,10 @@
       {#if data.mode !== 'login' && !data.mailEnabled}<p class="notice">
           Layanan email belum diaktifkan oleh pengelola.
         </p>{/if}
-      {#if data.mode !== 'login' && data.localMail}<p class="notice">
-          Mode pengujian lokal: email belum dikirim ke kotak masuk. Akun baru tetap bisa login;
+      {#if data.mode !== 'login' && data.localMail}<p class="notice info-notice">
+          <Icon name="info" size={19} /> <span>Mode pengujian lokal: email belum dikirim ke kotak masuk. Akun baru tetap bisa login;
           verifikasi diperlukan sebelum mulai ujian.
-        </p>{/if}
+          </span></p>{/if}
       <form onsubmit={submit} class="stack">
         {#if data.mode === 'register'}<label
             >Nama<input autocomplete="name" bind:value={name} required maxlength="100" /></label
@@ -231,4 +233,9 @@
     font-size: 0.9rem;
     min-height: 44px;
   }
+  .trust-list { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 12px; color: #dbeafe; font-size: .9rem; }
+  .trust-list li { display: flex; align-items: center; gap: 10px; }
+  .trust-list :global(svg) { color: #6ee7b7; }
+  .info-notice { display: flex; align-items: flex-start; gap: 10px; }
+  .info-notice :global(svg) { flex: 0 0 auto; margin-top: 3px; color: var(--color-primary); }
 </style>
