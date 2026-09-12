@@ -57,5 +57,6 @@ Tambahan dari arah self-hosting:
 
 | UX-002 | P1 | Responsif lintas perangkat dan hierarki beranda | Done | — | Beranda terbaca pada ponsel/tablet/desktop; panel samping punya tujuan; tidak ada overflow horizontal |
 | USER-003 | P1 | Riwayat pembelian pengguna | Done | PAY-003 | Pesanan milik akun tampil dengan status, nominal, tautan detail; isolasi antar akun teruji |
+| CONTENT-003 | P1 | Isi soal trial per subtes | Done | PROD-001 | Trial lokal berisi 30 TWK, 35 TIU, 45 TKP dengan opsi, kunci, pembahasan, dan label non-resmi |
 
 Gunakan Todo → In progress → Done; Blocked harus menyebut hambatan konkret. Saat menyelesaikan pekerjaan, tambahkan bukti di DEVLOG.md dan referensikan ID pada commit. Backlog Markdown ini adalah sumber pelacakan awal; GitHub Issues/Project belum dibuat.

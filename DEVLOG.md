@@ -305,3 +305,9 @@ Verifikasi lokal: migrasi terhadap SQLite aktif berhasil; 13 tes lulus termasuk 
 Beranda diperbesar tipografinya dan panel dekoratif diganti menjadi pilihan jalur CPNS/PPPK yang langsung membuka filter paket. Dashboard mengganti tautan cepat yang belum punya tujuan nyata dengan Paket tryout, Pembelian saya, dan Profil saya. Riwayat pembelian milik akun yang sedang masuk kini tampil dengan status, nominal, dan tautan ke pesanan; data pesanan dibatasi ke pemiliknya dan tidak di-cache.
 
 Verifikasi lokal: tampilan diperiksa pada lebar 320, 390, 768, dan 1440 piksel; tidak ada overflow horizontal. `svelte-check` 0 error/0 warning, 13 tes unit lulus, dan smoke test HTTP lulus termasuk isolasi riwayat pembelian antar akun. QRIS asli, VPS, dan fitur backlog lain tetap mengikuti urutan prioritas yang sudah ditetapkan.
+
+## 2026-09-12 — CONTENT-003, penggantian soal trial placeholder
+
+110 soal `CPNS-SKD-TRIAL` pada database lokal diperbarui menjadi butir latihan orisinal yang terbagi sesuai subtes: 30 TWK, 35 TIU, dan 45 TKP. Setiap butir memiliki topik, lima opsi, kunci, bobot TKP, dan pembahasan yang selaras dengan subtes. Script `scripts/replace-trial-question-content.mjs` dapat dijalankan ulang pada database lokal; soal tetap diberi label latihan dan bukan soal resmi BKN.
+
+Verifikasi: distribusi 30/35/45 terkonfirmasi dan 13 tes unit lulus. Sebelum produksi, pengelola tetap perlu meninjau setiap butir dan menambahkan sumber materi yang disetujui.
